@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 
@@ -88,8 +87,8 @@ const MainArticleCard = ({ article }) => {
   );
 };
 
-// Small article card
-const SmallArticleCard = ({ article, label }) => {
+// Small article card - עם רקע אדום לכותרת וללא תגיות
+const SmallArticleCard = ({ article }) => {
   return (
     <Link
       to={createPageUrl(`Article?id=${article.id}`)}
@@ -103,19 +102,20 @@ const SmallArticleCard = ({ article, label }) => {
         />
       </div>
       
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-      
-      {/* Label badge at top right */}
-      <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 font-bold text-sm z-10">
-        {label}
-      </div>
-      
-      {/* Title at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-        <h3 className="font-bold text-white text-base md:text-lg leading-tight line-clamp-3">
-          {article.title}
-        </h3>
+      {/* Title at bottom with red background (no dark overlay) */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <div 
+          className="p-3"
+          style={{
+            backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          <h3 className="font-normal text-white text-base leading-tight line-clamp-2">
+            {article.title}
+          </h3>
+        </div>
       </div>
     </Link>
   );
@@ -132,14 +132,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Two smaller articles (Right side) */}
         <div className="lg:col-span-4 order-1">
           <div className="grid grid-rows-2 gap-4 h-[600px]">
-            <SmallArticleCard 
-              article={articles[1]} 
-              label="מתכונים"
-            />
-            <SmallArticleCard 
-              article={articles[2]} 
-              label="סלבס"
-            />
+            <SmallArticleCard article={articles[1]} />
+            <SmallArticleCard article={articles[2]} />
           </div>
         </div>
         
@@ -150,17 +144,19 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
-          <div className="bg-white border border-gray-200 h-[600px] flex flex-col">
-            {/* Header with custom background */}
-            <div 
-              className="py-4 px-4"
-              style={{
-                backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            >
-              <h3 className="text-white text-xl font-normal text-center">מבזקים בכאן נעים</h3>
+          <div className="bg-white h-[600px] flex flex-col">
+            {/* Header with red background - NOT full width */}
+            <div className="px-2 py-2">
+              <div 
+                className="py-3 px-4"
+                style={{
+                  backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
+                <h3 className="text-white text-lg font-normal text-center">מבזקים בכאן נעים</h3>
+              </div>
             </div>
             
             {/* Breaking news list */}
