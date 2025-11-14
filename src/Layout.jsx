@@ -49,6 +49,18 @@ const NavMenuItem = ({ item, location }) => {
 
   // Check if current item is active
   const isActive = () => {
+    // Check if we're on Home page
+    const pathname = location.pathname.toLowerCase();
+    const isHomePage = pathname === '/' || pathname.includes('home');
+    
+    // Check if this is the "ראשי" category (main/home category)
+    const isMainCategory = item.label === 'ראשי' || item.label === 'main' || item.slug === 'main' || item.slug === 'ראשי';
+    
+    // If we're on home page and this is the main category, mark as active
+    if (isHomePage && isMainCategory) {
+      return true;
+    }
+    
     if (item.type === 'category') {
       const slug = item.slug || generateSlug(item.label);
       const urlParams = new URLSearchParams(location.search);
@@ -861,7 +873,6 @@ export default function Layout({ children, currentPageName }) {
               <Link 
                 to={createPageUrl("Advertisers")} 
                 className="text-base font-bold text-white px-4 py-3 transition-all hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:right-0 hover:after:h-1 hover:after:bg-[#d20201] relative"
-                style={{ backgroundColor: '#d20201' }}
               >
                 פרסם אצלנו
               </Link>
