@@ -1,10 +1,13 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from "react";
+
+import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { createPageUrl } from "@/utils";
 import { Article } from "@/entities/Article";
 import { Category } from "@/entities/Category";
+import { Advertisement } from "@/entities/Advertisement";
+import { HotArticle } from "@/entities/HotArticle";
 import { HomeConfig } from "@/entities/HomeConfig";
 import { defaultHomeConfig } from "../components/admin/HomePageEditor";
 
@@ -32,6 +35,7 @@ export default function Home() {
   const [homeConfig, setHomeConfig] = useState(null);
   const [specialAlertArticles, setSpecialAlertArticles] = useState({});
   const [sectionsData, setSectionsData] = useState({});
+  const [allAds, setAllAds] = useState([]); // Add allAds state
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,11 +47,13 @@ export default function Home() {
           mostViewedForSidebar,
           categoriesData,
           homeConfigData,
+          adsData,
         ] = await Promise.all([
           Article.filter({ published: true }, '-created_date', 20),
           Article.filter({ published: true }, '-views', 10), 
           Category.list(),
           HomeConfig.filter({ config_key: 'homePage' }),
+          Advertisement.filter({ active: true }),
         ]);
 
         setArticles(heroArticlesData);
@@ -79,6 +85,7 @@ export default function Home() {
         };
 
         setHomeConfig(loadedConfig);
+        setAllAds(adsData);
         
         // Fetch articles for special alert sections
         const specialAlertSections = loadedConfig.sections?.filter(s => s.type === 'special_alert' && s.enabled && s.article_id) || [];
@@ -231,7 +238,7 @@ export default function Home() {
         case 'ad':
           return (
             <div key={section.id || index} className="my-8">
-              <SmartAdBanner size="banner" position={section.position} />
+              <SmartAdBanner ads={allAds} size="banner" position={section.position} />
             </div>
           );
 

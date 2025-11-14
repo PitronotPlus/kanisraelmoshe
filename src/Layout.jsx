@@ -252,7 +252,7 @@ export default function Layout({ children, currentPageName }) {
   const [menuItems, setMenuItems] = useState([]);
   const [menuTree, setMenuTree] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [headerAds, setHeaderAds] = useState([]);
+  const [allAds, setAllAds] = useState([]); // Changed from headerAds to allAds
   const [siteConfig, setSiteConfig] = useState(null);
 
   const customFonts = useMemo(() => siteConfig?.custom_fonts || [], [siteConfig]);
@@ -271,7 +271,7 @@ export default function Layout({ children, currentPageName }) {
         const [currentUser, menuResult, adsData, configData] = await Promise.all([
           User.me().catch(() => null),
           NavigationMenu.filter({ name: 'main_menu' }).catch(() => []),
-          Advertisement.filter({ position: 'header', active: true }).catch(() => []),
+          Advertisement.filter({ active: true }).catch(() => []), // Load ALL active ads
           SiteConfig.list().catch(() => [])
         ]);
         
@@ -281,7 +281,7 @@ export default function Layout({ children, currentPageName }) {
             setMenuItems(flatItems);
             setMenuTree(buildMenuTree(flatItems));
         }
-        setHeaderAds(adsData);
+        setAllAds(adsData); // Store all ads
         if (configData.length > 0) {
             setSiteConfig(configData[0]);
         } else {
@@ -752,14 +752,14 @@ export default function Layout({ children, currentPageName }) {
         <header className="main-header">
           {/* Top Video Banner - DESKTOP */}
           <div className="hidden md:block w-full bg-gray-100">
-            <SmartAdBanner ads={headerAds} position="header" size="header" />
+            <SmartAdBanner ads={allAds} position="header" size="header" />
           </div>
 
           {/* Logo and Search Section - DESKTOP */}
           <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white">
             {/* Left Ad Banner */}
             <div className="w-[300px] h-[80px]">
-              <SmartAdBanner ads={headerAds} position="header_side" size="header" />
+              <SmartAdBanner ads={allAds} position="header_side" size="header" />
             </div>
 
             <div className="flex flex-col items-center">
@@ -960,7 +960,7 @@ export default function Layout({ children, currentPageName }) {
           
           <div className="my-8">
             <div className="max-w-[728px] h-24 mx-auto">
-              <SmartAdBanner ads={headerAds} position="footer" size="banner" />
+              <SmartAdBanner ads={allAds} position="footer" size="banner" />
             </div>
           </div>
 
