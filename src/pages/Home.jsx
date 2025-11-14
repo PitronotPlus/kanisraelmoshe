@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -36,7 +35,7 @@ export default function Home() {
   const [homeConfig, setHomeConfig] = useState(null);
   const [specialAlertArticles, setSpecialAlertArticles] = useState({});
   const [sectionsData, setSectionsData] = useState({});
-  const [allAds, setAllAds] = useState([]); // Add allAds state
+  const [allAds, setAllAds] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -177,13 +176,18 @@ export default function Home() {
     }
     
     const layout = homeConfig.hero.grid_style || 'hierarchical-1';
+    const redMailLink = homeConfig.hero.redMailLink || 'mailto:kanisraelnews@gmail.com';
 
     return (
       <Suspense fallback={<LoadingPlaceholder />}>
         {layout === 'cards' ? (
           <HeroCards articles={heroArticles} />
         ) : layout === 'kan-naim-original' ? (
-          <HeroKanNaimOriginal articles={heroArticles} breakingNews={hotArticles.slice(0, 6)} />
+          <HeroKanNaimOriginal 
+            articles={heroArticles} 
+            breakingNews={hotArticles.slice(0, 6)} 
+            redMailLink={redMailLink}
+          />
         ) : (
           <HeroGrid articles={heroArticles} layout={layout} />
         )}
@@ -205,7 +209,6 @@ export default function Home() {
           if (articlesForSection.length === 0) {
             return null;
           }
-          // Get category header style
           const categoryForSection = categoriesMap[section.category];
           return (
             <Suspense key={section.id || index} fallback={<LoadingPlaceholder />}>
@@ -224,7 +227,6 @@ export default function Home() {
           if (sliderArticles.length === 0) {
             return null;
           }
-          // Get category header style
           const categoryForSlider = categoriesMap[section.category];
           return (
             <Suspense key={section.id || index} fallback={<LoadingPlaceholder />}>
