@@ -53,7 +53,15 @@ const NavMenuItem = ({ item, location }) => {
       const slug = item.slug || generateSlug(item.label);
       const urlParams = new URLSearchParams(location.search);
       const currentSlug = urlParams.get('slug');
-      return currentSlug === slug;
+      const categoryParam = urlParams.get('category');
+      
+      // Check if we're on the category page itself
+      if (currentSlug === slug) return true;
+      
+      // Check if we're on an article page that belongs to this category
+      if (categoryParam === slug) return true;
+      
+      return false;
     }
     return false;
   };
@@ -738,7 +746,7 @@ export default function Layout({ children, currentPageName }) {
             transition: none;
           }
           
-          .breaking-news-scroll {
+          breaking-news-scroll {
             animation-duration: 20s;
           }
         }
@@ -852,7 +860,7 @@ export default function Layout({ children, currentPageName }) {
               ))}
               <Link 
                 to={createPageUrl("Advertisers")} 
-                className="text-base font-bold text-white px-4 py-3 transition-all"
+                className="text-base font-bold text-white px-4 py-3 transition-all hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:right-0 hover:after:h-1 hover:after:bg-[#d20201] relative"
                 style={{ backgroundColor: '#d20201' }}
               >
                 פרסם אצלנו
