@@ -1,16 +1,18 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Article } from '@/entities/Article';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Download, FileText, HardDrive, Archive, RefreshCw, Database } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Download, FileText, HardDrive, Archive, RefreshCw, Database, Video, Copy, CheckCircle } from 'lucide-react';
+import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
+import { base44 } from '@/api/base44Client';
 
 // Helper function to determine if a URL is external based on a list of internal hostnames
 const isExternalUrl = (url) => {
-    if (!url || !url.startsWith('http')) return false; // Not a valid web URL, treat as internal or local path
+    if (!url || !url.startsWith('http')) return false;
     const internalHosts = [
         'supabase.co', 
         'base44.app', 
@@ -18,11 +20,8 @@ const isExternalUrl = (url) => {
     ];
     try {
         const hostname = new URL(url).hostname;
-        // Check if any of the internal hosts are part of the URL's hostname
-        // Use .some() to check if at least one internal host matches
         return !internalHosts.some(host => hostname.includes(host));
     } catch (e) {
-        // If URL parsing fails, consider it non-external for safety
         return false;
     }
 };
@@ -33,6 +32,9 @@ export default function BackupManager() {
     const [exportProgress, setExportProgress] = useState(0);
     const [isExporting, setIsExporting] = useState(false);
     const [imageUrls, setImageUrls] = useState([]);
+    const [uploadedVideos, setUploadedVideos] = useState([]);
+    const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+    const [copiedUrl, setCopiedUrl] = useState(null);
     const [stats, setStats] = useState({
         totalArticles: 0,
         totalImages: 0,
@@ -42,6 +44,7 @@ export default function BackupManager() {
 
     useEffect(() => {
         loadData();
+        loadUploadedVideos();
     }, []);
 
     const loadData = async () => {
@@ -75,7 +78,7 @@ export default function BackupManager() {
                 totalArticles: articleData.length,
                 totalImages: imageUrlArray.length,
                 publishedArticles: publishedCount,
-                totalSize: 0 // We'll calculate this if needed
+                totalSize: 0
             });
             
         } catch (error) {
@@ -83,6 +86,75 @@ export default function BackupManager() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const loadUploadedVideos = () => {
+        const saved = localStorage.getItem('uploaded_videos');
+        if (saved) {
+            try {
+                setUploadedVideos(JSON.parse(saved));
+            } catch (e) {
+                setUploadedVideos([]);
+            }
+        }
+    };
+
+    const handleVideoUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Check if it's a video file
+        if (!file.type.startsWith('video/')) {
+            alert('אנא בחר קובץ וידאו בלבד');
+            return;
+        }
+
+        setIsUploadingVideo(true);
+        try {
+            const { file_url } = await base44.integrations.Core.UploadFile({ file });
+            
+            const newVideo = {
+                id: Date.now().toString(),
+                name: file.name,
+                url: file_url,
+                uploadDate: new Date().toISOString(),
+                size: file.size,
+                type: file.type
+            };
+            
+            const updatedVideos = [newVideo, ...uploadedVideos];
+            setUploadedVideos(updatedVideos);
+            localStorage.setItem('uploaded_videos', JSON.stringify(updatedVideos));
+            
+            alert('הוידאו הועלה בהצלחה!');
+        } catch (error) {
+            console.error('Error uploading video:', error);
+            alert('שגיאה בהעלאת הוידאו');
+        } finally {
+            setIsUploadingVideo(false);
+        }
+    };
+
+    const copyToClipboard = (url) => {
+        navigator.clipboard.writeText(url);
+        setCopiedUrl(url);
+        setTimeout(() => setCopiedUrl(null), 2000);
+    };
+
+    const deleteVideo = (videoId) => {
+        if (confirm('האם אתה בטוח שברצונך למחוק את הוידאו מהרשימה?')) {
+            const updatedVideos = uploadedVideos.filter(v => v.id !== videoId);
+            setUploadedVideos(updatedVideos);
+            localStorage.setItem('uploaded_videos', JSON.stringify(updatedVideos));
+        }
+    };
+
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
     };
 
     const exportArticles = async (format = 'json') => {
@@ -171,7 +243,7 @@ export default function BackupManager() {
         const imageData = imageUrls.map((url, index) => ({
             index: index + 1,
             url: url,
-            type: isExternalUrl(url) ? 'External' : 'Internal', // Use the new helper
+            type: isExternalUrl(url) ? 'External' : 'Internal',
             domain: new URL(url).hostname
         }));
         
@@ -211,7 +283,7 @@ export default function BackupManager() {
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900">גיבוי וניהול קבצים</h2>
-                    <p className="text-gray-600">ייצא מאמרים ונהל קבצי תמונות באתר</p>
+                    <p className="text-gray-600">ייצא מאמרים ונהל קבצי מדיה באתר</p>
                 </div>
             </div>
 
@@ -263,18 +335,113 @@ export default function BackupManager() {
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm text-gray-600">תמונות פנימיות</p>
-                                <p className="text-2xl font-bold text-orange-600">
-                                    {imageUrls.filter(url => !isExternalUrl(url)).length} {/* Updated logic */}
-                                </p>
+                                <p className="text-sm text-gray-600">קבצי וידאו</p>
+                                <p className="text-2xl font-bold text-red-600">{uploadedVideos.length}</p>
                             </div>
-                            <div className="bg-orange-100 p-3 rounded-xl">
-                                <Archive className="w-6 h-6 text-orange-600" />
+                            <div className="bg-red-100 p-3 rounded-xl">
+                                <Video className="w-6 h-6 text-red-600" />
                             </div>
                         </div>
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Video Upload Section - NEW */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Video className="w-5 h-5" />
+                        העלאת וידאו
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <p className="text-gray-600">העלה קבצי וידאו לשימוש בבאנרים ובמקומות אחרים באתר</p>
+                    
+                    <div className="flex gap-4 items-center">
+                        <input
+                            type="file"
+                            accept="video/*"
+                            onChange={handleVideoUpload}
+                            className="hidden"
+                            id="video-upload"
+                            disabled={isUploadingVideo}
+                        />
+                        <Button
+                            onClick={() => document.getElementById('video-upload')?.click()}
+                            disabled={isUploadingVideo}
+                            className="flex-1"
+                        >
+                            {isUploadingVideo ? (
+                                <>
+                                    <RefreshCw className="w-4 h-4 ml-2 animate-spin" />
+                                    מעלה וידאו...
+                                </>
+                            ) : (
+                                <>
+                                    <Video className="w-4 h-4 ml-2" />
+                                    בחר קובץ וידאו להעלאה
+                                </>
+                            )}
+                        </Button>
+                    </div>
+
+                    {/* Uploaded Videos List */}
+                    {uploadedVideos.length > 0 && (
+                        <div className="mt-6 space-y-3">
+                            <h4 className="font-semibold">וידאו שהועלו ({uploadedVideos.length}):</h4>
+                            <div className="space-y-2">
+                                {uploadedVideos.map((video) => (
+                                    <div key={video.id} className="border rounded-lg p-4 bg-gray-50">
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex-1 space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Video className="w-4 h-4 text-gray-500" />
+                                                    <span className="font-medium">{video.name}</span>
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    <span>גודל: {formatFileSize(video.size)}</span>
+                                                    <span className="mx-2">•</span>
+                                                    <span>הועלה: {format(new Date(video.uploadDate), 'dd/MM/yyyy HH:mm', { locale: he })}</span>
+                                                </div>
+                                                <div className="flex gap-2 mt-2">
+                                                    <Input
+                                                        value={video.url}
+                                                        readOnly
+                                                        className="text-sm font-mono"
+                                                        dir="ltr"
+                                                    />
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() => copyToClipboard(video.url)}
+                                                    >
+                                                        {copiedUrl === video.url ? (
+                                                            <CheckCircle className="w-4 h-4 text-green-600" />
+                                                        ) : (
+                                                            <Copy className="w-4 h-4" />
+                                                        )}
+                                                    </Button>
+                                                </div>
+                                                <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200">
+                                                    <strong>שימוש בוידאו:</strong> העתק את הקישור למעלה והשתמש בו ב-HTML: 
+                                                    <code className="block mt-1 text-xs">{`<video src="${video.url}" controls></video>`}</code>
+                                                </div>
+                                            </div>
+                                            <Button
+                                                size="sm"
+                                                variant="destructive"
+                                                onClick={() => deleteVideo(video.id)}
+                                            >
+                                                מחק
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
 
             {/* Export Articles Section */}
             <Card>
@@ -337,13 +504,13 @@ export default function BackupManager() {
                         </div>
                         <div className="text-center p-4 bg-green-50 rounded-lg">
                             <p className="text-2xl font-bold text-green-600">
-                                {imageUrls.filter(url => !isExternalUrl(url)).length} {/* Updated logic */}
+                                {imageUrls.filter(url => !isExternalUrl(url)).length}
                             </p>
                             <p className="text-sm text-gray-600">תמונות פנימיות</p>
                         </div>
                         <div className="text-center p-4 bg-red-50 rounded-lg">
                             <p className="text-2xl font-bold text-red-600">
-                                {imageUrls.filter(url => isExternalUrl(url)).length} {/* Updated logic */}
+                                {imageUrls.filter(url => isExternalUrl(url)).length}
                             </p>
                             <p className="text-sm text-gray-600">תמונות חיצוניות</p>
                         </div>
@@ -351,7 +518,7 @@ export default function BackupManager() {
                             <p className="text-2xl font-bold text-purple-600">
                                 {new Set(imageUrls.map(url => {
                                     try { return new URL(url).hostname; } 
-                                    catch { return 'invalid'; } // Handle malformed URLs gracefully
+                                    catch { return 'invalid'; }
                                 })).size}
                             </p>
                             <p className="text-sm text-gray-600">דומיינים שונים</p>
@@ -383,8 +550,8 @@ export default function BackupManager() {
                                             e.target.style.display = 'none';
                                         }}
                                     />
-                                    <Badge variant={isExternalUrl(url) ? 'destructive' : 'default'} className="text-xs"> {/* Updated variant logic */}
-                                        {isExternalUrl(url) ? 'חיצוני' : 'פנימי'} {/* Updated text logic */}
+                                    <Badge variant={isExternalUrl(url) ? 'destructive' : 'default'} className="text-xs">
+                                        {isExternalUrl(url) ? 'חיצוני' : 'פנימי'}
                                     </Badge>
                                 </div>
                             ))}
