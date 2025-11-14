@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
 import { Advertisement } from "@/entities/Advertisement";
-import { SiteConfig } from "@/entities/SiteConfig"; // Corrected import statement
-import { NavigationMenu } from "@/entities/NavigationMenu"; // Import new entity
+import { SiteConfig } from "@/entities/SiteConfig";
+import { NavigationMenu } from "@/entities/NavigationMenu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
@@ -31,49 +30,44 @@ const NavMenuItem = ({ item }) => {
     if (!name) return '';
     return name.toString().toLowerCase()
       .replace(/\s+/g, '-')
-      .replace(/[^\w\u0590-\u05FF-]/g, '') // Keep Hebrew characters
+      .replace(/[^\w\u0590-\u05FF-]/g, '')
       .replace(/--+/g, '-')
       .replace(/-+$/, '');
   };
 
   const getLink = () => {
     if (item.type === 'category') {
-      // Use slug if available, otherwise generate from label
       const slug = item.slug || generateSlug(item.label);
       return createPageUrl(`Category?slug=${slug}`);
     }
-    if (item.type === 'custom') { // Added as per outline
+    if (item.type === 'custom') {
       return item.url;
     }
-    // Parent items don't have links or other items that are not meant to be direct links
-    return null; // Changed as per outline
+    return null;
   };
 
   if (!hasChildren) {
-    // If it's a parent type, render as non-clickable text
-    if (item.type === 'parent') { // Added as per outline
+    if (item.type === 'parent') {
       return (
-        <span className="text-lg font-semibold text-gray-700 cursor-default">
+        <span className="text-base font-semibold text-white cursor-default px-4 py-2">
           {item.label}
         </span>
       );
     }
     
-    // Regular clickable item - only if there's a valid link
     const link = getLink();
     if (link) {
       return (
         <Link
           to={link}
-          className="text-lg font-semibold transition-colors hover:text-[var(--primary-color)] text-gray-700"
+          className="text-base font-semibold transition-colors hover:bg-white/10 text-white px-4 py-2 rounded"
         >
           {item.label}
         </Link>
       );
     }
-    // Fallback for items without a link but not explicitly 'parent' type
     return (
-      <span className="text-lg font-semibold text-gray-700 cursor-default">
+      <span className="text-base font-semibold text-white cursor-default px-4 py-2">
         {item.label}
       </span>
     );
@@ -81,13 +75,12 @@ const NavMenuItem = ({ item }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center text-lg font-semibold transition-colors hover:text-[var(--primary-color)] text-gray-700 focus:outline-none">
+      <DropdownMenuTrigger className="flex items-center text-base font-semibold transition-colors hover:bg-white/10 text-white focus:outline-none px-4 py-2 rounded">
         {item.label}
         <ChevronDown className="w-4 h-4 mr-1" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {/* Only show "view all" link if it's not a parent type */}
-        {item.type !== 'parent' && ( // Added condition as per outline
+        {item.type !== 'parent' && (
           <>
             <DropdownMenuItem asChild>
                <Link to={getLink()} className="font-bold">כל הכתבות ב-{item.label}</Link>
@@ -109,7 +102,7 @@ const NavSubMenuItem = ({ item }) => {
       if (!name) return '';
       return name.toString().toLowerCase()
         .replace(/\s+/g, '-')
-        .replace(/[^\w\u0590-\u05FF-]/g, '') // Keep Hebrew characters
+        .replace(/[^\w\u0590-\u05FF-]/g, '')
         .replace(/--+/g, '-')
         .replace(/-+$/, '');
     };
@@ -119,15 +112,14 @@ const NavSubMenuItem = ({ item }) => {
         const slug = item.slug || generateSlug(item.label);
         return createPageUrl(`Category?slug=${slug}`);
       }
-      if (item.type === 'custom') { // Added as per outline
+      if (item.type === 'custom') {
         return item.url;
       }
-      return null; // Changed as per outline
+      return null;
     };
 
     if (!hasChildren) {
-        // If it's a parent type, render as non-clickable
-        if (item.type === 'parent') { // Added as per outline
+        if (item.type === 'parent') {
             return (
                 <DropdownMenuItem disabled>
                     <span className="font-semibold text-gray-600">{item.label}</span>
@@ -135,7 +127,6 @@ const NavSubMenuItem = ({ item }) => {
             );
         }
         
-        // Regular clickable item - only if there's a valid link
         const link = getLink();
         if (link) {
             return (
@@ -144,7 +135,6 @@ const NavSubMenuItem = ({ item }) => {
                 </DropdownMenuItem>
             );
         }
-        // Fallback for items without a link but not explicitly 'parent' type
         return (
             <DropdownMenuItem disabled>
                 <span>{item.label}</span>
@@ -158,8 +148,7 @@ const NavSubMenuItem = ({ item }) => {
                 <span>{item.label}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-                 {/* Only show "view all" link if it's not a parent type */}
-                 {item.type !== 'parent' && ( // Added condition as per outline
+                 {item.type !== 'parent' && (
                    <>
                      <DropdownMenuItem asChild>
                         <Link to={getLink()} className="font-bold">כל הכתבות ב-{item.label}</Link>
@@ -177,7 +166,6 @@ const NavSubMenuItem = ({ item }) => {
 const AdminToolbar = ({ user }) => {
   const location = useLocation();
   
-  // Don't show toolbar in admin pages or editor pages
   if (location.pathname.includes('Admin') || 
       location.pathname.includes('Editor') || 
       location.pathname.includes('SpeakerDashboard')) {
@@ -188,7 +176,6 @@ const AdminToolbar = ({ user }) => {
     return null;
   }
 
-  // Determine current page type for direct editing button
   const getDirectEditLink = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const pathname = location.pathname.toLowerCase();
@@ -203,11 +190,9 @@ const AdminToolbar = ({ user }) => {
     }
     
     if (pathname.includes('category')) {
-        // categorySlug not used for direct link, leads to general category admin
         return createPageUrl('Admin', { tab: 'content' });
     }
     
-    // No specific edit available for this page
     return null;
   };
   
@@ -263,16 +248,14 @@ export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [menuItems, setMenuItems] = useState([]); // State for flat menu items
-  const [menuTree, setMenuTree] = useState([]); // State for hierarchical menu
+  const [menuItems, setMenuItems] = useState([]);
+  const [menuTree, setMenuTree] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [headerAds, setHeaderAds] = useState([]);
   const [siteConfig, setSiteConfig] = useState(null);
 
-  // Custom fonts are now derived from siteConfig, not separate state
   const customFonts = useMemo(() => siteConfig?.custom_fonts || [], [siteConfig]);
   
-  // Define font links with extended weights within the component as per outline
   const fontLinks = {
     Assistant: "https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap",
     Heebo: "https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap",
@@ -301,11 +284,10 @@ export default function Layout({ children, currentPageName }) {
         if (configData.length > 0) {
             setSiteConfig(configData[0]);
         } else {
-            // Set a fallback config if none is in the DB
             setSiteConfig({ 
               font_family: 'Assistant', 
-              primary_color: '#2563eb', 
-              accent_color: '#dc2626',
+              primary_color: '#153b79', 
+              accent_color: '#d20201',
               background_color: '#f9fafb',
               text_color_primary: '#111827',
               text_color_secondary: '#6b7281',
@@ -321,23 +303,17 @@ export default function Layout({ children, currentPageName }) {
     fetchData();
   }, []);
 
-  // Redirect new users to onboarding page, but NOT admins
   useEffect(() => {
-    // Add a check to ensure the user is not an admin
     if (user && user.role !== 'admin' && !user.requested_app_role && user.status !== 'approved' && user.status !== 'rejected') {
         const allowedPaths = ['/onboarding', '/logout'];
-        // The path in location.pathname is just the path, e.g. /onboarding, not the full URL.
         const currentPath = location.pathname.toLowerCase();
         
-        // createPageUrl returns a relative path like /onboarding
-        if (!allowedPaths.some(path => currentPath === createPageUrl(path.substring(1)))) { // Use createPageUrl for comparison
+        if (!allowedPaths.some(path => currentPath === createPageUrl(path.substring(1)))) {
              navigate(createPageUrl('Onboarding'));
         }
     }
   }, [user, location, navigate]);
 
-
-  // navigationItems for desktop will be based on the menuTree
   const desktopNavigationItems = useMemo(() => {
     return menuTree;
   }, [menuTree]);
@@ -352,7 +328,7 @@ export default function Layout({ children, currentPageName }) {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(createPageUrl(`Search?q=${encodeURIComponent(searchQuery.trim())}`));
-      setMobileMenuOpen(false); // Close mobile menu on search
+      setMobileMenuOpen(false);
     }
   };
 
@@ -428,7 +404,6 @@ export default function Layout({ children, currentPageName }) {
     
     let css = '';
     Object.entries(siteConfig.typography).forEach(([element, styles]) => {
-      // Add safety checks for styles object
       if (!styles || typeof styles !== 'object') return;
       
       let styleString = '';
@@ -453,11 +428,10 @@ export default function Layout({ children, currentPageName }) {
     if (!customFonts || !Array.isArray(customFonts) || customFonts.length === 0) return '';
     
     return customFonts.map(font => {
-      // Add safety checks for font object
       if (!font || !font.familyName || !font.files || !Array.isArray(font.files)) return '';
       
       const fontSources = font.files
-        .filter(file => file && file.url && file.format) // Filter out invalid files
+        .filter(file => file && file.url && file.format)
         .sort((a, b) => {
           const formatPriority = { woff2: 1, woff: 2, ttf: 3, otf: 4, eot: 5 };
           return (formatPriority[a.format] || 6) - (formatPriority[b.format] || 6);
@@ -486,12 +460,11 @@ export default function Layout({ children, currentPageName }) {
     if (!name) return '';
     return name.toString().toLowerCase()
       .replace(/\s+/g, '-')
-      .replace(/[^\w\u0590-\u05FF-]/g, '') // Keep Hebrew characters
+      .replace(/[^\w\u0590-\u05FF-]/g, '')
       .replace(/--+/g, '-')
       .replace(/-+$/, '');
   };
 
-  // Determine if admin toolbar should show padding
   const showAdminToolbarPadding = user?.role === 'admin' && 
                                 !location.pathname.includes('Admin') && 
                                 !location.pathname.includes('Editor') && 
@@ -500,20 +473,17 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div dir="rtl" style={{ 
         fontFamily: `'${siteConfig?.font_family || 'Assistant'}', sans-serif`,
-        '--primary-color': siteConfig?.primary_color || '#2563eb',
-        '--accent-color': siteConfig?.accent_color || '#dc2626',
+        '--primary-color': siteConfig?.primary_color || '#153b79',
+        '--accent-color': siteConfig?.accent_color || '#d20201',
         '--background-color': siteConfig?.background_color || '#f9fafb',
         '--text-primary': siteConfig?.text_color_primary || '#111827',
         '--text-secondary': siteConfig?.text_color_secondary || '#6b7281',
       }}
       className="min-h-screen bg-[var(--background-color)]"
     >
-      {/* Admin Toolbar - only for admins */}
       <AdminToolbar user={user} />
       
-      {/* Add top padding when admin toolbar is present */}
       <style>{`
-        /* Admin toolbar styles */
         .admin-toolbar-active {
           padding-top: 60px;
         }
@@ -524,19 +494,15 @@ export default function Layout({ children, currentPageName }) {
           }
         }
         
-        /* Preload critical fonts */
         .preload-font {
           font-display: swap;
         }
 
-        /* Load additional fonts only if needed */
         ${(() => {
           const uniqueFonts = new Set();
-          // Add siteConfig font if it's not Assistant and fontLinks exists for it
           if (siteConfig?.font_family && fontLinks[siteConfig.font_family] && siteConfig.font_family !== 'Assistant') {
             uniqueFonts.add(siteConfig.font_family);
           }
-          // Add typography fonts if they exist and are not Assistant
           if (siteConfig?.typography && typeof siteConfig.typography === 'object') {
             Object.values(siteConfig.typography).forEach(styles => {
               if (styles && typeof styles === 'object' && styles.fontFamily && typeof styles.fontFamily === 'string' && fontLinks[styles.fontFamily] && styles.fontFamily !== 'Assistant') {
@@ -550,38 +516,31 @@ export default function Layout({ children, currentPageName }) {
         })()}
       
         :root {
-          --primary-color: ${siteConfig?.primary_color || '#2563eb'};
-          --accent-color: ${siteConfig?.accent_color || '#dc2626'};
+          --primary-color: ${siteConfig?.primary_color || '#153b79'};
+          --accent-color: ${siteConfig?.accent_color || '#d20201'};
           --background-color: ${siteConfig?.background_color || '#f9fafb'};
           --text-primary: ${siteConfig?.text_color_primary || '#111827'};
           --text-secondary: ${siteConfig?.text_color_secondary || '#6b7281'};
         }
 
-        /* Remove any eval-based code and unsafe practices */
         body {
           background-color: var(--background-color);
           color: var(--text-primary);
           font-family: '${siteConfig?.font_family || 'Assistant'}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          overflow-wrap: break-word; /* Prevent long words from breaking layout */
-          font-display: swap; /* Optimize font rendering */
-          overflow-x: hidden; /* Global container constraints to prevent overflow */
+          overflow-wrap: break-word;
+          font-display: swap;
+          overflow-x: hidden;
         }
 
-        /* Rest of existing CSS without any eval or unsafe patterns */
-        /* Custom fonts */
         ${generateCustomFontCSS()}
-
-        /* Typography styles */
         ${generateTypographyCSS()}
 
-        /* Main container fixes */
         .max-w-\\[1440px\\] {
           width: 100%;
           max-width: min(1440px, 100vw);
           margin: 0 auto;
         }
 
-        /* Grid container fixes */
         .grid {
           overflow: hidden;
         }
@@ -590,52 +549,46 @@ export default function Layout({ children, currentPageName }) {
           min-width: 0;
         }
 
-        /* Utility to hide scrollbars */
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
         .scrollbar-hide {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         .text-lg {
             line-height: 1.25rem !important;
         }
 
-        /* Fix for overflowing embedded content */
         .article-content iframe,
         .article-content video,
         .article-content embed {
             max-width: 100%;
             aspect-ratio: 16 / 9;
             height: auto;
-            border-radius: 8px; /* Optional: adds a nice touch */
+            border-radius: 8px;
             margin: 1rem 0;
         }
 
-        /* Performance optimizations */
         .main-header {
           z-index: 50;
-          will-change: transform; /* Hint to the browser for better performance on scroll */
-          border-bottom: 3px solid var(--primary-color); /* Added blue bar */
+          will-change: transform;
         }
 
-        /* Optimized animations */
         .hero-card {
           border-radius: 8px;
           cursor: pointer;
-          transition: transform 0.2s ease, box-shadow 0.2s ease; /* Shorter transition for snappier feel */
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          will-change: transform; /* Hint to the browser */
+          will-change: transform;
         }
 
         .hero-card:hover {
           transform: translateY(-2px);
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* Improved shadow on hover */
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        /* Reduce paint operations */
         .text-shadow {
           text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
         }
@@ -645,17 +598,16 @@ export default function Layout({ children, currentPageName }) {
         }
 
         .section-title {
-          font-size: 1.75rem; /* Larger font for main title */
-          font-weight: 800; /* Extra bold */
-          color: #333; /* Default dark gray for text */
-          margin-bottom: 0.75rem; /* Space below title */
-          display: block; /* Make it a block element to take full width */
-          text-align: start; /* Align to start (right in RTL) */
-          padding-top: 0.5rem; /* Some top padding for overall section if desired */
-          contain: layout style; /* Optimize rendering */
+          font-size: 1.75rem;
+          font-weight: 800;
+          color: #333;
+          margin-bottom: 0.75rem;
+          display: block;
+          text-align: start;
+          padding-top: 0.5rem;
+          contain: layout style;
         }
         
-        /* Update title text color based on class */
         .section-title.green { color: #16a344; }
         .section-title.purple { color: #9333ea; }
         .section-title.blue { color: #2563eb; }
@@ -663,15 +615,14 @@ export default function Layout({ children, currentPageName }) {
 
         .section-divider {
           border: none;
-          height: 4px; /* Thicker line */
-          background-color: var(--primary-color); /* Default to primary color */
-          margin: 0 0 1.5rem 0; /* Margin below the divider */
-          border-radius: 2px; /* Slightly rounded ends */
-          width: 100%; /* Ensure it spans full width */
-          contain: layout style; /* Optimize rendering */
+          height: 4px;
+          background-color: var(--primary-color);
+          margin: 0 0 1.5rem 0;
+          border-radius: 2px;
+          width: 100%;
+          contain: layout style;
         }
 
-        /* Apply colors to the divider */
         .section-divider.green { background-color: #16a344; }
         .section-divider.purple { background-color: #9333ea; }
         .section-divider.blue { background-color: #2563eb; }
@@ -686,7 +637,7 @@ export default function Layout({ children, currentPageName }) {
           font-weight: 700;
           font-size: 1rem;
           padding: 0.5rem 0.75rem;
-          contain: layout style; /* Optimize rendering */
+          contain: layout style;
         }
 
         .sidebar-news-list {
@@ -696,7 +647,7 @@ export default function Layout({ children, currentPageName }) {
           background-color: #f9fafb;
           border: 1px solid #e5e7eb;
           border-top: none;
-          contain: layout style; /* Optimize rendering */
+          contain: layout style;
         }
 
         .sidebar-news-list li {
@@ -708,7 +659,6 @@ export default function Layout({ children, currentPageName }) {
           border-bottom: none;
         }
 
-        /* Optimized breaking news animation */
         .breaking-news-scroll {
           animation: scroll-left 30s linear infinite;
           will-change: transform;
@@ -721,18 +671,16 @@ export default function Layout({ children, currentPageName }) {
 
         .breaking-news-container {
           overflow: hidden;
-          contain: layout style paint; /* Contain layout, style, and paint operations */
+          contain: layout style paint;
         }
 
-        /* Image optimization */
         img {
-          content-visibility: auto; /* Defer rendering of off-screen images */
+          content-visibility: auto;
         }
 
-        /* Mobile specific styles */
         @media (max-width: 768px) {
           .section-title {
-            font-size: 1.25rem; /* Smaller font on mobile */
+            font-size: 1.25rem;
             margin-bottom: 0.5rem;
             padding-top: 0.25rem;
           }
@@ -768,17 +716,15 @@ export default function Layout({ children, currentPageName }) {
             transform: translateX(0);
           }
           
-          /* Mobile optimizations */
           .hero-card {
-            transition: none; /* Disable transitions on mobile for snappier feel */
+            transition: none;
           }
           
           .breaking-news-scroll {
-            animation-duration: 20s; /* Faster animation on mobile */
+            animation-duration: 20s;
           }
         }
 
-        /* Prevent horizontal overflow on all screen sizes */
         * {
           box-sizing: border-box;
         }
@@ -792,7 +738,6 @@ export default function Layout({ children, currentPageName }) {
           overflow: hidden;
         }
 
-        /* Preload critical elements */
         @media (prefers-reduced-motion: no-preference) {
           .hero-card {
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -800,19 +745,26 @@ export default function Layout({ children, currentPageName }) {
         }
       `}</style>
 
-      {/* Main content wrapper for boxed layout with admin toolbar spacing */}
       <div 
         className={`max-w-[1440px] mx-auto bg-white shadow-md ${showAdminToolbarPadding ? 'admin-toolbar-active' : ''}`}
       >
-        <header className="main-header px-4">
-          {/* Top Header - DESKTOP */}
-          <div className="hidden md:flex items-center justify-between py-4">
-            {/* Left: AdSense Space */}
-            <div className="w-[300px] flex items-center">
-              <SmartAdBanner ads={headerAds} position="header" size="header" />
-            </div>
+        <header className="main-header">
+          {/* Top Video Banner - DESKTOP */}
+          <div className="hidden md:block w-full bg-gray-100">
+            <video 
+              src="https://base44.app/api/apps/68701c57df55f5f96aeb5a04/files/public/68701c57df55f5f96aeb5a04/70cf2044e_BANNER.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-auto max-h-[120px] object-cover"
+            />
+          </div>
 
-            {/* Center: Logo and Slogan */}
+          {/* Logo and Search Section - DESKTOP */}
+          <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white">
+            <div className="w-[300px]"></div>
+
             <div className="flex flex-col items-center">
               <Link to={createPageUrl("Home")} className="flex-shrink-0">
                 <img
@@ -827,7 +779,6 @@ export default function Layout({ children, currentPageName }) {
               )}
             </div>
 
-            {/* Right: Search and User Menu */}
             <div className="w-[300px] flex items-center justify-end space-x-3 space-x-reverse">
               <form onSubmit={handleSearch} className="flex-1">
                 <div className="relative w-full">
@@ -846,8 +797,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           {/* Top Header - MOBILE */}
-          <div className="md:hidden flex items-center justify-between py-3"> {/* Removed border-b */}
-              {/* Right Group (in RTL) - Menu Icon */}
+          <div className="md:hidden flex items-center justify-between py-3 px-4 bg-white">
               <div className="flex-shrink-0">
                   <button
                       className="p-2 -mr-2"
@@ -857,7 +807,6 @@ export default function Layout({ children, currentPageName }) {
                   </button>
               </div>
 
-              {/* Center Logo - takes remaining space */}
               <div className="flex-grow text-center px-2">
                   <Link to={createPageUrl("Home")} className="inline-block">
                       <img
@@ -868,21 +817,24 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
               </div>
 
-              {/* Left Group (in RTL) - User Menu */}
               <div className="flex-shrink-0">
                   <UserMenu />
               </div>
           </div>
 
-
-          {/* Navigation Menu (Desktop) */}
-          <nav className="hidden md:flex items-center justify-center py-3">
-            <div className="flex items-center space-x-8 space-x-reverse">
+          {/* Navigation Menu (Desktop) - Blue Background */}
+          <nav className="hidden md:flex items-center justify-center py-3 px-4" style={{ backgroundColor: '#153b79' }}>
+            <div className="flex items-center space-x-6 space-x-reverse">
               {desktopNavigationItems.map((item) => (
                 <NavMenuItem key={item.id} item={item} />
               ))}
-              {/* "Advertisers" is a static link, not part of the dynamic menu */}
-              <Link to={createPageUrl("Advertisers")} className="text-lg font-semibold transition-colors hover:text-[var(--primary-color)] text-gray-700">פרסם אצלנו</Link>
+              <Link 
+                to={createPageUrl("Advertisers")} 
+                className="text-base font-semibold transition-colors text-white px-4 py-2 rounded"
+                style={{ backgroundColor: '#d20201' }}
+              >
+                פרסם אצלנו
+              </Link>
             </div>
           </nav>
         </header>
@@ -890,9 +842,8 @@ export default function Layout({ children, currentPageName }) {
         <main className="px-4 py-4 md:py-8">
           {children}
         </main>
-      </div> {/* End of content-wrapper bg-white shadow-md */}
+      </div>
 
-      {/* Mobile Menu (remains outside the boxed content wrapper to allow full overlay) */}
       {mobileMenuOpen && (
         <div
           className="mobile-menu-overlay md:hidden"
@@ -911,17 +862,15 @@ export default function Layout({ children, currentPageName }) {
           </button>
         </div>
         <nav className="p-4">
-          {/* Mobile menu: list all top-level items from menu */}
           {menuItems
             .filter(item => !item.parentId)
             .sort((a, b) => (a.order || 0) - (b.order || 0))
             .map((item) => {
-              // Get link for mobile menu
               const link = item.type === 'category' 
                 ? createPageUrl(`Category?slug=${item.slug || generateSlugForMobileMenu(item.label)}`) 
-                : (item.type === 'custom' ? item.url : null); // Handle custom type explicitly, null for parent
+                : (item.type === 'custom' ? item.url : null);
               
-              if (item.type === 'parent') { // Render parent type as non-clickable
+              if (item.type === 'parent') {
                 return (
                   <div
                     key={item.id}
@@ -932,7 +881,7 @@ export default function Layout({ children, currentPageName }) {
                 );
               }
 
-              if (link) { // Render Link if there is a valid link
+              if (link) {
                 return (
                   <Link
                     key={item.id}
@@ -944,7 +893,6 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 );
               }
-              // Fallback for items without a link but not explicitly 'parent' type
               return (
                 <div
                   key={item.id}
@@ -954,7 +902,6 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               );
             })}
-          {/* Add "Advertisers" link for mobile */}
           <Link
               to={createPageUrl("Advertisers")}
               className="block py-3 px-2 text-lg font-semibold transition-colors border-b border-gray-100"
@@ -995,7 +942,7 @@ export default function Layout({ children, currentPageName }) {
       </div>
 
       <footer className="bg-gray-800 text-white mt-12 w-full">
-        <div className="max-w-[1440px] mx-auto px-4 py-8 md:py-10"> {/* Footer content is boxed for alignment */}
+        <div className="max-w-[1440px] mx-auto px-4 py-8 md:py-10">
           <div className="text-center">
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/dad5fecc4_.png"
@@ -1005,8 +952,6 @@ export default function Layout({ children, currentPageName }) {
             <p className="text-gray-400 text-sm mb-6">
               {siteConfig?.site_description || 'אתר החדשות המוביל בישראל.'}
             </p>
-            {/* The SmartAdBanner in the footer needs to use the headerAds state variable as it's the only one populated for ads. 
-                If there were specific footer ads, a new state for them would be needed.*/}
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-2">
               <a href="#" className="text-gray-400 hover:text-white text-sm">אודות</a>
               <a href="#" className="text-gray-400 hover:text-white text-sm">צור קשר</a>
@@ -1016,7 +961,6 @@ export default function Layout({ children, currentPageName }) {
             </div>
           </div>
           
-          {/* Advertisement Section */}
           <div className="my-8">
             <div className="max-w-[728px] h-24 mx-auto">
               <SmartAdBanner ads={headerAds} position="footer" size="banner" />
@@ -1025,9 +969,9 @@ export default function Layout({ children, currentPageName }) {
 
           <div className="border-t border-gray-700 mt-6 md:mt-8 pt-6 md:pt-8 text-center text-gray-400">
              <div className="max-w-3xl mx-auto text-xs">
-                <h4 className="font-bold text-gray-200 mb-2">סעיף 27א – “יצירות שבעל הזכות בהן אינו ידוע או לא אותר”</h4>
+                <h4 className="font-bold text-gray-200 mb-2">סעיף 27א – "יצירות שבעל הזכות בהן אינו ידוע או לא אותר"</h4>
                 <p>
-                    מערכת בלוג | אתר “כאן ישראל ” פועלת בכל השקידה הסבירה לגילוי או איתור בעל הזכות של יצירה, תמונה או מאמר. השימוש ביצירה בבלוג זה, נעשה לפי סעיף זה 27א’ לחוק זכויות יוצרים. בכל מקרה, בעל הזכות מתבקש לפנות למייל; kanisraelnews@gmail.com ולהודיענו על כך. אנו נפעל להסרה תוך 30 יום מקבלת התלונה למייל זה.
+                    מערכת בלוג | אתר "כאן ישראל " פועלת בכל השקידה הסבירה לגילוי או איתור בעל הזכות של יצירה, תמונה או מאמר. השימוש ביצירה בבלוג זה, נעשה לפי סעיף זה 27א' לחוק זכויות יוצרים. בכל מקרה, בעל הזכות מתבקש לפנות למייל; kanisraelnews@gmail.com ולהודיענו על כך. אנו נפעל להסרה תוך 30 יום מקבלת התלונה למייל זה.
                 </p>
              </div>
           </div>
