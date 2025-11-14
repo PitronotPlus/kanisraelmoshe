@@ -811,9 +811,11 @@ export default function Layout({ children, currentPageName }) {
       >
         <header className="main-header">
           {/* Top Video Banner - DESKTOP */}
-          <div className="hidden md:block w-full bg-gray-100">
-            <div className="max-w-[1200px] mx-auto px-4 py-2">
-              <SmartAdBanner ads={allAds} position="header" size="header" />
+          <div className="hidden md:block w-full bg-white">
+            <div className="max-w-[1200px] mx-auto px-4">
+              <div className="h-16 overflow-hidden">
+                <SmartAdBanner ads={allAds} position="header" size="header" />
+              </div>
             </div>
           </div>
 
