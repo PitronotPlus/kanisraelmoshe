@@ -24,7 +24,7 @@ const buildMenuTree = (items, parentId = null) => {
 };
 
 // Component for rendering a single navigation item (top-level or sub-menu)
-const NavMenuItem = ({ item }) => {
+const NavMenuItem = ({ item, location }) => {
   const hasChildren = item.children && item.children.length > 0;
 
   const generateSlug = (name) => {
@@ -47,10 +47,23 @@ const NavMenuItem = ({ item }) => {
     return null;
   };
 
+  // Check if current item is active
+  const isActive = () => {
+    if (item.type === 'category') {
+      const slug = item.slug || generateSlug(item.label);
+      const urlParams = new URLSearchParams(location.search);
+      const currentSlug = urlParams.get('slug');
+      return currentSlug === slug;
+    }
+    return false;
+  };
+
+  const active = isActive();
+
   if (!hasChildren) {
     if (item.type === 'parent') {
       return (
-        <span className="text-base font-semibold text-white cursor-default px-4 py-2">
+        <span className="nav-menu-item text-base font-bold text-white cursor-default px-4 py-3 border-r border-white/20">
           {item.label}
         </span>
       );
@@ -61,14 +74,16 @@ const NavMenuItem = ({ item }) => {
       return (
         <Link
           to={link}
-          className="text-base font-semibold transition-colors hover:bg-white/10 text-white px-4 py-2 rounded"
+          className={`nav-menu-item text-base font-bold px-4 py-3 border-r border-white/20 transition-all relative ${
+            active ? 'bg-[#d20201] text-white' : 'text-white hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:right-0 hover:after:h-1 hover:after:bg-[#d20201]'
+          }`}
         >
           {item.label}
         </Link>
       );
     }
     return (
-      <span className="text-base font-semibold text-white cursor-default px-4 py-2">
+      <span className="nav-menu-item text-base font-bold text-white cursor-default px-4 py-3 border-r border-white/20">
         {item.label}
       </span>
     );
@@ -76,7 +91,9 @@ const NavMenuItem = ({ item }) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center text-base font-semibold transition-colors hover:bg-white/10 text-white focus:outline-none px-4 py-2 rounded">
+      <DropdownMenuTrigger className={`nav-menu-item flex items-center text-base font-bold focus:outline-none px-4 py-3 border-r border-white/20 transition-all relative ${
+        active ? 'bg-[#d20201] text-white' : 'text-white hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:right-0 hover:after:h-1 hover:after:bg-[#d20201]'
+      }`}>
         {item.label}
         <ChevronDown className="w-4 h-4 mr-1" />
       </DropdownMenuTrigger>
@@ -744,6 +761,14 @@ export default function Layout({ children, currentPageName }) {
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           }
         }
+        
+        .nav-menu-item {
+          position: relative;
+        }
+
+        .nav-menu-item:first-child {
+          border-right: none;
+        }
       `}</style>
 
       <div 
@@ -820,14 +845,14 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           {/* Navigation Menu (Desktop) - Blue Background */}
-          <nav className="hidden md:flex items-center justify-center py-3 px-4" style={{ backgroundColor: '#153b79' }}>
-            <div className="flex items-center space-x-6 space-x-reverse">
+          <nav className="hidden md:flex items-center justify-center" style={{ backgroundColor: '#153b79' }}>
+            <div className="flex items-center">
               {desktopNavigationItems.map((item) => (
-                <NavMenuItem key={item.id} item={item} />
+                <NavMenuItem key={item.id} item={item} location={location} />
               ))}
               <Link 
                 to={createPageUrl("Advertisers")} 
-                className="text-base font-semibold transition-colors text-white px-4 py-2 rounded"
+                className="text-base font-bold text-white px-4 py-3 transition-all"
                 style={{ backgroundColor: '#d20201' }}
               >
                 פרסם אצלנו
