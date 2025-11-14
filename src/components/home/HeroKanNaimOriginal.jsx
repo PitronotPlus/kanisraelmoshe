@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 
@@ -121,71 +120,77 @@ const SmallArticleCard = ({ article, label }) => {
   );
 };
 
-export default function HeroKanNaimOriginal({ articles, breakingNews = [] }) {
+export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMailLink = 'mailto:kanisraelnews@gmail.com' }) {
   if (!articles || articles.length < 3) {
     return <div className="text-center py-10">אין מספיק מאמרים להצגה באזור זה.</div>;
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      {/* Two smaller articles (Right side) */}
-      <div className="lg:col-span-4 order-1">
-        <div className="grid grid-rows-2 gap-4 h-[600px]">
-          <SmallArticleCard 
-            article={articles[1]} 
-            label="מתכונים"
-          />
-          <SmallArticleCard 
-            article={articles[2]} 
-            label="סלבס"
-          />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Two smaller articles (Right side) */}
+        <div className="lg:col-span-4 order-1">
+          <div className="grid grid-rows-2 gap-4 h-[600px]">
+            <SmallArticleCard 
+              article={articles[1]} 
+              label="מתכונים"
+            />
+            <SmallArticleCard 
+              article={articles[2]} 
+              label="סלבס"
+            />
+          </div>
+        </div>
+        
+        {/* Main large article (Center) */}
+        <div className="lg:col-span-5 order-2 h-[600px]">
+          <MainArticleCard article={articles[0]} />
+        </div>
+        
+        {/* Sidebar - Breaking News (Left side) */}
+        <div className="lg:col-span-3 order-3">
+          <div className="bg-white border border-gray-200 h-[600px] flex flex-col">
+            {/* Header */}
+            <div className="bg-red-600 text-white py-3 px-4">
+              <h3 className="font-bold text-base text-center">מבזקים בכאן נעים</h3>
+            </div>
+            
+            {/* Breaking news list */}
+            <div className="flex-1 overflow-y-auto">
+              {breakingNews.length > 0 ? (
+                <div className="divide-y divide-gray-200">
+                  {breakingNews.map((article) => (
+                    <BreakingNewsItem 
+                      key={article.id} 
+                      article={article}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="p-4 text-center text-gray-500 text-sm">
+                  אין מבזקים חדשים
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
       
-      {/* Main large article (Center) */}
-      <div className="lg:col-span-5 order-2 h-[600px]">
-        <MainArticleCard article={articles[0]} />
-      </div>
-      
-      {/* Sidebar - Breaking News (Left side) */}
-      <div className="lg:col-span-3 order-3">
-        <div className="bg-white border border-gray-200 h-full flex flex-col">
-          {/* Header */}
-          <div className="bg-red-600 text-white py-3 px-4">
-            <h3 className="font-bold text-base text-center">מבזקים בכאן נעים</h3>
-          </div>
-          
-          {/* Breaking news list */}
-          <div className="flex-1 overflow-y-auto">
-            {breakingNews.length > 0 ? (
-              <div className="divide-y divide-gray-200">
-                {breakingNews.map((article) => (
-                  <BreakingNewsItem 
-                    key={article.id} 
-                    article={article}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="p-4 text-center text-gray-500 text-sm">
-                אין מבזקים חדשים
-              </div>
-            )}
-          </div>
-          
-          {/* Red email button */}
-          <div className="p-3 border-t border-gray-200">
-            <a
-              href="mailto:kanisraelnews@gmail.com"
-              className="block bg-red-600 hover:bg-red-700 text-white py-3 px-3 text-center font-bold transition-colors"
-            >
-              <div className="flex items-center justify-center space-x-2 space-x-reverse mb-1">
-                <Mail className="w-4 h-4" />
-                <span className="text-xs">יש לך ידיעה / תמונה / סרט?</span>
-              </div>
-              <div className="text-xs font-normal">המייל האדום</div>
-            </a>
-          </div>
+      {/* Red email button - below sidebar */}
+      <div className="lg:grid lg:grid-cols-12 lg:gap-4">
+        <div className="lg:col-start-10 lg:col-span-3">
+          <a
+            href={redMailLink}
+            target={redMailLink.startsWith('http') ? '_blank' : undefined}
+            rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
+            className="block hover:opacity-90 transition-opacity"
+          >
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
+              alt="המייל האדום"
+              className="w-full"
+            />
+          </a>
         </div>
       </div>
     </div>
