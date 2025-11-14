@@ -17,8 +17,9 @@ export const defaultHomeConfig = {
     enabled: true,
     articleCount: 5,
     showBreakingNews: true,
-    type: 'grid', // This property might become less relevant if grid_style is used directly for layout
-    grid_style: 'hierarchical-1' // Add default grid style
+    type: 'grid',
+    grid_style: 'hierarchical-1',
+    redMailLink: 'mailto:kanisraelnews@gmail.com' // Add default red mail link
   },
   sections: [
     {
@@ -29,7 +30,7 @@ export const defaultHomeConfig = {
       articleCount: 8,
       enabled: true,
       type: 'articles',
-      display: { // Add default display settings
+      display: {
         showExcerpt: true,
         showDate: true,
         showAuthor: true,
@@ -44,7 +45,7 @@ export const defaultHomeConfig = {
       articleCount: 4,
       enabled: true,
       type: 'articles',
-      display: { // Add default display settings
+      display: {
         showExcerpt: true,
         showDate: true,
         showAuthor: true,
@@ -59,7 +60,7 @@ export const defaultHomeConfig = {
       articleCount: 4,
       enabled: true,
       type: 'articles',
-      display: { // Add default display settings
+      display: {
         showExcerpt: true,
         showDate: true,
         showAuthor: true,
@@ -67,7 +68,7 @@ export const defaultHomeConfig = {
       }
     },
     {
-      id: 'hot_articles', // Kept for backwards compatibility but not addable
+      id: 'hot_articles',
       title: 'מאמרים חמים',
       enabled: true,
       type: 'hot_articles'
@@ -87,7 +88,7 @@ export const defaultHomeConfig = {
       articleCount: 8,
       enabled: true,
       type: 'articles',
-      display: { // Add default display settings
+      display: {
         showExcerpt: true,
         showDate: true,
         showAuthor: true,
@@ -109,7 +110,7 @@ export const defaultHomeConfig = {
       articleCount: 8,
       enabled: true,
       type: 'articles',
-      display: { // Add default display settings
+      display: {
         showExcerpt: true,
         showDate: true,
         showAuthor: true,
@@ -451,7 +452,8 @@ export default function HomePageEditor() {
           hero: { // Deep merge hero
             ...defaultHomeConfig.hero,
             ...(loadedConfig.hero || {}),
-            grid_style: loadedConfig.hero?.grid_style || 'hierarchical-1' // Add default grid style
+            grid_style: loadedConfig.hero?.grid_style || 'hierarchical-1', // Add default grid style
+            redMailLink: loadedConfig.hero?.redMailLink || 'mailto:kanisraelnews@gmail.com' // Add default if missing
           },
           sections: loadedConfig.sections.map(section => {
             let updatedSection = { ...section };
@@ -692,6 +694,27 @@ export default function HomePageEditor() {
                     <Label>הצג מבזקים</Label>
                   </div>
                 </div>
+
+                {/* Red Mail Link Setting for kan-naim-original layout */}
+                {config.hero.grid_style === 'kan-naim-original' && (
+                  <div>
+                    <Label>קישור כפתור המייל האדום</Label>
+                    <Input
+                      type="text"
+                      value={config.hero.redMailLink || ''}
+                      onChange={(e) =>
+                        setConfig({
+                          ...config,
+                          hero: { ...config.hero, redMailLink: e.target.value }
+                        })
+                      }
+                      placeholder="mailto:kanisraelnews@gmail.com או קישור אחר"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      הזן קישור mailto: או קישור פנימי/חיצוני לכפתור המייל האדום
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </CardContent>
