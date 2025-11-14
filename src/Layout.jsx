@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -751,19 +752,15 @@ export default function Layout({ children, currentPageName }) {
         <header className="main-header">
           {/* Top Video Banner - DESKTOP */}
           <div className="hidden md:block w-full bg-gray-100">
-            <video 
-              src="https://base44.app/api/apps/68701c57df55f5f96aeb5a04/files/public/68701c57df55f5f96aeb5a04/70cf2044e_BANNER.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-auto max-h-[120px] object-cover"
-            />
+            <SmartAdBanner ads={headerAds} position="header" size="header" />
           </div>
 
           {/* Logo and Search Section - DESKTOP */}
           <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white">
-            <div className="w-[300px]"></div>
+            {/* Left Ad Banner */}
+            <div className="w-[300px] h-[80px]">
+              <SmartAdBanner ads={headerAds} position="header_side" size="header" />
+            </div>
 
             <div className="flex flex-col items-center">
               <Link to={createPageUrl("Home")} className="flex-shrink-0">
