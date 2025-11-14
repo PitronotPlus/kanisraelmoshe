@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 
@@ -18,14 +19,14 @@ const BreakingNewsItem = ({ article }) => {
           <img 
             src={article.featured_image} 
             alt={article.title}
-            className="w-12 h-12 object-cover flex-shrink-0"
+            className="w-16 h-16 object-cover flex-shrink-0"
           />
         )}
         <div className="flex-1 min-w-0">
-          <div className="text-xs text-red-600 font-bold mb-1">
+          <div className="text-base text-red-600 font-normal mb-1">
             {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
           </div>
-          <h4 className="text-sm font-bold leading-tight line-clamp-2">
+          <h4 className="text-base font-normal leading-tight line-clamp-3">
             {article.title}
           </h4>
         </div>
@@ -150,9 +151,16 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
           <div className="bg-white border border-gray-200 h-[600px] flex flex-col">
-            {/* Header */}
-            <div className="bg-red-600 text-white py-3 px-4">
-              <h3 className="font-bold text-base text-center">מבזקים בכאן נעים</h3>
+            {/* Header with custom background */}
+            <div 
+              className="py-4 px-4"
+              style={{
+                backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <h3 className="text-white text-xl font-normal text-center">מבזקים בכאן נעים</h3>
             </div>
             
             {/* Breaking news list */}
