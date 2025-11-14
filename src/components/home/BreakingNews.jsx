@@ -5,16 +5,15 @@ export default function BreakingNews() {
   const [breakingNews, setBreakingNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // פונקציה לניקוי קישורים וסוגריים מהטקסט
   const cleanText = (text) => {
     if (!text) return '';
     return text
-      .replace(/\([^)]*\)/g, '') // הסרת כל מה שבסוגריים
-      .replace(/\[[^\]]*\]/g, '') // הסרת כל מה שבסוגריים מרובעים
-      .replace(/https?:\/\/[^\s]+/g, '') // הסרת קישורים
-      .replace(/www\.[^\s]+/g, '') // הסרת קישורי www
-      .replace(/\s+/g, ' ') // החלפת רווחים מרובים ברווח אחד
-      .trim(); // הסרת רווחים מתחילת וסוף
+      .replace(/\([^)]*\)/g, '')
+      .replace(/\[[^\]]*\]/g, '')
+      .replace(/https?:\/\/[^\s]+/g, '')
+      .replace(/www\.[^\s]+/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   };
 
   useEffect(() => {
@@ -27,20 +26,17 @@ export default function BreakingNews() {
       if (cachedData) {
         try {
           const { timestamp, news } = JSON.parse(cachedData);
-          // Cache for 15 minutes (15 * 60 * 1000 ms)
           if (now - timestamp < 15 * 60 * 1000) {
             setBreakingNews(news);
             setLoading(false);
-            return; // Exit if valid cache found
+            return;
           }
         } catch (e) {
-            // Invalid cache, clear it and proceed to fetch
             console.warn("Invalid cached breaking news data, clearing cache:", e);
             localStorage.removeItem(cacheKey);
         }
       }
 
-      // If no valid cache, fetch from API
       try {
         const response = await InvokeLLM({
           prompt: "תן לי 3 חדשות חמות ואקטואליות מישראל מהיום. עבור כל חדשה תן רק כותרת קצרה. החזר בפורמט JSON נקי",
@@ -68,16 +64,13 @@ export default function BreakingNews() {
         
         if (cleanedNews.length > 0) {
             setBreakingNews(cleanedNews);
-            // Save to cache
             localStorage.setItem(cacheKey, JSON.stringify({ timestamp: now, news: cleanedNews }));
         } else {
-            // אם אין חדשות, להציג הודעה מעודכנת
             setBreakingNews([{ title: "עוקבים אחר החדשות העדכניות ביותר" }]);
         }
 
       } catch (error) {
         console.error('Error loading breaking news:', error);
-        // Display updated error message
         setBreakingNews([
           { title: "כאן ישראל - מביא לכם את החדשות החמות" }
         ]);
@@ -86,12 +79,8 @@ export default function BreakingNews() {
       }
     };
     
-    // Load immediately
     loadBreakingNews();
-    
-    // The previous interval for periodic updates has been removed as per the optimization outline.
-    // News will now only load on component mount or if the cache is expired/invalidaמcted.
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   const SkeletonLoader = () => (
     <div className="flex space-x-8 space-x-reverse"> 
@@ -105,9 +94,12 @@ export default function BreakingNews() {
   );
 
   return (
-    <div className="bg-white py-2 mb-6 border-y border-gray-200" style={{ contain: 'layout style paint' }}>
+    <div className="bg-white py-3 mb-6 border-y border-l border-r border-gray-200" style={{ contain: 'layout style paint' }}>
       <div className="container mx-auto px-4">
         <div className="flex items-center">
+          <div className="bg-red-600 text-white px-4 py-1 font-bold text-base rounded ml-4">
+            הודעות:
+          </div>
           <div className="breaking-news-container flex-1">
             <div className="breaking-news-scroll flex space-x-8 space-x-reverse">
               {loading ? (
@@ -116,7 +108,7 @@ export default function BreakingNews() {
                 <>
                   {breakingNews.map((item, index) => (
                     <React.Fragment key={index}>
-                      <span className="flex-shrink-0 text-sm font-medium text-gray-900">
+                      <span className="flex-shrink-0 text-base font-semibold text-gray-900">
                         {item.title}
                       </span>
                       {index < breakingNews.length - 1 && (
@@ -127,9 +119,6 @@ export default function BreakingNews() {
                 </>
               )}
             </div>
-          </div>
-          <div className="bg-red-600 text-white px-3 py-1 font-bold text-sm rounded mr-4">
-            מבזקים
           </div>
         </div>
       </div>
