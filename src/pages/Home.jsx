@@ -14,6 +14,7 @@ import { defaultHomeConfig } from "../components/admin/HomePageEditor";
 // Import Home Page Components (Lazy Loaded for performance)
 const HeroGrid = lazy(() => import("../components/home/HeroGrid"));
 const HeroCards = lazy(() => import("../components/home/HeroCards"));
+const HeroKanNaimOriginal = lazy(() => import("../components/home/HeroKanNaimOriginal"));
 const BreakingNews = lazy(() => import("../components/home/BreakingNews"));
 const CategorySection = lazy(() => import("../components/home/CategorySection"));
 const Sidebar = lazy(() => import("../components/home/Sidebar"));
@@ -181,6 +182,8 @@ export default function Home() {
       <Suspense fallback={<LoadingPlaceholder />}>
         {layout === 'cards' ? (
           <HeroCards articles={heroArticles} />
+        ) : layout === 'kan-naim-original' ? (
+          <HeroKanNaimOriginal articles={heroArticles} breakingNews={hotArticles.slice(0, 6)} />
         ) : (
           <HeroGrid articles={heroArticles} layout={layout} />
         )}

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { GripVertical, Plus, Trash2, Edit, Save, AlertTriangle, Square } from "lucide-react";
+import { GripVertical, Plus, Trash2, Edit, Save, AlertTriangle, LayoutGrid, Square, Columns, Box, Image as ImageIcon } from "lucide-react";
 import { Category } from "@/entities/Category";
 import { Article } from "@/entities/Article";
 import { HomeConfig } from "@/entities/HomeConfig";
@@ -125,6 +125,7 @@ const GridStyleSelector = ({ selectedStyle, onSelect }) => {
     { id: 'hierarchical-2', label: 'היררכי 2', icon: <div className="grid grid-cols-3 grid-rows-2 gap-0.5 w-full h-full p-0.5"><div className="col-span-2 row-span-2 bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div></div>, articles: 3 },
     { id: 'modular-2x2', label: 'מודולרי 2x2', icon: <div className="grid grid-cols-2 grid-rows-2 gap-0.5 w-full h-full p-0.5"><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div></div>, articles: 4 },
     { id: 'column', label: 'עמודות', icon: <div className="grid grid-cols-4 gap-0.5 w-full h-full p-0.5"><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div></div>, articles: 4 },
+    { id: 'kan-naim-original', label: 'כאן נעים המקורי', icon: <div className="grid grid-cols-12 gap-0.5 w-full h-full p-0.5"><div className="col-span-5 bg-slate-400"></div><div className="col-span-4 bg-slate-400"></div><div className="col-span-3 bg-slate-500"></div></div>, articles: 3 },
     { id: 'cards', label: 'כרטיסיות', icon: <Square className="w-6 h-6 text-slate-500" />, articles: 5 },
   ];
 
