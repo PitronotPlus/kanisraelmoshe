@@ -807,7 +807,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       <div 
-        className={`max-w-[1440px] mx-auto bg-white shadow-md ${showAdminToolbarPadding ? 'admin-toolbar-active' : ''}`}
+        className={`bg-white ${showAdminToolbarPadding ? 'admin-toolbar-active' : ''}`}
       >
         <header className="main-header">
           {/* Top Video Banner - DESKTOP */}
@@ -816,7 +816,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           {/* Logo and Search Section - DESKTOP */}
-          <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white">
+          <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white max-w-[1440px] mx-auto">
             {/* Left Ad Banner */}
             <div className="w-[300px] h-[80px]">
               <SmartAdBanner ads={allAds} position="header_side" size="header" />
@@ -899,7 +899,7 @@ export default function Layout({ children, currentPageName }) {
           </nav>
         </header>
 
-        <main className="px-4 py-4 md:py-8">
+        <main className="px-4 py-4 md:py-8 max-w-[1440px] mx-auto">
           {children}
         </main>
       </div>
