@@ -18,14 +18,14 @@ const BreakingNewsItem = ({ article }) => {
           <img 
             src={article.featured_image} 
             alt={article.title}
-            className="w-16 h-16 object-cover flex-shrink-0"
+            className="w-20 h-16 object-cover flex-shrink-0"
           />
         )}
         <div className="flex-1 min-w-0">
-          <div className="text-base text-red-600 font-normal mb-1">
+          <div className="text-base text-red-600 font-normal mb-1 text-right">
             {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
           </div>
-          <h4 className="text-base font-normal leading-tight line-clamp-3">
+          <h4 className="text-base font-normal leading-snug text-right">
             {article.title}
           </h4>
         </div>
@@ -49,11 +49,11 @@ const MainArticleCard = ({ article }) => {
         />
       </div>
       
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+      {/* Dark overlay gradient only at bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
       
       {/* פוליטיקה label at top right */}
-      <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 font-bold text-sm z-20">
+      <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 font-normal text-base z-20">
         פוליטיקה
       </div>
       
@@ -61,23 +61,22 @@ const MainArticleCard = ({ article }) => {
       <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
         {/* Title with ribbon background */}
         <div 
-          className="relative mb-3"
+          className="relative mb-3 py-3 px-4"
           style={{
-            backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/4293514a5_5.png)',
+            backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            padding: '10px 16px'
+            backgroundPosition: 'center'
           }}
         >
-          <h3 className="font-bold text-white text-xl md:text-2xl leading-tight">
+          <h3 className="font-normal text-white text-xl leading-snug">
             {article.title}
           </h3>
         </div>
         
         {/* Description with semi-transparent background */}
         {article.excerpt && (
-          <div className="bg-black/70 p-3">
-            <p className="text-white text-sm leading-relaxed line-clamp-3">
+          <div className="bg-black/60 p-3">
+            <p className="text-white text-sm leading-relaxed font-normal">
               {article.excerpt}
             </p>
           </div>
@@ -87,8 +86,8 @@ const MainArticleCard = ({ article }) => {
   );
 };
 
-// Small article card - עם רקע אדום לכותרת וללא תגיות
-const SmallArticleCard = ({ article }) => {
+// Small article card - רק תגית למעלה וכותרת עם רקע אדום למטה
+const SmallArticleCard = ({ article, label }) => {
   return (
     <Link
       to={createPageUrl(`Article?id=${article.id}`)}
@@ -102,17 +101,22 @@ const SmallArticleCard = ({ article }) => {
         />
       </div>
       
-      {/* Title at bottom with red background (no dark overlay) */}
+      {/* Label badge at top right - NO dark overlay */}
+      <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 font-normal text-base z-10">
+        {label}
+      </div>
+      
+      {/* Title at bottom with red background */}
       <div className="absolute bottom-0 left-0 right-0">
         <div 
-          className="p-3"
+          className="py-3 px-4"
           style={{
             backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         >
-          <h3 className="font-normal text-white text-base leading-tight line-clamp-2">
+          <h3 className="font-normal text-white text-base leading-snug">
             {article.title}
           </h3>
         </div>
@@ -132,8 +136,14 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Two smaller articles (Right side) */}
         <div className="lg:col-span-4 order-1">
           <div className="grid grid-rows-2 gap-4 h-[600px]">
-            <SmallArticleCard article={articles[1]} />
-            <SmallArticleCard article={articles[2]} />
+            <SmallArticleCard 
+              article={articles[1]} 
+              label="מתכונים"
+            />
+            <SmallArticleCard 
+              article={articles[2]} 
+              label="סלבס"
+            />
           </div>
         </div>
         
@@ -145,8 +155,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
           <div className="bg-white h-[600px] flex flex-col">
-            {/* Header with red background - NOT full width */}
-            <div className="px-2 py-2">
+            {/* Header with red background - with white margin */}
+            <div className="p-3">
               <div 
                 className="py-3 px-4"
                 style={{
