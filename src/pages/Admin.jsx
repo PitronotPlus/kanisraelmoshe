@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Article } from "@/entities/Article";
 import { Advertisement } from "@/entities/Advertisement";
 import { User } from "@/entities/User";
@@ -10,10 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Settings, LayoutDashboard, Image, Newspaper, BarChart3, Users, Tags, Upload, Home, FileText, Palette, Zap, Shield, Wrench, Archive, ListTree, Wand2, Copy, PenSquare, ShieldAlert, FolderTree, PanelLeft } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Settings, LayoutDashboard, Video, Image, Code, Newspaper, BarChart3, Users, Tags, Upload, X, GripVertical, Menu, Home, FileText, Palette, Zap, Shield, PenTool, Trash2, Wrench, Archive, ListTree, Wand2, Copy, Edit, PenSquare, ShieldAlert, FolderTree, PanelLeft } from "lucide-react";
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { createArticleContent } from "@/functions/createArticleContent";
+import { UploadFile } from "@/integrations/Core";
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 // Removed Shadcn UI Tabs imports as per outline:
 // import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -40,6 +44,7 @@ import CodeInjectorManager from "../components/admin/CodeInjectorManager";
 import ContentCreatorsManager from "../components/admin/ContentCreatorsManager";
 import ThinContentManager from "../components/admin/ThinContentManager";
 import CategoryManager from "../components/admin/CategoryManager"; // Added new CategoryManager component
+import BannerManager from "../components/admin/BannerManager"; // Add new import
 
 // Modern Stats Card Component
 const ModernStatsCard = ({ title, value, icon: Icon, gradient, change }) => (
@@ -361,6 +366,16 @@ export default function Admin() {
               </button>
               
               <button
+                onClick={() => setActiveTab('banners')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'banners' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Video className="w-4 h-4" />
+                <span>ניהול באנרים</span>
+              </button>
+
+              <button
                 onClick={() => setActiveTab('import')}
                 className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
                   activeTab === 'import' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
@@ -592,6 +607,12 @@ export default function Admin() {
             {activeTab === 'ads' && (
               <ContentContainer title="ניהול פרסום" description="נהל מודעות וקמפיינים פרסומיים">
                 <AdminAdvertisers />
+              </ContentContainer>
+            )}
+
+            {activeTab === 'banners' && (
+              <ContentContainer title="ניהול באנרים ופרסומות" description="נהל באנרים, מודעות וידאו ופרסומות באתר">
+                <BannerManager />
               </ContentContainer>
             )}
 
