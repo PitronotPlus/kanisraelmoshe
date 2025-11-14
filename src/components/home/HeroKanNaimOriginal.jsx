@@ -128,8 +128,27 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [] }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      {/* Sidebar - Breaking News (Right side in RTL) */}
-      <div className="lg:col-span-3 order-1">
+      {/* Two smaller articles (Right side) */}
+      <div className="lg:col-span-4 order-1">
+        <div className="grid grid-rows-2 gap-4 h-[600px]">
+          <SmallArticleCard 
+            article={articles[1]} 
+            label="מתכונים"
+          />
+          <SmallArticleCard 
+            article={articles[2]} 
+            label="סלבס"
+          />
+        </div>
+      </div>
+      
+      {/* Main large article (Center) */}
+      <div className="lg:col-span-5 order-2 h-[600px]">
+        <MainArticleCard article={articles[0]} />
+      </div>
+      
+      {/* Sidebar - Breaking News (Left side) */}
+      <div className="lg:col-span-3 order-3">
         <div className="bg-white border border-gray-200 h-full flex flex-col">
           {/* Header */}
           <div className="bg-red-600 text-white py-3 px-4">
@@ -167,25 +186,6 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [] }) {
               <div className="text-xs font-normal">המייל האדום</div>
             </a>
           </div>
-        </div>
-      </div>
-      
-      {/* Main large article (Center) */}
-      <div className="lg:col-span-5 order-2 h-[600px]">
-        <MainArticleCard article={articles[0]} />
-      </div>
-      
-      {/* Two smaller articles (Left side in RTL) */}
-      <div className="lg:col-span-4 order-3">
-        <div className="grid grid-rows-2 gap-4 h-[600px]">
-          <SmallArticleCard 
-            article={articles[1]} 
-            label="מתכונים"
-          />
-          <SmallArticleCard 
-            article={articles[2]} 
-            label="סלבס"
-          />
         </div>
       </div>
     </div>
