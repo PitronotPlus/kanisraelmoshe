@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { NavigationMenu } from '@/entities/NavigationMenu';
 import { Category } from '@/entities/Category';
@@ -125,6 +125,7 @@ const MenuEditor = () => {
   const [customLabel, setCustomLabel] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [newItemParentId, setNewItemParentId] = useState(null);
+  const [categorySearch, setCategorySearch] = useState(''); // Add search state
 
   const loadMenu = useCallback(async () => {
     setLoading(true);
@@ -233,6 +234,7 @@ const MenuEditor = () => {
     setCustomLabel('');
     setCustomUrl('');
     setNewItemParentId(null); // Reset parent ID selection
+    setCategorySearch(''); // Reset category search
   };
 
   const updateItem = (itemId, updates) => {
@@ -324,6 +326,12 @@ const MenuEditor = () => {
     setItems([...unaffectedItems, ...sourceList, ...destinationList]);
   };
   
+  // Filter categories based on search
+  const filteredCategories = categories.filter(c => 
+    c.name.toLowerCase().includes(categorySearch.toLowerCase()) ||
+    (c.slug && c.slug.toLowerCase().includes(categorySearch.toLowerCase()))
+  );
+
   if (loading) return <div>טוען עורך תפריטים...</div>;
 
   const menuTree = buildTree(items);
@@ -359,14 +367,26 @@ const MenuEditor = () => {
             </Select>
 
             {newItemType === 'category' && (
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger><SelectValue placeholder="בחר קטגוריה" /></SelectTrigger>
-                <SelectContent>
-                  {categories.map(c => (
-                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-2">
+                <Input
+                  placeholder="חפש קטגוריה..."
+                  value={categorySearch}
+                  onChange={(e) => setCategorySearch(e.target.value)}
+                  className="mb-2"
+                />
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger><SelectValue placeholder="בחר קטגוריה" /></SelectTrigger>
+                  <SelectContent>
+                    {filteredCategories.length > 0 ? (
+                      filteredCategories.map(c => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value={null} disabled>לא נמצאו קטגוריות</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
             )}
 
             {newItemType === 'parent' && (
