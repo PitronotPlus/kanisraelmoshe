@@ -49,7 +49,6 @@ const NavMenuItem = ({ item, location }) => {
 
   // Check if current item is active
   const isActive = () => {
-    // Check if we're on Home page
     const pathname = location.pathname.toLowerCase();
     const isHomePage = pathname === '/' || pathname.includes('home');
     
@@ -59,6 +58,22 @@ const NavMenuItem = ({ item, location }) => {
     // If we're on home page and this is the main category, mark as active
     if (isHomePage && isMainCategory) {
       return true;
+    }
+    
+    // For custom links, check if the current path matches
+    if (item.type === 'custom' && item.url) {
+      // Extract the page name from the custom URL
+      try {
+        const urlMatch = item.url.match(/\/([\w]+)(\?|$)/);
+        if (urlMatch && urlMatch[1]) {
+          const pageName = urlMatch[1].toLowerCase();
+          if (pathname.includes(pageName)) {
+            return true;
+          }
+        }
+      } catch (e) {
+        // If URL parsing fails, continue with category check
+      }
     }
     
     if (item.type === 'category') {
@@ -872,7 +887,11 @@ export default function Layout({ children, currentPageName }) {
               ))}
               <Link 
                 to={createPageUrl("Advertisers")} 
-                className="text-base font-bold text-white px-4 py-3 transition-all hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:right-0 hover:after:h-1 hover:after:bg-[#d20201] relative"
+                className={`text-base font-bold text-white px-4 py-3 transition-all relative ${
+                  location.pathname.toLowerCase().includes('advertisers') 
+                    ? 'bg-[#d20201]' 
+                    : 'hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:right-0 hover:after:h-1 hover:after:bg-[#d20201]'
+                }`}
               >
                 פרסם אצלנו
               </Link>
