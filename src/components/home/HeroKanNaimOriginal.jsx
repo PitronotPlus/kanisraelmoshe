@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Mail } from 'lucide-react';
@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 // Breaking news item component
-const BreakingNewsItem = ({ article, index }) => {
+const BreakingNewsItem = ({ article }) => {
   const displayDate = article.original_publication_date || article.created_date;
   
   return (
@@ -35,7 +35,7 @@ const BreakingNewsItem = ({ article, index }) => {
   );
 };
 
-// Main article card with ribbon title
+// Main article card with ribbon title and "פוליטיקה" label
 const MainArticleCard = ({ article }) => {
   return (
     <Link
@@ -51,29 +51,34 @@ const MainArticleCard = ({ article }) => {
       </div>
       
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
       
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-        {/* Ribbon background for title */}
+      {/* פוליטיקה label at top right */}
+      <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 font-bold text-sm z-20">
+        פוליטיקה
+      </div>
+      
+      {/* Content at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+        {/* Title with ribbon background */}
         <div 
-          className="relative mb-4"
+          className="relative mb-3"
           style={{
             backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/4293514a5_5.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            padding: '12px 20px'
+            padding: '10px 16px'
           }}
         >
-          <h3 className="font-bold text-white text-2xl md:text-3xl leading-tight">
+          <h3 className="font-bold text-white text-xl md:text-2xl leading-tight">
             {article.title}
           </h3>
         </div>
         
         {/* Description with semi-transparent background */}
         {article.excerpt && (
-          <div className="bg-black/60 p-3 rounded">
-            <p className="text-white text-sm md:text-base leading-relaxed">
+          <div className="bg-black/70 p-3">
+            <p className="text-white text-sm leading-relaxed line-clamp-3">
               {article.excerpt}
             </p>
           </div>
@@ -84,7 +89,7 @@ const MainArticleCard = ({ article }) => {
 };
 
 // Small article card
-const SmallArticleCard = ({ article, label, labelColor = 'bg-red-600' }) => {
+const SmallArticleCard = ({ article, label }) => {
   return (
     <Link
       to={createPageUrl(`Article?id=${article.id}`)}
@@ -99,18 +104,16 @@ const SmallArticleCard = ({ article, label, labelColor = 'bg-red-600' }) => {
       </div>
       
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
       
-      {/* Label badge */}
-      {label && (
-        <div className={`absolute top-4 right-4 ${labelColor} text-white px-3 py-1 font-bold text-sm z-10`}>
-          {label}
-        </div>
-      )}
+      {/* Label badge at top right */}
+      <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 font-bold text-sm z-10">
+        {label}
+      </div>
       
-      {/* Content */}
+      {/* Title at bottom */}
       <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-        <h3 className="font-bold text-white text-lg md:text-xl leading-tight">
+        <h3 className="font-bold text-white text-base md:text-lg leading-tight line-clamp-3">
           {article.title}
         </h3>
       </div>
@@ -125,70 +128,64 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [] }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      {/* Main Content Area - 3 Articles */}
-      <div className="lg:col-span-9">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[600px]">
-          {/* Large main article */}
-          <div className="h-full">
-            <MainArticleCard article={articles[0]} />
-          </div>
-          
-          {/* Two smaller articles stacked */}
-          <div className="grid grid-rows-2 gap-4 h-full">
-            <SmallArticleCard 
-              article={articles[1]} 
-              label="מתכונים" 
-              labelColor="bg-red-600"
-            />
-            <SmallArticleCard 
-              article={articles[2]} 
-              label="סלבס" 
-              labelColor="bg-red-600"
-            />
-          </div>
-        </div>
-      </div>
-      
-      {/* Sidebar - Breaking News */}
-      <div className="lg:col-span-3">
+      {/* Sidebar - Breaking News (Right side in RTL) */}
+      <div className="lg:col-span-3 order-1">
         <div className="bg-white border border-gray-200 h-full flex flex-col">
           {/* Header */}
           <div className="bg-red-600 text-white py-3 px-4">
-            <h3 className="font-bold text-lg text-center">מבזקים בכאן נעים</h3>
+            <h3 className="font-bold text-base text-center">מבזקים בכאן נעים</h3>
           </div>
           
           {/* Breaking news list */}
           <div className="flex-1 overflow-y-auto">
             {breakingNews.length > 0 ? (
               <div className="divide-y divide-gray-200">
-                {breakingNews.map((article, index) => (
+                {breakingNews.map((article) => (
                   <BreakingNewsItem 
                     key={article.id} 
-                    article={article} 
-                    index={index}
+                    article={article}
                   />
                 ))}
               </div>
             ) : (
-              <div className="p-4 text-center text-gray-500">
+              <div className="p-4 text-center text-gray-500 text-sm">
                 אין מבזקים חדשים
               </div>
             )}
           </div>
           
           {/* Red email button */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-3 border-t border-gray-200">
             <a
               href="mailto:kanisraelnews@gmail.com"
-              className="block bg-red-600 hover:bg-red-700 text-white py-3 px-4 text-center font-bold transition-colors"
+              className="block bg-red-600 hover:bg-red-700 text-white py-3 px-3 text-center font-bold transition-colors"
             >
-              <div className="flex items-center justify-center space-x-2 space-x-reverse">
-                <Mail className="w-5 h-5" />
-                <span className="text-sm">יש לך ידיעה / תמונה / סרט?</span>
+              <div className="flex items-center justify-center space-x-2 space-x-reverse mb-1">
+                <Mail className="w-4 h-4" />
+                <span className="text-xs">יש לך ידיעה / תמונה / סרט?</span>
               </div>
-              <div className="text-xs mt-1">המייל האדום</div>
+              <div className="text-xs font-normal">המייל האדום</div>
             </a>
           </div>
+        </div>
+      </div>
+      
+      {/* Main large article (Center) */}
+      <div className="lg:col-span-5 order-2 h-[600px]">
+        <MainArticleCard article={articles[0]} />
+      </div>
+      
+      {/* Two smaller articles (Left side in RTL) */}
+      <div className="lg:col-span-4 order-3">
+        <div className="grid grid-rows-2 gap-4 h-[600px]">
+          <SmallArticleCard 
+            article={articles[1]} 
+            label="מתכונים"
+          />
+          <SmallArticleCard 
+            article={articles[2]} 
+            label="סלבס"
+          />
         </div>
       </div>
     </div>
