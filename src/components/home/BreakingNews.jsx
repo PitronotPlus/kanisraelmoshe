@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InvokeLLM } from "@/integrations/Core";
 
 export default function BreakingNews() {
@@ -95,19 +94,18 @@ export default function BreakingNews() {
   }, []); // Empty dependency array means this effect runs once on mount
 
   const SkeletonLoader = () => (
-    // Removed `animate-pulse` from parent div, applied to inner div for better control
     <div className="flex space-x-8 space-x-reverse"> 
-        {[...Array(3)].map((_, i) => ( // Reduced skeleton items from 5 to 3
+        {[...Array(3)].map((_, i) => (
             <div key={i} className="flex items-center flex-shrink-0">
-                <div className="h-4 bg-red-400/50 rounded w-48 animate-pulse"></div> {/* Changed width and added opacity */}
-                <span className="mx-4 text-red-400">•</span>
+                <div className="h-4 bg-gray-400/50 rounded w-48 animate-pulse"></div>
+                <span className="mx-4 text-red-600 font-bold">|</span>
             </div>
         ))}
     </div>
   );
 
   return (
-    <div className="text-white py-2 mb-6" style={{ backgroundColor: '#b4131d', contain: 'layout style paint' }}>
+    <div className="bg-white py-2 mb-6 border-y border-gray-200" style={{ contain: 'layout style paint' }}>
       <div className="container mx-auto px-4">
         <div className="flex items-center">
           <div className="breaking-news-container flex-1">
@@ -116,18 +114,21 @@ export default function BreakingNews() {
                 <SkeletonLoader />
               ) : (
                 <>
-                  {/* No longer duplicating items for infinite scroll, showing only current news */}
                   {breakingNews.map((item, index) => (
-                    <span key={index} className="flex-shrink-0 text-sm font-medium">
-                      {item.title}
-                      <span className="mx-4">•</span>
-                    </span>
+                    <React.Fragment key={index}>
+                      <span className="flex-shrink-0 text-sm font-medium text-gray-900">
+                        {item.title}
+                      </span>
+                      {index < breakingNews.length - 1 && (
+                        <span className="text-red-600 font-bold mx-4">|</span>
+                      )}
+                    </React.Fragment>
                   ))}
                 </>
               )}
             </div>
           </div>
-          <div className="bg-white px-3 py-1 font-bold text-sm rounded mr-4" style={{ color: '#b4131d' }}>
+          <div className="bg-red-600 text-white px-3 py-1 font-bold text-sm rounded mr-4">
             מבזקים
           </div>
         </div>
