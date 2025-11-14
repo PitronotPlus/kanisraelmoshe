@@ -812,11 +812,13 @@ export default function Layout({ children, currentPageName }) {
         <header className="main-header">
           {/* Top Video Banner - DESKTOP */}
           <div className="hidden md:block w-full bg-gray-100">
-            <SmartAdBanner ads={allAds} position="header" size="header" />
+            <div className="max-w-[1200px] mx-auto px-4 py-2">
+              <SmartAdBanner ads={allAds} position="header" size="header" />
+            </div>
           </div>
 
           {/* Logo and Search Section - DESKTOP */}
-          <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white max-w-[1440px] mx-auto">
+          <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white max-w-[1200px] mx-auto">
             {/* Left Ad Banner */}
             <div className="w-[300px] h-[80px]">
               <SmartAdBanner ads={allAds} position="header_side" size="header" />
@@ -879,8 +881,8 @@ export default function Layout({ children, currentPageName }) {
               </div>
           </div>
 
-          {/* Navigation Menu (Desktop) - Blue Background */}
-          <nav className="hidden md:flex items-center justify-center" style={{ backgroundColor: '#153b79' }}>
+          {/* Navigation Menu (Desktop) - Full Width Blue Background */}
+          <nav className="hidden md:flex items-center justify-center w-full" style={{ backgroundColor: '#153b79' }}>
             <div className="flex items-center">
               {desktopNavigationItems.map((item) => (
                 <NavMenuItem key={item.id} item={item} location={location} />
@@ -899,7 +901,7 @@ export default function Layout({ children, currentPageName }) {
           </nav>
         </header>
 
-        <main className="px-4 py-4 md:py-8 max-w-[1440px] mx-auto">
+        <main className="px-4 py-4 md:py-8 max-w-[1200px] mx-auto">
           {children}
         </main>
       </div>
