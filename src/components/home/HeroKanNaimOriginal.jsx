@@ -155,10 +155,10 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
           <div className="bg-white h-[600px] flex flex-col">
-            {/* Header - with background image, narrower and right-aligned */}
+            {/* Header - with background image, 60% width and right-aligned */}
             <div className="px-3 pt-3 pb-2">
               <div 
-                className="py-2 px-4 w-4/5"
+                className="py-2 px-4 w-3/5"
                 style={{
                   backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
                   backgroundSize: 'cover',
