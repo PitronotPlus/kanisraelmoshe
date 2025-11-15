@@ -64,8 +64,9 @@ const MainArticleCard = ({ article }) => {
           className="relative mb-3 py-3 px-4"
           style={{
             backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
           }}
         >
           <h3 className="font-normal text-white text-xl leading-snug">
@@ -112,8 +113,9 @@ const SmallArticleCard = ({ article, label }) => {
           className="py-3 px-4"
           style={{
             backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
           }}
         >
           <h3 className="font-normal text-white text-base leading-snug">
@@ -155,17 +157,19 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
           <div className="bg-white h-[600px] flex flex-col">
-            {/* Header - with background image, 60% width and right-aligned */}
+            {/* Header - 45% width, background image without cropping */}
             <div className="px-3 pt-3 pb-2">
               <div 
-                className="py-2 px-4 w-3/5"
+                className="py-2 px-4"
                 style={{
+                  width: '45%',
                   backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+                  backgroundSize: '100% 100%',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
                 }}
               >
-                <h3 className="text-white text-base font-normal text-right">מבזקים בכאן נעים</h3>
+                <h3 className="text-white text-base font-normal text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
               </div>
             </div>
             
