@@ -14,6 +14,20 @@ const BreakingNewsItem = ({ article }) => {
       className="block hover:bg-gray-50 transition-colors"
     >
       <div className="flex items-start space-x-3 space-x-reverse p-3">
+        <div className="flex-1 min-w-0 text-right">
+          <div 
+            className="text-lg text-red-600 mb-1"
+            style={{ fontFamily: 'Assistant, sans-serif', fontWeight: 400 }}
+          >
+            {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
+          </div>
+          <h4 
+            className="text-lg leading-snug"
+            style={{ fontFamily: 'Assistant, sans-serif', fontWeight: 400 }}
+          >
+            {article.title}
+          </h4>
+        </div>
         {article.featured_image && (
           <img 
             src={article.featured_image} 
@@ -21,14 +35,6 @@ const BreakingNewsItem = ({ article }) => {
             className="w-20 h-16 object-cover flex-shrink-0"
           />
         )}
-        <div className="flex-1 min-w-0">
-          <div className="text-base text-red-600 font-normal mb-1 text-right">
-            {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
-          </div>
-          <h4 className="text-base font-normal leading-snug text-right">
-            {article.title}
-          </h4>
-        </div>
       </div>
     </Link>
   );
@@ -156,7 +162,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
-          <div className="bg-white h-[600px] flex flex-col">
+          <div className="bg-white h-[600px] flex flex-col border-2 border-gray-300">
             {/* Header - 45% width, background image without cropping */}
             <div className="px-3 pt-3 pb-2">
               <div 
@@ -173,11 +179,11 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
               </div>
             </div>
             
-            {/* Breaking news list */}
-            <div className="flex-1 overflow-y-auto">
+            {/* Breaking news list - only 4 items, no scroll */}
+            <div className="flex-1">
               {breakingNews.length > 0 ? (
                 <div className="divide-y divide-gray-200">
-                  {breakingNews.map((article) => (
+                  {breakingNews.slice(0, 4).map((article) => (
                     <BreakingNewsItem 
                       key={article.id} 
                       article={article}
