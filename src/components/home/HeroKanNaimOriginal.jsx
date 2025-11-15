@@ -155,17 +155,17 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
           <div className="bg-white h-[600px] flex flex-col">
-            {/* Header with red background - with white margin */}
-            <div className="p-3">
+            {/* Header - smaller, right-aligned, with white margins */}
+            <div className="px-4 pt-4 pb-2">
               <div 
-                className="py-3 px-4"
+                className="inline-block py-2 px-4"
                 style={{
                   backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
               >
-                <h3 className="text-white text-lg font-normal text-center">מבזקים בכאן נעים</h3>
+                <h3 className="text-white text-base font-normal whitespace-nowrap">מבזקים בכאן נעים</h3>
               </div>
             </div>
             
