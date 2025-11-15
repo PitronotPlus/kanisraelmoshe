@@ -17,13 +17,13 @@ const BreakingNewsItem = ({ article }) => {
         <div className="flex-1 min-w-0 text-right">
           <div 
             className="text-lg text-red-600 mb-1"
-            style={{ fontFamily: 'Assistant, sans-serif', fontWeight: 400 }}
+            style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'normal' }}
           >
             {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
           </div>
           <h4 
             className="text-lg leading-snug"
-            style={{ fontFamily: 'Assistant, sans-serif', fontWeight: 400 }}
+            style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'normal' }}
           >
             {article.title}
           </h4>
@@ -162,7 +162,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
-          <div className="bg-white h-[600px] flex flex-col border-2 border-gray-300">
+          <div className="bg-white h-[600px] flex flex-col">
             {/* Header - 45% width, background image without cropping */}
             <div className="px-3 pt-3 pb-2">
               <div 
@@ -179,8 +179,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
               </div>
             </div>
             
-            {/* Breaking news list - only 4 items, no scroll */}
-            <div className="flex-1">
+            {/* Breaking news list - only 4 items, no scroll, border only around this section */}
+            <div className="flex-1 border border-gray-300 bg-white">
               {breakingNews.length > 0 ? (
                 <div className="divide-y divide-gray-200">
                   {breakingNews.slice(0, 4).map((article) => (
