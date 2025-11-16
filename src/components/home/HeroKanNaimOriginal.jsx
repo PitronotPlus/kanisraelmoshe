@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
 
 // Breaking news item component
-const BreakingNewsItem = ({ article }) => {
+const BreakingNewsItem = ({ article, isLast }) => {
   const displayDate = article.original_publication_date || article.created_date;
   
   return (
@@ -13,7 +13,7 @@ const BreakingNewsItem = ({ article }) => {
       to={createPageUrl(`Article?id=${article.id}`)}
       className="block hover:bg-gray-50 transition-colors"
     >
-      <div className="flex items-start space-x-3 space-x-reverse p-3">
+      <div className={`flex items-start space-x-3 space-x-reverse ${isLast ? 'p-3 pb-0' : 'p-3'}`}>
         <div className="flex-1 min-w-0 text-right">
           <p 
             className="text-sm text-red-600 mb-1"
@@ -158,10 +158,10 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column - ללא שום רווח בכלל */}
-        <div className="hidden lg:block lg:col-span-3 order-2" style={{ margin: 0, padding: 0 }}>
+        {/* Sidebar column */}
+        <div className="hidden lg:block lg:col-span-3 order-2">
           {/* Breaking News Sidebar */}
-          <div className="bg-white flex flex-col" style={{ height: '485px', margin: 0 }}>
+          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
               style={{
@@ -178,10 +178,10 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
             
             <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
               {breakingNews.length > 0 ? (
-                <div className="divide-y divide-gray-200 flex-1">
+                <div className="divide-y divide-gray-200 flex-1 flex flex-col">
                   {breakingNews.slice(0, 4).map((article, index) => (
                     <div key={article.id} className="flex-1">
-                      <BreakingNewsItem article={article} />
+                      <BreakingNewsItem article={article} isLast={index === 3 || index === breakingNews.slice(0, 4).length - 1} />
                     </div>
                   ))}
                 </div>
@@ -193,13 +193,13 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
             </div>
           </div>
           
-          {/* Red email button - צמוד לחלוטין */}
+          {/* Red email button */}
           <a
             href={redMailLink}
             target={redMailLink.startsWith('http') ? '_blank' : undefined}
             rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
             className="hover:opacity-90 transition-opacity"
-            style={{ display: 'block', lineHeight: 0, margin: 0, padding: 0 }}
+            style={{ display: 'block', lineHeight: 0 }}
           >
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
