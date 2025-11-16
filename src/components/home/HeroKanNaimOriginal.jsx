@@ -143,7 +143,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Two smaller articles (Right side) - Hidden on mobile */}
         <div className="hidden lg:block lg:col-span-4 order-1">
-          <div className="grid grid-rows-2 gap-4 h-[480px]">
+          <div className="grid grid-rows-2 gap-4 h-[485px]">
             <SmallArticleCard 
               article={articles[1]} 
               label="מתכונים"
@@ -156,16 +156,16 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         </div>
         
         {/* Main large article (Center) */}
-        <div className="lg:col-span-5 order-2 h-[480px]">
+        <div className="lg:col-span-5 order-2 h-[485px]">
           <MainArticleCard article={articles[0]} />
         </div>
         
         {/* Sidebar - Breaking News (Left side) - Hidden on mobile */}
         <div className="hidden lg:block lg:col-span-3 order-3">
-          <div className="bg-white h-[480px] flex flex-col">
+          <div className="bg-white min-h-[485px] flex flex-col">
             {/* Header - 45% width, background image without cropping, sits on top of border */}
             <div 
-              className="py-2 px-4 relative z-10"
+              className="py-2 px-4 relative z-10 flex-shrink-0"
               style={{
                 width: '45%',
                 backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
@@ -179,18 +179,17 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
             </div>
             
             {/* Breaking news list - only 4 items, no scroll, border all around including bottom */}
-            <div className="flex-1 border border-gray-300 bg-white overflow-hidden">
+            <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
               {breakingNews.length > 0 ? (
-                <div className="divide-y divide-gray-200">
-                  {breakingNews.slice(0, 4).map((article) => (
-                    <BreakingNewsItem 
-                      key={article.id} 
-                      article={article}
-                    />
+                <div className="divide-y divide-gray-200 flex-1">
+                  {breakingNews.slice(0, 4).map((article, index) => (
+                    <div key={article.id} className="flex-1">
+                      <BreakingNewsItem article={article} />
+                    </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-4 text-center text-gray-500 text-sm">
+                <div className="p-4 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
                   אין מבזקים חדשים
                 </div>
               )}
