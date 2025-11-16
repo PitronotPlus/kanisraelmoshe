@@ -158,10 +158,10 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column - ללא gap בכלל */}
-        <div className="hidden lg:block lg:col-span-3 order-2">
+        {/* Sidebar column - ללא שום רווח בכלל */}
+        <div className="hidden lg:block lg:col-span-3 order-2" style={{ margin: 0, padding: 0 }}>
           {/* Breaking News Sidebar */}
-          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
+          <div className="bg-white flex flex-col" style={{ height: '485px', margin: 0 }}>
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
               style={{
@@ -193,18 +193,18 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
             </div>
           </div>
           
-          {/* Red email button - בלוק רגיל צמוד ממש */}
+          {/* Red email button - צמוד לחלוטין */}
           <a
             href={redMailLink}
             target={redMailLink.startsWith('http') ? '_blank' : undefined}
             rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
             className="hover:opacity-90 transition-opacity"
-            style={{ display: 'block', lineHeight: 0 }}
+            style={{ display: 'block', lineHeight: 0, margin: 0, padding: 0 }}
           >
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
               alt="המייל האדום"
-              style={{ width: '100%', display: 'block', margin: 0, padding: 0 }}
+              style={{ width: '100%', display: 'block', margin: 0, padding: 0, verticalAlign: 'top' }}
             />
           </a>
         </div>
