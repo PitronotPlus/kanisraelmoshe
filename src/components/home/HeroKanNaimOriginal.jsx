@@ -132,78 +132,82 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   }
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Two smaller articles (Right side) - עכשיו גבוהים יותר כדי להגיע לכפתור האדום */}
-        <div className="hidden lg:block lg:col-span-4 order-1">
-          <div className="grid grid-rows-2 gap-4" style={{ height: '600px' }}>
-            <SmallArticleCard 
-              article={articles[1]} 
-              label="מתכונים"
-            />
-            <SmallArticleCard 
-              article={articles[2]} 
-              label="סלבס"
-            />
-          </div>
-        </div>
-        
-        {/* Main large article (Center) - באותו גובה של הסיידבר */}
-        <div className="lg:col-span-5 order-2" style={{ height: '485px' }}>
-          <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
-        </div>
-        
-        {/* Sidebar - Breaking News (Left side) - חזרה לגובה המקורי */}
-        <div className="hidden lg:block lg:col-span-3 order-3">
-          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
-            <div 
-              className="py-2 px-4 relative z-10 flex-shrink-0"
-              style={{
-                width: '45%',
-                backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-                backgroundSize: '100% 100%',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                marginBottom: '-1px'
-              }}
-            >
-              <h3 className="text-white text-base font-normal text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
+        {/* Grid of posts on the right and center - filling the entire height including the red button area */}
+        <div className="hidden lg:block lg:col-span-9 order-1">
+          <div className="grid grid-cols-9 gap-4" style={{ height: '630px' }}>
+            {/* Two smaller articles - right side */}
+            <div className="col-span-4">
+              <div className="grid grid-rows-2 gap-4 h-full">
+                <SmallArticleCard 
+                  article={articles[1]} 
+                  label="מתכונים"
+                />
+                <SmallArticleCard 
+                  article={articles[2]} 
+                  label="סלבס"
+                />
+              </div>
             </div>
             
-            <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
-              {breakingNews.length > 0 ? (
-                <div className="divide-y divide-gray-200 flex-1">
-                  {breakingNews.slice(0, 4).map((article, index) => (
-                    <div key={article.id} className="flex-1">
-                      <BreakingNewsItem article={article} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="p-4 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
-                  אין מבזקים חדשים
-                </div>
-              )}
+            {/* Main large article - center */}
+            <div className="col-span-5">
+              <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Red email button - below sidebar */}
-      <div className="hidden lg:grid lg:grid-cols-12 lg:gap-4">
-        <div className="lg:col-start-10 lg:col-span-3">
-          <a
-            href={redMailLink}
-            target={redMailLink.startsWith('http') ? '_blank' : undefined}
-            rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className="block hover:opacity-90 transition-opacity"
-          >
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
-              alt="המייל האדום"
-              className="w-full"
-            />
-          </a>
+        
+        {/* Sidebar column - containing breaking news + red button */}
+        <div className="hidden lg:block lg:col-span-3 order-2">
+          <div className="space-y-4">
+            {/* Breaking News Sidebar */}
+            <div className="bg-white flex flex-col" style={{ height: '485px' }}>
+              <div 
+                className="py-2 px-4 relative z-10 flex-shrink-0"
+                style={{
+                  width: '45%',
+                  backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+                  backgroundSize: '100% 100%',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  marginBottom: '-1px'
+                }}
+              >
+                <h3 className="text-white text-base font-normal text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
+              </div>
+              
+              <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
+                {breakingNews.length > 0 ? (
+                  <div className="divide-y divide-gray-200 flex-1">
+                    {breakingNews.slice(0, 4).map((article, index) => (
+                      <div key={article.id} className="flex-1">
+                        <BreakingNewsItem article={article} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
+                    אין מבזקים חדשים
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Red email button */}
+            <a
+              href={redMailLink}
+              target={redMailLink.startsWith('http') ? '_blank' : undefined}
+              rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
+              className="block hover:opacity-90 transition-opacity"
+            >
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
+                alt="המייל האדום"
+                className="w-full"
+              />
+            </a>
+          </div>
         </div>
       </div>
     </div>
