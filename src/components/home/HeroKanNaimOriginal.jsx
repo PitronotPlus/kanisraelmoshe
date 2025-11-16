@@ -13,16 +13,16 @@ const BreakingNewsItem = ({ article }) => {
       to={createPageUrl(`Article?id=${article.id}`)}
       className="block hover:bg-gray-50 transition-colors"
     >
-      <div className="flex items-start space-x-2 space-x-reverse p-2">
+      <div className="flex items-start space-x-3 space-x-reverse p-3">
         <div className="flex-1 min-w-0 text-right">
           <p 
-            className="text-xs text-red-600 mb-1"
+            className="text-sm text-red-600 mb-1"
             style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold' }}
           >
             {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
           </p>
           <p 
-            className="text-sm leading-snug"
+            className="text-base leading-snug"
             style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'normal' }}
           >
             {article.title}
@@ -32,7 +32,7 @@ const BreakingNewsItem = ({ article }) => {
           <img 
             src={article.featured_image} 
             alt={article.title}
-            className="w-16 h-12 object-cover flex-shrink-0"
+            className="w-20 h-16 object-cover flex-shrink-0"
           />
         )}
       </div>
@@ -134,9 +134,9 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Grid of posts on the right and center - גובה מותאם ל-600px */}
-        <div className="hidden lg:block lg:col-span-9 order-1" style={{ height: '600px' }}>
-          <div className="grid grid-cols-9 gap-4 h-full">
+        {/* Grid of posts - בידוד מוחלט בגובה 620px */}
+        <div className="hidden lg:block lg:col-span-9 order-1">
+          <div className="grid grid-cols-9 gap-4" style={{ height: '620px' }}>
             {/* Two smaller articles - right side */}
             <div className="col-span-4">
               <div className="grid grid-rows-2 gap-4 h-full">
@@ -146,21 +146,21 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
                 />
                 <SmallArticleCard 
                   article={articles[2]} 
-                  label="סלבס"
+                  label="סלבs"
                 />
               </div>
             </div>
             
             {/* Main large article - center */}
-            <div className="col-span-5">
+            <div className="col-span-5 h-full">
               <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
             </div>
           </div>
         </div>
         
-        {/* Sidebar column with Breaking News + Red Button - כל התוכן בעמודה אחת */}
+        {/* Sidebar column - מוחלטת ללא תלות בפוסטים */}
         <div className="hidden lg:flex lg:flex-col lg:col-span-3 order-2 gap-4">
-          {/* Breaking News Sidebar - גובה קבוע של 485px */}
+          {/* Breaking News Sidebar */}
           <div className="bg-white flex flex-col" style={{ height: '485px' }}>
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
@@ -186,24 +186,24 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
                   ))}
                 </div>
               ) : (
-                <div className="p-2 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
+                <div className="p-4 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
                   אין מבזקים חדשים
                 </div>
               )}
             </div>
           </div>
           
-          {/* Red email button - ישירות מתחת לסיידבר */}
+          {/* Red email button */}
           <a
             href={redMailLink}
             target={redMailLink.startsWith('http') ? '_blank' : undefined}
             rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className="block hover:opacity-90 transition-opacity"
+            className="block hover:opacity-90 transition-opacity flex-shrink-0"
           >
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
               alt="המייל האדום"
-              className="w-full"
+              className="w-full h-auto"
             />
           </a>
         </div>
