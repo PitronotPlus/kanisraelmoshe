@@ -70,7 +70,7 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
               maxWidth: '35%'
             }}
           >
-            <p className="font-bold text-white text-xs">
+            <p className="font-bold text-white text-sm">
               {categoryName}
             </p>
           </div>
