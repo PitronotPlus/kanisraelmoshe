@@ -40,7 +40,7 @@ const BreakingNewsItem = ({ article }) => {
   );
 };
 
-// Main article card - קטגוריה קטנה ברקע האדום מיושרת ימינה, כותרת ותיאור ב-overlay מתחת
+// Main article card
 const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
   return (
     <Link
@@ -55,12 +55,9 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
         />
       </div>
       
-      {/* Dark overlay gradient only at bottom */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
       
-      {/* Content at bottom */}
       <div className="absolute bottom-0 left-0 right-0 z-10">
-        {/* רקע אדום קטן עם הקטגוריה בלבד - מיושר ימינה, טקסט קטן ובולד */}
         <div className="flex justify-start mb-[-1px]">
           <div 
             className="py-1.5 px-3 inline-block"
@@ -79,7 +76,6 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
           </div>
         </div>
         
-        {/* כותרת ותיאור עם רקע כהה */}
         <div className="bg-black/70 p-4">
           <h3 className="font-normal text-white text-xl leading-snug mb-2">
             {article.title}
@@ -96,7 +92,7 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
   );
 };
 
-// Small article card - רק כותרת עם רקע אדום למטה
+// Small article card
 const SmallArticleCard = ({ article, label }) => {
   return (
     <Link
@@ -111,7 +107,6 @@ const SmallArticleCard = ({ article, label }) => {
         />
       </div>
       
-      {/* Title at bottom with red background */}
       <div className="absolute bottom-0 left-0 right-0">
         <div 
           className="py-3 px-4"
@@ -139,7 +134,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   return (
     <div className="w-full space-y-4">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Two smaller articles (Right side) - Hidden on mobile */}
+        {/* Two smaller articles (Right side) - עכשיו גבוהים יותר כדי להגיע לכפתור האדום */}
         <div className="hidden lg:block lg:col-span-4 order-1">
           <div className="grid grid-rows-2 gap-4" style={{ height: '600px' }}>
             <SmallArticleCard 
@@ -153,15 +148,14 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Main large article (Center) */}
-        <div className="lg:col-span-5 order-2" style={{ height: '600px' }}>
+        {/* Main large article (Center) - באותו גובה של הסיידבר */}
+        <div className="lg:col-span-5 order-2" style={{ height: '485px' }}>
           <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
         </div>
         
-        {/* Sidebar - Breaking News (Left side) - Hidden on mobile */}
+        {/* Sidebar - Breaking News (Left side) - חזרה לגובה המקורי */}
         <div className="hidden lg:block lg:col-span-3 order-3">
-          <div className="bg-white flex flex-col" style={{ height: '600px' }}>
-            {/* Header - 45% width, background image without cropping, sits on top of border */}
+          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
               style={{
@@ -176,7 +170,6 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
               <h3 className="text-white text-base font-normal text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
             </div>
             
-            {/* Breaking news list - only 4 items, no scroll, border all around including bottom */}
             <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
               {breakingNews.length > 0 ? (
                 <div className="divide-y divide-gray-200 flex-1">
@@ -196,7 +189,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         </div>
       </div>
       
-      {/* Red email button - below sidebar, hidden on mobile */}
+      {/* Red email button - below sidebar */}
       <div className="hidden lg:grid lg:grid-cols-12 lg:gap-4">
         <div className="lg:col-start-10 lg:col-span-3">
           <a
