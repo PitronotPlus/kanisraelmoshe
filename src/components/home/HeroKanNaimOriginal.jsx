@@ -134,8 +134,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Grid of posts on the right and center */}
-        <div className="hidden lg:block lg:col-span-9 order-1">
+        {/* Grid of posts on the right and center - גובה קבוע של 630px */}
+        <div className="hidden lg:block lg:col-span-9 order-1" style={{ height: '630px' }}>
           <div className="grid grid-cols-9 gap-4 h-full">
             {/* Two smaller articles - right side */}
             <div className="col-span-4">
@@ -158,9 +158,9 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column - Breaking News */}
+        {/* Sidebar column - Breaking News - גובה של 485px */}
         <div className="hidden lg:block lg:col-span-3 order-2">
-          <div className="bg-white flex flex-col h-full">
+          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
               style={{
@@ -172,7 +172,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
                 marginBottom: '-1px'
               }}
             >
-              <h3 className="text-white text-base font-normal text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
+              <h3 className="text-white text-base font-bold text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
             </div>
             
             <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
