@@ -83,8 +83,8 @@ export default function BreakingNews() {
   }, []);
 
   const SkeletonLoader = () => (
-    <div className="flex space-x-8 space-x-reverse animate-scroll"> 
-        {[...Array(3)].map((_, i) => (
+    <div className="flex space-x-8 space-x-reverse animate-scroll-rtl"> 
+        {[...Array(6)].map((_, i) => (
             <div key={i} className="flex items-center flex-shrink-0">
                 <div className="h-4 bg-gray-400/50 rounded w-48 animate-pulse"></div>
                 <span className="mx-4 text-red-600 font-bold">|</span>
@@ -97,12 +97,12 @@ export default function BreakingNews() {
     <div className="bg-white py-3 mb-6 border-y border-l border-r border-gray-200" style={{ contain: 'layout style paint' }}>
       <style>
         {`
-          @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+          @keyframes scroll-rtl {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
           }
-          .animate-scroll {
-            animation: scroll 30s linear infinite;
+          .animate-scroll-rtl {
+            animation: scroll-rtl 40s linear infinite;
           }
         `}
       </style>
@@ -112,19 +112,17 @@ export default function BreakingNews() {
             הודעות:
           </div>
           <div className="breaking-news-container flex-1 overflow-hidden">
-            <div className="flex space-x-8 space-x-reverse animate-scroll" style={{ width: 'max-content' }}>
+            <div className="flex space-x-8 space-x-reverse animate-scroll-rtl" style={{ width: 'max-content' }}>
               {loading ? (
                 <SkeletonLoader />
               ) : (
                 <>
-                  {[...breakingNews, ...breakingNews].map((item, index) => (
+                  {[...breakingNews, ...breakingNews, ...breakingNews, ...breakingNews].map((item, index) => (
                     <React.Fragment key={index}>
-                      <span className="flex-shrink-0 text-lg font-normal text-gray-900">
+                      <span className="flex-shrink-0 text-lg font-normal text-gray-900 whitespace-nowrap">
                         {item.title}
                       </span>
-                      {index < (breakingNews.length * 2) - 1 && (
-                        <span className="text-red-600 font-bold mx-4">|</span>
-                      )}
+                      <span className="text-red-600 font-bold mx-4">|</span>
                     </React.Fragment>
                   ))}
                 </>
