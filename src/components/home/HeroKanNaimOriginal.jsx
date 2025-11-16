@@ -55,8 +55,6 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
         />
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent"></div>
-      
       <div className="absolute bottom-0 left-0 right-0 z-10">
         <div className="flex justify-start mb-[-1px]">
           <div 
