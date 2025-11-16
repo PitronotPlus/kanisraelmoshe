@@ -355,7 +355,7 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="w-full space-y-8">
       {homeConfig?.hero?.enabled && homeConfig.hero.showBreakingNews && (
         <Suspense fallback={<LoadingPlaceholder />}>
           <BreakingNews />
@@ -364,7 +364,7 @@ export default function Home() {
 
       {renderHero()}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 -mt-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <main className="lg:col-span-2 space-y-12 order-1 lg:order-2 min-w-0">
           {renderDynamicSections()}
         </main>

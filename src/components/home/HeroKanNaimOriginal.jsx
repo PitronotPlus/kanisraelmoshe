@@ -137,11 +137,11 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   }
 
   return (
-    <div className="space-y-4 max-w-[1400px] mx-auto">
+    <div className="w-full space-y-4">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Two smaller articles (Right side) - Hidden on mobile */}
         <div className="hidden lg:block lg:col-span-4 order-1">
-          <div className="grid grid-rows-2 gap-4" style={{ height: '485px' }}>
+          <div className="grid grid-rows-2 gap-4" style={{ height: '600px' }}>
             <SmallArticleCard 
               article={articles[1]} 
               label="מתכונים"
@@ -154,13 +154,13 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         </div>
         
         {/* Main large article (Center) */}
-        <div className="lg:col-span-5 order-2" style={{ height: '485px' }}>
+        <div className="lg:col-span-5 order-2" style={{ height: '600px' }}>
           <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
         </div>
         
         {/* Sidebar - Breaking News (Left side) - Hidden on mobile */}
         <div className="hidden lg:block lg:col-span-3 order-3">
-          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
+          <div className="bg-white flex flex-col" style={{ height: '600px' }}>
             {/* Header - 45% width, background image without cropping, sits on top of border */}
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
