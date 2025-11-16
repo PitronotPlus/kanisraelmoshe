@@ -158,55 +158,57 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column */}
+        {/* Sidebar column - סה"כ 620px */}
         <div className="hidden lg:block lg:col-span-3 order-2">
-          {/* Breaking News Sidebar */}
-          <div className="bg-white flex flex-col mb-4" style={{ height: '485px' }}>
-            <div 
-              className="py-2 px-4 relative z-10 flex-shrink-0"
-              style={{
-                width: '45%',
-                backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-                backgroundSize: '100% 100%',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                marginBottom: '-1px'
-              }}
-            >
-              <h3 className="text-white text-base font-bold text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
+          <div className="flex flex-col" style={{ height: '620px' }}>
+            {/* Breaking News Sidebar - 485px */}
+            <div className="bg-white flex flex-col" style={{ height: '485px' }}>
+              <div 
+                className="py-2 px-4 relative z-10 flex-shrink-0"
+                style={{
+                  width: '45%',
+                  backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+                  backgroundSize: '100% 100%',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  marginBottom: '-1px'
+                }}
+              >
+                <h3 className="text-white text-base font-bold text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
+              </div>
+              
+              <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
+                {breakingNews.length > 0 ? (
+                  <div className="divide-y divide-gray-200 flex-1 flex flex-col">
+                    {breakingNews.slice(0, 4).map((article, index) => (
+                      <div key={article.id} className="flex-1">
+                        <BreakingNewsItem article={article} isLast={index === 3 || index === breakingNews.slice(0, 4).length - 1} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
+                    אין מבזקים חדשים
+                  </div>
+                )}
+              </div>
             </div>
             
-            <div className="flex-1 border border-gray-300 bg-white overflow-hidden flex flex-col">
-              {breakingNews.length > 0 ? (
-                <div className="divide-y divide-gray-200 flex-1 flex flex-col">
-                  {breakingNews.slice(0, 4).map((article, index) => (
-                    <div key={article.id} className="flex-1">
-                      <BreakingNewsItem article={article} isLast={index === 3 || index === breakingNews.slice(0, 4).length - 1} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="p-4 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
-                  אין מבזקים חדשים
-                </div>
-              )}
-            </div>
+            {/* Red email button - יתר ה-135px */}
+            <a
+              href={redMailLink}
+              target={redMailLink.startsWith('http') ? '_blank' : undefined}
+              rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
+              className="hover:opacity-90 transition-opacity flex-1"
+              style={{ display: 'block', lineHeight: 0 }}
+            >
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
+                alt="המייל האדום"
+                style={{ width: '100%', height: '100%', display: 'block', margin: 0, padding: 0, objectFit: 'cover' }}
+              />
+            </a>
           </div>
-          
-          {/* Red email button */}
-          <a
-            href={redMailLink}
-            target={redMailLink.startsWith('http') ? '_blank' : undefined}
-            rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className="hover:opacity-90 transition-opacity"
-            style={{ display: 'block', lineHeight: 0 }}
-          >
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
-              alt="המייל האדום"
-              style={{ width: '100%', display: 'block', margin: 0, padding: 0, verticalAlign: 'top' }}
-            />
-          </a>
         </div>
       </div>
     </div>
