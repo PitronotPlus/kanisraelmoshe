@@ -161,7 +161,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         {/* Sidebar column */}
         <div className="hidden lg:block lg:col-span-3 order-2">
           {/* Breaking News Sidebar */}
-          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
+          <div className="bg-white flex flex-col mb-4" style={{ height: '485px' }}>
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
               style={{
