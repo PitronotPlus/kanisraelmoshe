@@ -40,7 +40,7 @@ const BreakingNewsItem = ({ article }) => {
   );
 };
 
-// Main article card - קטגוריה ברקע האדום, כותרת ותיאור ב-overlay
+// Main article card - קטגוריה קטנה ברקע האדום מיושרת ימינה, כותרת ותיאור ב-overlay מתחת
 const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
   return (
     <Link
@@ -65,19 +65,23 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
       
       {/* Content at bottom */}
       <div className="absolute bottom-0 left-0 right-0 z-10">
-        {/* רקע אדום עם הקטגוריה בלבד - טקסט קטן */}
-        <div 
-          className="py-2 px-4"
-          style={{
-            backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-            backgroundSize: '100% 100%',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
-          <p className="font-normal text-white text-sm">
-            {categoryName}
-          </p>
+        {/* רקע אדום קטן עם הקטגוריה בלבד - מיושר ימינה, טקסט קטן */}
+        <div className="flex justify-end mb-[-1px]">
+          <div 
+            className="py-1.5 px-3 inline-block"
+            style={{
+              backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+              backgroundSize: '100% 100%',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              minWidth: '120px',
+              maxWidth: '35%'
+            }}
+          >
+            <p className="font-normal text-white text-xs">
+              {categoryName}
+            </p>
+          </div>
         </div>
         
         {/* כותרת ותיאור עם רקע כהה */}
