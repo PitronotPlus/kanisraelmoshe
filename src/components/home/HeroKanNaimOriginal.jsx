@@ -40,8 +40,8 @@ const BreakingNewsItem = ({ article }) => {
   );
 };
 
-// Main article card with ribbon title and "פוליטיקה" label
-const MainArticleCard = ({ article }) => {
+// Main article card - קטגוריה ברקע האדום, כותרת ותיאור ב-overlay
+const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
   return (
     <Link
       to={createPageUrl(`Article?id=${article.id}`)}
@@ -56,18 +56,18 @@ const MainArticleCard = ({ article }) => {
       </div>
       
       {/* Dark overlay gradient only at bottom */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
       
-      {/* פוליטיקה label at top right */}
+      {/* קטגוריה label at top right */}
       <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 font-normal text-base z-20">
-        פוליטיקה
+        {categoryName}
       </div>
       
       {/* Content at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-        {/* Title with ribbon background */}
+      <div className="absolute bottom-0 left-0 right-0 z-10">
+        {/* רקע אדום עם הקטגוריה בלבד - טקסט קטן */}
         <div 
-          className="relative mb-3 py-3 px-4"
+          className="py-2 px-4"
           style={{
             backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
             backgroundSize: '100% 100%',
@@ -75,19 +75,23 @@ const MainArticleCard = ({ article }) => {
             backgroundRepeat: 'no-repeat'
           }}
         >
-          <h3 className="font-normal text-white text-xl leading-snug">
-            {article.title}
-          </h3>
+          <p className="font-normal text-white text-sm">
+            {categoryName}
+          </p>
         </div>
         
-        {/* Description with semi-transparent background */}
-        {article.excerpt && (
-          <div className="bg-black/60 p-3">
+        {/* כותרת ותיאור עם רקע כהה */}
+        <div className="bg-black/70 p-4">
+          <h3 className="font-normal text-white text-xl leading-snug mb-2">
+            {article.title}
+          </h3>
+          
+          {article.excerpt && (
             <p className="text-white text-sm leading-relaxed font-normal">
               {article.excerpt}
             </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Link>
   );
@@ -139,7 +143,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-[1400px] mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Two smaller articles (Right side) - Hidden on mobile */}
         <div className="hidden lg:block lg:col-span-4 order-1">
@@ -157,7 +161,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         
         {/* Main large article (Center) */}
         <div className="lg:col-span-5 order-2 h-[485px]">
-          <MainArticleCard article={articles[0]} />
+          <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
         </div>
         
         {/* Sidebar - Breaking News (Left side) - Hidden on mobile */}
