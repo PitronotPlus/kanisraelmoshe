@@ -16,13 +16,13 @@ const BreakingNewsItem = ({ article }) => {
       <div className="flex items-start space-x-3 space-x-reverse p-3">
         <div className="flex-1 min-w-0 text-right">
           <p 
-            className="text-lg text-red-600 mb-1"
-            style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'normal' }}
+            className="text-sm text-red-600 mb-1"
+            style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold' }}
           >
             {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
           </p>
           <p 
-            className="text-lg leading-snug"
+            className="text-base leading-snug"
             style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'normal' }}
           >
             {article.title}
@@ -143,7 +143,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Two smaller articles (Right side) */}
         <div className="lg:col-span-4 order-1">
-          <div className="grid grid-rows-2 gap-4 h-[540px]">
+          <div className="grid grid-rows-2 gap-4 h-[480px]">
             <SmallArticleCard 
               article={articles[1]} 
               label="מתכונים"
@@ -156,13 +156,13 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         </div>
         
         {/* Main large article (Center) */}
-        <div className="lg:col-span-5 order-2 h-[540px]">
+        <div className="lg:col-span-5 order-2 h-[480px]">
           <MainArticleCard article={articles[0]} />
         </div>
         
         {/* Sidebar - Breaking News (Left side) */}
         <div className="lg:col-span-3 order-3">
-          <div className="bg-white h-[540px] flex flex-col">
+          <div className="bg-white h-[480px] flex flex-col">
             {/* Header - 45% width, background image without cropping, sits on top of border */}
             <div 
               className="py-2 px-4 relative z-10"
