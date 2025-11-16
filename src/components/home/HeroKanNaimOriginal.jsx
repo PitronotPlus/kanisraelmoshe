@@ -141,8 +141,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Two smaller articles (Right side) */}
-        <div className="lg:col-span-4 order-1">
+        {/* Two smaller articles (Right side) - Hidden on mobile */}
+        <div className="hidden lg:block lg:col-span-4 order-1">
           <div className="grid grid-rows-2 gap-4 h-[480px]">
             <SmallArticleCard 
               article={articles[1]} 
@@ -160,8 +160,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           <MainArticleCard article={articles[0]} />
         </div>
         
-        {/* Sidebar - Breaking News (Left side) */}
-        <div className="lg:col-span-3 order-3">
+        {/* Sidebar - Breaking News (Left side) - Hidden on mobile */}
+        <div className="hidden lg:block lg:col-span-3 order-3">
           <div className="bg-white h-[480px] flex flex-col">
             {/* Header - 45% width, background image without cropping, sits on top of border */}
             <div 
@@ -178,8 +178,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
               <h3 className="text-white text-base font-normal text-right whitespace-nowrap">מבזקים בכאן נעים</h3>
             </div>
             
-            {/* Breaking news list - only 4 items, no scroll, border only around this section */}
-            <div className="flex-1 border border-gray-300 bg-white">
+            {/* Breaking news list - only 4 items, no scroll, border all around including bottom */}
+            <div className="flex-1 border border-gray-300 bg-white overflow-hidden">
               {breakingNews.length > 0 ? (
                 <div className="divide-y divide-gray-200">
                   {breakingNews.slice(0, 4).map((article) => (
@@ -199,8 +199,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         </div>
       </div>
       
-      {/* Red email button - below sidebar */}
-      <div className="lg:grid lg:grid-cols-12 lg:gap-4">
+      {/* Red email button - below sidebar, hidden on mobile */}
+      <div className="hidden lg:grid lg:grid-cols-12 lg:gap-4">
         <div className="lg:col-start-10 lg:col-span-3">
           <a
             href={redMailLink}
