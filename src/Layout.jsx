@@ -588,7 +588,7 @@ export default function Layout({ children, currentPageName }) {
         ${generateCustomFontCSS()}
         ${generateTypographyCSS()}
 
-        .max-w-\\[1440px\\] {
+        .max-w-\[1440px\\] {
           width: 100%;
           max-width: min(1440px, 100vw);
           margin: 0 auto;
@@ -812,7 +812,7 @@ export default function Layout({ children, currentPageName }) {
         <header className="main-header">
           {/* Top Video Banner - DESKTOP */}
           <div className="hidden md:block w-full bg-white">
-            <div className="max-w-[1200px] mx-auto px-4">
+            <div className="w-full px-4">
               <div className="h-16 overflow-hidden">
                 <SmartAdBanner ads={allAds} position="header" size="header" />
               </div>
@@ -820,7 +820,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           {/* Logo and Search Section - DESKTOP */}
-          <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white max-w-[1200px] mx-auto">
+          <div className="hidden md:flex items-center justify-between py-4 px-4 bg-white w-full">
             {/* Left Ad Banner */}
             <div className="w-[300px] h-[80px]">
               <SmartAdBanner ads={allAds} position="header_side" size="header" />
@@ -903,7 +903,7 @@ export default function Layout({ children, currentPageName }) {
           </nav>
         </header>
 
-        <main className="px-4 py-4 md:py-8 max-w-[1200px] mx-auto">
+        <main className="w-full px-4 py-4 md:py-8">
           {children}
         </main>
       </div>
@@ -1006,7 +1006,7 @@ export default function Layout({ children, currentPageName }) {
       </div>
 
       <footer className="bg-gray-800 text-white mt-12 w-full">
-        <div className="max-w-[1440px] mx-auto px-4 py-8 md:py-10">
+        <div className="w-full px-4 py-8 md:py-10">
           <div className="text-center">
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/dad5fecc4_.png"
