@@ -158,8 +158,9 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column - Breaking News - גובה של 485px */}
-        <div className="hidden lg:block lg:col-span-3 order-2">
+        {/* Sidebar column with Breaking News + Red Button - כל התוכן בעמודה אחת */}
+        <div className="hidden lg:flex lg:flex-col lg:col-span-3 order-2 gap-4">
+          {/* Breaking News Sidebar - גובה קבוע של 485px */}
           <div className="bg-white flex flex-col" style={{ height: '485px' }}>
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
@@ -191,12 +192,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
               )}
             </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Red email button - below sidebar, aligned to sidebar column */}
-      <div className="hidden lg:grid lg:grid-cols-12 lg:gap-4 mt-4">
-        <div className="lg:col-start-10 lg:col-span-3">
+          
+          {/* Red email button - ישירות מתחת לסיידבר */}
           <a
             href={redMailLink}
             target={redMailLink.startsWith('http') ? '_blank' : undefined}
