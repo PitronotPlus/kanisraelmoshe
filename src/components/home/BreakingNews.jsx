@@ -83,7 +83,7 @@ export default function BreakingNews() {
   }, []);
 
   const SkeletonLoader = () => (
-    <div className="flex space-x-8 space-x-reverse"> 
+    <div className="flex space-x-8 space-x-reverse animate-scroll"> 
         {[...Array(3)].map((_, i) => (
             <div key={i} className="flex items-center flex-shrink-0">
                 <div className="h-4 bg-gray-400/50 rounded w-48 animate-pulse"></div>
@@ -95,23 +95,34 @@ export default function BreakingNews() {
 
   return (
     <div className="bg-white py-3 mb-6 border-y border-l border-r border-gray-200" style={{ contain: 'layout style paint' }}>
+      <style>
+        {`
+          @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-scroll {
+            animation: scroll 30s linear infinite;
+          }
+        `}
+      </style>
       <div className="container mx-auto px-4">
         <div className="flex items-center">
-          <div className="bg-red-600 text-white px-4 py-1 font-bold text-base rounded ml-4">
+          <div className="text-red-600 px-4 py-1 font-normal text-lg ml-4">
             הודעות:
           </div>
-          <div className="breaking-news-container flex-1">
-            <div className="breaking-news-scroll flex space-x-8 space-x-reverse">
+          <div className="breaking-news-container flex-1 overflow-hidden">
+            <div className="flex space-x-8 space-x-reverse animate-scroll" style={{ width: 'max-content' }}>
               {loading ? (
                 <SkeletonLoader />
               ) : (
                 <>
-                  {breakingNews.map((item, index) => (
+                  {[...breakingNews, ...breakingNews].map((item, index) => (
                     <React.Fragment key={index}>
-                      <span className="flex-shrink-0 text-base font-semibold text-gray-900">
+                      <span className="flex-shrink-0 text-lg font-normal text-gray-900">
                         {item.title}
                       </span>
-                      {index < breakingNews.length - 1 && (
+                      {index < (breakingNews.length * 2) - 1 && (
                         <span className="text-red-600 font-bold mx-4">|</span>
                       )}
                     </React.Fragment>
