@@ -65,8 +65,8 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
       
       {/* Content at bottom */}
       <div className="absolute bottom-0 left-0 right-0 z-10">
-        {/* רקע אדום קטן עם הקטגוריה בלבד - מיושר ימינה, טקסט קטן */}
-        <div className="flex justify-end mb-[-1px]">
+        {/* רקע אדום קטן עם הקטגוריה בלבד - מיושר ימינה, טקסט קטן ובולד */}
+        <div className="flex justify-start mb-[-1px]">
           <div 
             className="py-1.5 px-3 inline-block"
             style={{
@@ -78,7 +78,7 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
               maxWidth: '35%'
             }}
           >
-            <p className="font-normal text-white text-xs">
+            <p className="font-bold text-white text-xs">
               {categoryName}
             </p>
           </div>
@@ -151,7 +151,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Two smaller articles (Right side) - Hidden on mobile */}
         <div className="hidden lg:block lg:col-span-4 order-1">
-          <div className="grid grid-rows-2 gap-4 h-[485px]">
+          <div className="grid grid-rows-2 gap-4" style={{ height: '485px' }}>
             <SmallArticleCard 
               article={articles[1]} 
               label="מתכונים"
@@ -164,13 +164,13 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
         </div>
         
         {/* Main large article (Center) */}
-        <div className="lg:col-span-5 order-2 h-[485px]">
+        <div className="lg:col-span-5 order-2" style={{ height: '485px' }}>
           <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
         </div>
         
         {/* Sidebar - Breaking News (Left side) - Hidden on mobile */}
         <div className="hidden lg:block lg:col-span-3 order-3">
-          <div className="bg-white min-h-[485px] flex flex-col">
+          <div className="bg-white flex flex-col" style={{ height: '485px' }}>
             {/* Header - 45% width, background image without cropping, sits on top of border */}
             <div 
               className="py-2 px-4 relative z-10 flex-shrink-0"
