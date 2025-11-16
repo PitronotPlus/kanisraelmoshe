@@ -205,7 +205,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
                 alt="המייל האדום"
-                style={{ width: '100%', height: '100%', display: 'block', margin: 0, padding: 0, objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', display: 'block', margin: 0, padding: 0, objectFit: 'contain' }}
               />
             </a>
           </div>
