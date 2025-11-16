@@ -13,16 +13,16 @@ const BreakingNewsItem = ({ article }) => {
       to={createPageUrl(`Article?id=${article.id}`)}
       className="block hover:bg-gray-50 transition-colors"
     >
-      <div className="flex items-start space-x-3 space-x-reverse p-3">
+      <div className="flex items-start space-x-2 space-x-reverse p-2">
         <div className="flex-1 min-w-0 text-right">
           <p 
-            className="text-sm text-red-600 mb-1"
+            className="text-xs text-red-600 mb-1"
             style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'bold' }}
           >
             {format(new Date(displayDate), 'HH:mm dd.MM.yyyy', { locale: he })}
           </p>
           <p 
-            className="text-base leading-snug"
+            className="text-sm leading-snug"
             style={{ fontFamily: 'Arial, sans-serif', fontWeight: 'normal' }}
           >
             {article.title}
@@ -32,7 +32,7 @@ const BreakingNewsItem = ({ article }) => {
           <img 
             src={article.featured_image} 
             alt={article.title}
-            className="w-20 h-16 object-cover flex-shrink-0"
+            className="w-16 h-12 object-cover flex-shrink-0"
           />
         )}
       </div>
@@ -134,8 +134,8 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Grid of posts on the right and center - גובה קבוע של 630px */}
-        <div className="hidden lg:block lg:col-span-9 order-1" style={{ height: '630px' }}>
+        {/* Grid of posts on the right and center - גובה מותאם ל-600px */}
+        <div className="hidden lg:block lg:col-span-9 order-1" style={{ height: '600px' }}>
           <div className="grid grid-cols-9 gap-4 h-full">
             {/* Two smaller articles - right side */}
             <div className="col-span-4">
@@ -186,7 +186,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
                   ))}
                 </div>
               ) : (
-                <div className="p-4 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
+                <div className="p-2 text-center text-gray-500 text-sm flex-1 flex items-center justify-center">
                   אין מבזקים חדשים
                 </div>
               )}
