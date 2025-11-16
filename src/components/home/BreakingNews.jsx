@@ -83,14 +83,14 @@ export default function BreakingNews() {
   }, []);
 
   const SkeletonLoader = () => (
-    <div className="flex space-x-8 space-x-reverse animate-scroll-rtl"> 
-        {[...Array(6)].map((_, i) => (
-            <div key={i} className="flex items-center flex-shrink-0">
-                <div className="h-4 bg-gray-400/50 rounded w-48 animate-pulse"></div>
-                <span className="mx-4 text-red-600 font-bold">|</span>
-            </div>
-        ))}
-    </div>
+    <>
+      {[...Array(8)].map((_, i) => (
+        <React.Fragment key={i}>
+          <div className="h-4 bg-gray-400/50 rounded w-48 animate-pulse flex-shrink-0"></div>
+          <span className="mx-4 text-red-600 font-bold flex-shrink-0">|</span>
+        </React.Fragment>
+      ))}
+    </>
   );
 
   return (
@@ -98,17 +98,17 @@ export default function BreakingNews() {
       <style>
         {`
           @keyframes scroll-rtl {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
           }
           .animate-scroll-rtl {
-            animation: scroll-rtl 40s linear infinite;
+            animation: scroll-rtl 60s linear infinite;
           }
         `}
       </style>
       <div className="container mx-auto px-4">
         <div className="flex items-center">
-          <div className="text-red-600 px-4 py-1 font-normal text-lg ml-4">
+          <div className="text-red-600 px-4 py-1 font-bold text-lg ml-4 flex-shrink-0">
             הודעות:
           </div>
           <div className="breaking-news-container flex-1 overflow-hidden">
@@ -117,12 +117,12 @@ export default function BreakingNews() {
                 <SkeletonLoader />
               ) : (
                 <>
-                  {[...breakingNews, ...breakingNews, ...breakingNews, ...breakingNews].map((item, index) => (
+                  {[...breakingNews, ...breakingNews, ...breakingNews, ...breakingNews, ...breakingNews, ...breakingNews].map((item, index) => (
                     <React.Fragment key={index}>
                       <span className="flex-shrink-0 text-lg font-normal text-gray-900 whitespace-nowrap">
                         {item.title}
                       </span>
-                      <span className="text-red-600 font-bold mx-4">|</span>
+                      <span className="text-red-600 font-bold mx-4 flex-shrink-0">|</span>
                     </React.Fragment>
                   ))}
                 </>
