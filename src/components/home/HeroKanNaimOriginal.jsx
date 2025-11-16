@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -142,10 +141,68 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Grid of posts - בידוד מוחלט בגובה 577px */}
-        <div className="hidden lg:block lg:col-span-9 order-1">
-          <div className="grid grid-cols-9 gap-4" style={{ height: '577px' }}>
+      <style>
+        {`
+          @media (min-width: 1024px) {
+            .hero-grid-container {
+              display: grid;
+              grid-template-columns: repeat(12, minmax(0, 1fr));
+              gap: 1rem;
+            }
+            
+            .hero-posts-grid {
+              grid-column: span 9 / span 9;
+              height: 572px;
+            }
+            
+            .hero-sidebar {
+              grid-column: span 3 / span 3;
+              height: 572px;
+            }
+            
+            .breaking-news-section {
+              height: 437px;
+            }
+            
+            .red-mail-button {
+              height: 135px;
+            }
+          }
+          
+          @media (min-width: 1280px) {
+            .hero-posts-grid {
+              height: 575px;
+            }
+            
+            .hero-sidebar {
+              height: 575px;
+            }
+            
+            .breaking-news-section {
+              height: 440px;
+            }
+          }
+          
+          @media (min-width: 1536px) {
+            .hero-posts-grid {
+              height: 578px;
+            }
+            
+            .hero-sidebar {
+              height: 578px;
+            }
+            
+            .breaking-news-section {
+              height: 443px;
+            }
+          }
+        `}
+      </style>
+      
+      <div className="hero-grid-container grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Grid of posts */}
+        <div className="hidden lg:block hero-posts-grid order-1">
+          <div className="grid grid-cols-9 gap-4 h-full">
             {/* Two smaller articles - right side */}
             <div className="col-span-4">
               <div className="grid grid-rows-2 gap-4 h-full">
@@ -167,11 +224,11 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column - סה"כ 577px */}
-        <div className="hidden lg:block lg:col-span-3 order-2">
-          <div className="flex flex-col" style={{ height: '577px' }}>
-            {/* Breaking News Sidebar - 442px */}
-            <div className="bg-white flex flex-col" style={{ height: '442px' }}>
+        {/* Sidebar column */}
+        <div className="hidden lg:block hero-sidebar order-2">
+          <div className="flex flex-col h-full">
+            {/* Breaking News Sidebar */}
+            <div className="bg-white flex flex-col breaking-news-section">
               <div 
                 className="py-2 px-4 relative z-10 flex-shrink-0"
                 style={{
@@ -203,12 +260,12 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
               </div>
             </div>
             
-            {/* Red email button - יתר ה-135px */}
+            {/* Red email button */}
             <a
               href={redMailLink}
               target={redMailLink.startsWith('http') ? '_blank' : undefined}
               rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="hover:opacity-90 transition-opacity flex-1"
+              className="hover:opacity-90 transition-opacity red-mail-button"
               style={{ display: 'block', lineHeight: 0 }}
             >
               <img 
