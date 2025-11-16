@@ -58,11 +58,6 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
       {/* Dark overlay gradient only at bottom */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
       
-      {/* קטגוריה label at top right */}
-      <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 font-normal text-base z-20">
-        {categoryName}
-      </div>
-      
       {/* Content at bottom */}
       <div className="absolute bottom-0 left-0 right-0 z-10">
         {/* רקע אדום קטן עם הקטגוריה בלבד - מיושר ימינה, טקסט קטן ובולד */}
@@ -101,7 +96,7 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
   );
 };
 
-// Small article card - רק תגית למעלה וכותרת עם רקע אדום למטה
+// Small article card - רק כותרת עם רקע אדום למטה
 const SmallArticleCard = ({ article, label }) => {
   return (
     <Link
@@ -114,11 +109,6 @@ const SmallArticleCard = ({ article, label }) => {
           alt={article.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-      </div>
-      
-      {/* Label badge at top right - NO dark overlay */}
-      <div className="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 font-normal text-base z-10">
-        {label}
       </div>
       
       {/* Title at bottom with red background */}
