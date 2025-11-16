@@ -55,12 +55,12 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
         />
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent"></div>
       
       <div className="absolute bottom-0 left-0 right-0 z-10">
         <div className="flex justify-start mb-[-1px]">
           <div 
-            className="py-1.5 px-3 inline-block"
+            className="py-2 px-4 inline-block"
             style={{
               backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
               backgroundSize: '100% 100%',
@@ -70,19 +70,29 @@ const MainArticleCard = ({ article, categoryName = 'פוליטיקה' }) => {
               maxWidth: '35%'
             }}
           >
-            <p className="font-bold text-white text-sm">
+            <p className="font-bold text-white text-lg">
               {categoryName}
             </p>
           </div>
         </div>
         
-        <div className="bg-black/70 p-4">
-          <h3 className="font-normal text-white text-xl leading-snug mb-2">
+        <div className="bg-black/50 p-5">
+          <h3 className="font-bold text-white text-2xl leading-tight mb-3" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
             {article.title}
           </h3>
           
           {article.excerpt && (
-            <p className="text-white text-sm leading-relaxed font-normal">
+            <p 
+              className="text-white text-base leading-relaxed font-normal" 
+              style={{ 
+                textShadow: '1px 1px 3px rgba(0,0,0,0.8)',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
               {article.excerpt}
             </p>
           )}
@@ -134,9 +144,9 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Grid of posts - בידוד מוחלט בגובה 620px */}
+        {/* Grid of posts - בידוד מוחלט בגובה 580px */}
         <div className="hidden lg:block lg:col-span-9 order-1">
-          <div className="grid grid-cols-9 gap-4" style={{ height: '620px' }}>
+          <div className="grid grid-cols-9 gap-4" style={{ height: '580px' }}>
             {/* Two smaller articles - right side */}
             <div className="col-span-4">
               <div className="grid grid-rows-2 gap-4 h-full">
@@ -158,11 +168,11 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column - סה"כ 620px */}
+        {/* Sidebar column - סה"כ 580px */}
         <div className="hidden lg:block lg:col-span-3 order-2">
-          <div className="flex flex-col" style={{ height: '620px' }}>
-            {/* Breaking News Sidebar - 485px */}
-            <div className="bg-white flex flex-col" style={{ height: '485px' }}>
+          <div className="flex flex-col" style={{ height: '580px' }}>
+            {/* Breaking News Sidebar - 445px */}
+            <div className="bg-white flex flex-col" style={{ height: '445px' }}>
               <div 
                 className="py-2 px-4 relative z-10 flex-shrink-0"
                 style={{
