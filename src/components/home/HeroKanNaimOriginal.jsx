@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -142,9 +143,9 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Grid of posts - בידוד מוחלט בגובה 580px */}
+        {/* Grid of posts - בידוד מוחלט בגובה 577px */}
         <div className="hidden lg:block lg:col-span-9 order-1">
-          <div className="grid grid-cols-9 gap-4" style={{ height: '580px' }}>
+          <div className="grid grid-cols-9 gap-4" style={{ height: '577px' }}>
             {/* Two smaller articles - right side */}
             <div className="col-span-4">
               <div className="grid grid-rows-2 gap-4 h-full">
@@ -166,11 +167,11 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column - סה"כ 580px */}
+        {/* Sidebar column - סה"כ 577px */}
         <div className="hidden lg:block lg:col-span-3 order-2">
-          <div className="flex flex-col" style={{ height: '580px' }}>
-            {/* Breaking News Sidebar - 445px */}
-            <div className="bg-white flex flex-col" style={{ height: '445px' }}>
+          <div className="flex flex-col" style={{ height: '577px' }}>
+            {/* Breaking News Sidebar - 442px */}
+            <div className="bg-white flex flex-col" style={{ height: '442px' }}>
               <div 
                 className="py-2 px-4 relative z-10 flex-shrink-0"
                 style={{
