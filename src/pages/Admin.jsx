@@ -608,7 +608,7 @@ export default function Admin() {
                 <HomePageEditor />
               </ContentContainer>
             )}
-
+            
             {activeTab === 'sidebar' && (
               <ContentContainer title="עריכת סרגל צד" description="נהל את הרכיבים בסרגל הצד">
                 <SidebarEditor />
