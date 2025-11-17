@@ -12,15 +12,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings, LayoutDashboard, Video, Image, Code, Newspaper, BarChart3, Users, Tags, Upload, X, GripVertical, Menu, Home, FileText, Palette, Zap, Shield, PenTool, Trash2, Wrench, Archive, ListTree, Wand2, Copy, Edit, PenSquare, ShieldAlert, FolderTree, PanelLeft, Layout } from "lucide-react";
+import { Settings, LayoutDashboard, Video, Image, Code, Newspaper, BarChart3, Users, Tags, Upload, X, GripVertical, Menu, Home, FileText, Palette, Zap, Shield, PenTool, Trash2, Wrench, Archive, ListTree, Wand2, Copy, Edit, PenSquare, ShieldAlert, FolderTree, PanelLeft } from "lucide-react";
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { createArticleContent } from "@/functions/createArticleContent";
 import { UploadFile } from "@/integrations/Core";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
-// Import Shadcn UI Tabs components for navigation
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+// Removed Shadcn UI Tabs imports as per outline:
+// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // Import internal admin components
 import AdminEditor from "../components/admin/AdminEditor";
@@ -45,7 +45,6 @@ import ContentCreatorsManager from "../components/admin/ContentCreatorsManager";
 import ThinContentManager from "../components/admin/ThinContentManager";
 import CategoryManager from "../components/admin/CategoryManager"; // Added new CategoryManager component
 import BannerManager from "../components/admin/BannerManager"; // Add new import
-import PageEditor from "../components/admin/PageEditor";
 
 // Modern Stats Card Component
 const ModernStatsCard = ({ title, value, icon: Icon, gradient, change }) => (
@@ -69,14 +68,11 @@ const ModernStatsCard = ({ title, value, icon: Icon, gradient, change }) => (
 );
 
 // Modern Content Container
-const ContentContainer = ({ children, title, description, icon: Icon }) => (
+const ContentContainer = ({ children, title, description }) => (
   <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     {title && (
       <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-        <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-          {Icon && <Icon className="w-6 h-6 ml-2 text-gray-700" />}
-          {title}
-        </h3>
+        <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
         {description && <p className="text-gray-600 mt-2">{description}</p>}
       </div>
     )}
@@ -264,7 +260,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-4 space-x-reverse">
@@ -285,223 +281,215 @@ export default function Admin() {
             </Link>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Navigation (TabsList) */}
-          <TabsList className="w-full lg:w-64 flex-shrink-0 flex flex-col h-auto p-2 bg-white rounded-lg shadow-sm border space-y-1">
-            <TabsTrigger
-              value="dashboard"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'dashboard' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>לוח בקרה</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="articles"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'articles' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Newspaper className="w-4 h-4" />
-              <span>ניהול מאמרים</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="creators"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'creators' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <PenSquare className="w-4 h-4" />
-              <span>ניהול כותבים</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="content"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'content' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <FolderTree className="w-4 h-4" />
-              <span>ניהול קטגוריות</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="homepage"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'homepage' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Home className="w-4 h-4" />
-              <span>עורך דף הבית</span>
-            </TabsTrigger>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Navigation */}
+          <div className="w-full lg:w-64 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow-sm border p-2 space-y-1">
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'dashboard' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>לוח בקרה</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('articles')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'articles' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Newspaper className="w-4 h-4" />
+                <span>ניהול מאמרים</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('creators')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'creators' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <PenSquare className="w-4 h-4" />
+                <span>ניהול כותבים</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('content')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'content' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <FolderTree className="w-4 h-4" />
+                <span>ניהול קטגוריות</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('homepage')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'homepage' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Home className="w-4 h-4" />
+                <span>עורך דף הבית</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('sidebar')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'sidebar' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <PanelLeft className="w-4 h-4" />
+                <span>עורך סרגל צד</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('menu')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'menu' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <ListTree className="w-4 h-4" />
+                <span>ניהול תפריט</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('ads')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'ads' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>ניהול פרסום</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('banners')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'banners' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Video className="w-4 h-4" />
+                <span>ניהול באנרים</span>
+              </button>
 
-            <TabsTrigger
-              value="pages"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'pages' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span>עורך דפים</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="sidebar"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'sidebar' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <PanelLeft className="w-4 h-4" />
-              <span>עורך סרגל צד</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="menu"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'menu' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <ListTree className="w-4 h-4" />
-              <span>ניהול תפריט</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="ads"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'ads' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <BarChart3 className="w-4 h-4" />
-              <span>ניהול פרסום</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="banners"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'banners' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Video className="w-4 h-4" />
-              <span>ניהול באנרים</span>
-            </TabsTrigger>
+              <button
+                onClick={() => setActiveTab('import')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'import' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Upload className="w-4 h-4" />
+                <span>ייבוא תוכן</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('images')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'images' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Image className="w-4 h-4" />
+                <span>אופטימיזציית תמונות</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('image-repair')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'image-repair' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Wrench className="w-4 h-4" />
+                <span>תיקון תמונות</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('image-generator')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'image-generator' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Wand2 className="w-4 h-4" />
+                <span>מחולל תמונות</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('duplicates')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'duplicates' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Copy className="w-4 h-4" />
+                <span>זיהוי כפילויות</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('thin-content')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'thin-content' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <ShieldAlert className="w-4 h-4" />
+                <span>מנהל תוכן דל</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('backup')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'backup' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Archive className="w-4 h-4" />
+                <span>גיבוי וקבצים</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'users' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Users className="w-4 h-4" />
+                <span>ניהול משתמשים</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('settings')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'settings' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                <span>הגדרות</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('design')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'design' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Palette className="w-4 h-4" />
+                <span>צבעים וטיפוגרפיה</span>
+              </button>
+              
+              <button
+                onClick={() => setActiveTab('article-stylist')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'article-stylist' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Wand2 className="w-4 h-4" />
+                <span>מסגנן מאמרים</span>
+              </button>
+            </div>
+          </div>
 
-            <TabsTrigger
-              value="import"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'import' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Upload className="w-4 h-4" />
-              <span>ייבוא תוכן</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="images"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'images' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Image className="w-4 h-4" />
-              <span>אופטימיזציית תמונות</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="image-repair"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'image-repair' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Wrench className="w-4 h-4" />
-              <span>תיקון תמונות</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="image-generator"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'image-generator' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Wand2 className="w-4 h-4" />
-              <span>מחולל תמונות</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="duplicates"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'duplicates' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Copy className="w-4 h-4" />
-              <span>זיהוי כפילויות</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="thin-content"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'thin-content' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <ShieldAlert className="w-4 h-4" />
-              <span>מנהל תוכן דל</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="backup"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'backup' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Archive className="w-4 h-4" />
-              <span>גיבוי וקבצים</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="users"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'users' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              <span>ניהול משתמשים</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="settings"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'settings' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Settings className="w-4 h-4" />
-              <span>הגדרות</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="design"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'design' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Palette className="w-4 h-4" />
-              <span>צבעים וטיפוגרפיה</span>
-            </TabsTrigger>
-            
-            <TabsTrigger
-              value="article-stylist"
-              className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                activeTab === 'article-stylist' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-              }`}
-            >
-              <Wand2 className="w-4 h-4" />
-              <span>מסגנן מאמרים</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Main Content Area (TabsContent) */}
+          {/* Main Content */}
           <div className="flex-1">
-            <TabsContent value="dashboard">
+            {activeTab === 'dashboard' && (
               <div className="space-y-8">
                 <div className="text-center lg:text-right">
                   <h1 className="text-4xl font-bold text-gray-900 mb-2">ברוכים הבאים לפאנל הניהול</h1>
@@ -561,9 +549,9 @@ export default function Admin() {
                   </div>
                 </ContentContainer>
               </div>
-            </TabsContent>
+            )}
 
-            <TabsContent value="articles">
+            {activeTab === 'articles' && (
               <ContentContainer title="ניהול מאמרים" description="צור, ערוך ונהל את כל המאמרים באתר">
                 {showArticleEditor ? (
                   <AdminEditor
@@ -579,15 +567,15 @@ export default function Admin() {
                   />
                 )}
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="creators">
+            {activeTab === 'creators' && (
               <ContentContainer title="ניהול כותבים" description="נהל כותבים ותרומות תוכן">
                 <ContentCreatorsManager />
               </ContentContainer>
-            </TabsContent>
+            )}
             
-            <TabsContent value="content">
+            {activeTab === 'content' && (
                 <ContentContainer title="ניהול קטגוריות" description="צור, ערוך וסדר את כל הקטגוריות באתר">
                     <CategoryManager
                       allCategories={allCategories}
@@ -596,93 +584,87 @@ export default function Admin() {
                       setStats={setStats}
                     />
                 </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="homepage">
+            {activeTab === 'homepage' && (
               <ContentContainer title="עריכת דף הבית" description="התאם את מראה ותוכן דף הבית">
                 <HomePageEditor />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="pages">
-              <ContentContainer title="עורך דפים" description="נהל את תוכן הדפים הכלליים באתר" icon={Layout}>
-                <PageEditor />
-              </ContentContainer>
-            </TabsContent>
-
-            <TabsContent value="sidebar">
+            {activeTab === 'sidebar' && (
               <ContentContainer title="עריכת סרגל צד" description="נהל את הרכיבים בסרגל הצד">
                 <SidebarEditor />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="menu">
+            {activeTab === 'menu' && (
               <ContentContainer title="ניהול תפריט" description="סדר והגדר את תפריט הניווט הראשי של האתר">
                 <MenuEditor />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="ads">
+            {activeTab === 'ads' && (
               <ContentContainer title="ניהול פרסום" description="נהל מודעות וקמפיינים פרסומיים">
                 <AdminAdvertisers />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="banners">
+            {activeTab === 'banners' && (
               <ContentContainer title="ניהול באנרים ופרסומות" description="נהל באנרים, מודעות וידאו ופרסומות באתר">
                 <BannerManager />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="import">
+            {activeTab === 'import' && (
               <ContentContainer title="ייבוא תוכן" description="ייבא מאמרים מקבצי CSV או מקורות חיצוניים">
                 <WordpressImporter />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="images">
+            {activeTab === 'images' && (
               <ContentContainer title="אופטימיזציית תמונות" description="שפר את ביצועי התמונות באתר">
                 <ImageOptimizationManager />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="image-repair">
+            {activeTab === 'image-repair' && (
               <ContentContainer title="תיקון קישורי תמונות" description="העבר תמונות חיצוניות ממאמרים לשרת המקומי">
                 <ImageRepairManager />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="image-generator">
+            {activeTab === 'image-generator' && (
               <ContentContainer title="מחולל תמונות" description="צור תמונות אוטומטיות למאמרים ללא תמונות">
                 <ImageGenerator />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="duplicates">
+            {activeTab === 'duplicates' && (
               <ContentContainer title="זיהוי כפילויות" description="מצא ומחק מאמרים כפולים באתר">
                 <DuplicateManager />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="thin-content">
+            {activeTab === 'thin-content' && (
               <ContentContainer title="מנהל תוכן דל" description="מצא ונקה מאמרים עם תוכן מועט או חסר">
                 <ThinContentManager />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="backup">
+            {activeTab === 'backup' && (
               <ContentContainer title="גיבוי וניהול קבצים" description="ייצא מאמרים ונהל קבצי תמונות באתר">
                 <BackupManager />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="users">
+            {activeTab === 'users' && (
               <ContentContainer title="ניהול משתמשים" description="נהל הרשאות ואשר משתמשים חדשים">
                 <UserManagement />
               </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="settings">
+            {activeTab === 'settings' && (
               <ContentContainer title="הגדרות מערכת" description="קבע את ההגדרות הכלליות של האתר">
                 <div className="space-y-6">
                   <Card className="shadow-lg border-0 rounded-2xl">
@@ -732,9 +714,9 @@ export default function Admin() {
                   </Card>
                 </div>
               </ContentContainer>
-            </TabsContent>
+            )}
             
-            <TabsContent value="design">
+            {activeTab === 'design' && (
                 <ContentContainer title="צבעים וטיפוגרפיה" description="התאם את העיצוב הויזואלי של האתר">
                   <DesignEditor
                     config={config}
@@ -742,15 +724,15 @@ export default function Admin() {
                     onSave={handleSaveSettings}
                   />
                 </ContentContainer>
-            </TabsContent>
+            )}
 
-            <TabsContent value="article-stylist">
+            {activeTab === 'article-stylist' && (
               <ContentContainer title="מסגנן מאמרים" description="עיצוב אוטומטי של מאמרים - הפרדת פסקאות ועיצוב מקצועי">
                 <ArticleStylist />
               </ContentContainer>
-            </TabsContent>
+            )}
           </div>
-        </Tabs>
+        </div>
       </div>
     </div>
   );
