@@ -19,7 +19,8 @@ export const defaultHomeConfig = {
     showBreakingNews: true,
     type: 'grid',
     grid_style: 'hierarchical-1',
-    redMailLink: 'mailto:kanisraelnews@gmail.com' // Add default red mail link
+    redMailLink: 'mailto:kanisraelnews@gmail.com', // Add default red mail link
+    showPrimaryAd: true // Added new property
   },
   sections: [
     {
@@ -122,7 +123,7 @@ export const defaultHomeConfig = {
 
 const GridStyleSelector = ({ selectedStyle, onSelect }) => {
   const styles = [
-    { id: 'hierarchical-1', label: 'היררכי 1', icon: <div className="grid grid-cols-4 grid-rows-2 gap-0.5 w-full h-full p-0.5"><div className="col-span-2 row-span-2 bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400 col-span-2"></div></div>, articles: 5 },
+    { id: 'hierarchical-1', label: 'היררכי 1', icon: <div className="grid grid-cols-4 grid-rows-2 gap-0.5 w-full h-full p-0.5"><div className="col-span-2 row-span-2 bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="col-span-2 bg-slate-400"></div></div>, articles: 5 },
     { id: 'hierarchical-2', label: 'היררכי 2', icon: <div className="grid grid-cols-3 grid-rows-2 gap-0.5 w-full h-full p-0.5"><div className="col-span-2 row-span-2 bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div></div>, articles: 3 },
     { id: 'modular-2x2', label: 'מודולרי 2x2', icon: <div className="grid grid-cols-2 grid-rows-2 gap-0.5 w-full h-full p-0.5"><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div></div>, articles: 4 },
     { id: 'column', label: 'עמודות', icon: <div className="grid grid-cols-4 gap-0.5 w-full h-full p-0.5"><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div><div className="bg-slate-400"></div></div>, articles: 4 },
@@ -453,7 +454,8 @@ export default function HomePageEditor() {
             ...defaultHomeConfig.hero,
             ...(loadedConfig.hero || {}),
             grid_style: loadedConfig.hero?.grid_style || 'hierarchical-1', // Add default grid style
-            redMailLink: loadedConfig.hero?.redMailLink || 'mailto:kanisraelnews@gmail.com' // Add default if missing
+            redMailLink: loadedConfig.hero?.redMailLink || 'mailto:kanisraelnews@gmail.com', // Add default if missing
+            showPrimaryAd: loadedConfig.hero?.showPrimaryAd ?? true // Add default for new showPrimaryAd
           },
           sections: loadedConfig.sections.map(section => {
             let updatedSection = { ...section };
@@ -684,14 +686,25 @@ export default function HomePageEditor() {
                       max="10"
                     />
                   </div>
-                  <div className="flex items-center space-x-2 space-x-reverse pt-6">
-                    <Switch
-                      checked={config.hero.showBreakingNews}
-                      onCheckedChange={(showBreakingNews) =>
-                        setConfig({ ...config, hero: { ...config.hero, showBreakingNews } })
-                      }
-                    />
-                    <Label>הצג מבזקים</Label>
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <Switch
+                        checked={config.hero.showBreakingNews}
+                        onCheckedChange={(showBreakingNews) =>
+                          setConfig({ ...config, hero: { ...config.hero, showBreakingNews } })
+                        }
+                      />
+                      <Label>הצג מבזקים</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <Switch
+                        checked={config.hero.showPrimaryAd}
+                        onCheckedChange={(showPrimaryAd) =>
+                          setConfig({ ...config, hero: { ...config.hero, showPrimaryAd } })
+                        }
+                      />
+                      <Label>הצג מודעה ראשית</Label>
+                    </div>
                   </div>
                 </div>
 

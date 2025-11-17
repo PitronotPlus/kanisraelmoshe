@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -363,6 +364,15 @@ export default function Home() {
       )}
 
       {renderHero()}
+
+      {/* Primary Ad after Hero (full width before sections) */}
+      {homeConfig?.hero?.showPrimaryAd !== false && (
+        <div className="w-full my-6">
+          <Suspense fallback={<LoadingPlaceholder />}>
+            <SmartAdBanner ads={allAds} position="main_leaderboard" size="banner" />
+          </Suspense>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <main className="lg:col-span-2 space-y-12 order-1 lg:order-2 min-w-0">

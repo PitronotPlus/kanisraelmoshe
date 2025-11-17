@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -333,6 +334,7 @@ export default function PageEditor() {
             showBreakingNews: false,
             type: 'grid',
             grid_style: 'hierarchical-1',
+            showPrimaryAd: false, // Default for new pages
           },
           sections: []
         };
@@ -350,7 +352,8 @@ export default function PageEditor() {
             ...(selectedPage === 'homePage' ? defaultHomeConfig.hero : {}),
             ...(loadedConfig.hero || {}),
             grid_style: loadedConfig.hero?.grid_style || 'hierarchical-1',
-            redMailLink: loadedConfig.hero?.redMailLink || 'mailto:kanisraelnews@gmail.com'
+            redMailLink: loadedConfig.hero?.redMailLink || 'mailto:kanisraelnews@gmail.com',
+            showPrimaryAd: loadedConfig.hero?.showPrimaryAd ?? false // Default to false if not set
           },
           sections: (loadedConfig.sections || []).map(section => {
             let updatedSection = { ...section };
@@ -636,6 +639,25 @@ export default function PageEditor() {
                     </p>
                   </div>
                 )}
+
+                {/* Hero Primary Ad Section */}
+                <div className="border-t pt-4 mt-4">
+                  <div className="flex items-center space-x-2 space-x-reverse mb-4">
+                    <Switch
+                      checked={config.hero.showPrimaryAd !== false}
+                      onCheckedChange={(checked) =>
+                        setConfig({
+                          ...config,
+                          hero: { ...config.hero, showPrimaryAd: checked }
+                        })
+                      }
+                    />
+                    <Label className="text-base font-semibold">הצג מודעות ראשי</Label>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">
+                    מודעה שתופיע על כל הרוחב מתחת למקטע ה-Hero ולפני שאר הסקשנים
+                  </p>
+                </div>
               </>
             )}
           </CardContent>
