@@ -19,6 +19,7 @@ const BreakingNews = lazy(() => import("../components/home/BreakingNews"));
 const CategorySection = lazy(() => import("../components/home/CategorySection"));
 const Sidebar = lazy(() => import("../components/home/Sidebar"));
 const SmartAdBanner = lazy(() => import("../components/ads/SmartAdBanner"));
+const DualAdBanner = lazy(() => import("../components/ads/DualAdBanner"));
 const SpecialAlert = lazy(() => import("../components/home/SpecialAlert"));
 import ArticleSlider from "../components/home/ArticleSlider";
 
@@ -369,7 +370,7 @@ export default function Home() {
       {homeConfig?.hero?.showPrimaryAd !== false && (
         <div className="w-full my-6">
           <Suspense fallback={<LoadingPlaceholder />}>
-            <SmartAdBanner ads={allAds} position="main_leaderboard" size="banner" />
+            <DualAdBanner ads={allAds} />
           </Suspense>
         </div>
       )}
