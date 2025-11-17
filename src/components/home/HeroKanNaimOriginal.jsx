@@ -163,16 +163,16 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
             
             .hero-posts-grid {
               grid-column: span 9 / span 9;
-              height: 572px;
+              height: 565px;
             }
             
             .hero-sidebar {
               grid-column: span 3 / span 3;
-              height: 572px;
+              height: 565px;
             }
             
             .breaking-news-section {
-              height: 437px;
+              height: 430px;
             }
             
             .red-mail-button {
@@ -182,29 +182,29 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           
           @media (min-width: 1280px) {
             .hero-posts-grid {
-              height: 575px;
+              height: 567px;
             }
             
             .hero-sidebar {
-              height: 575px;
+              height: 567px;
             }
             
             .breaking-news-section {
-              height: 440px;
+              height: 432px;
             }
           }
           
           @media (min-width: 1536px) {
             .hero-posts-grid {
-              height: 578px;
+              height: 570px;
             }
             
             .hero-sidebar {
-              height: 578px;
+              height: 570px;
             }
             
             .breaking-news-section {
-              height: 443px;
+              height: 435px;
             }
           }
         `}
