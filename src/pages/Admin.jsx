@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Article } from "@/entities/Article";
 import { Advertisement } from "@/entities/Advertisement";
@@ -19,18 +18,13 @@ import { createArticleContent } from "@/functions/createArticleContent";
 import { UploadFile } from "@/integrations/Core";
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
-// Removed Shadcn UI Tabs imports as per outline:
-// import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
 // Import internal admin components
 import AdminEditor from "../components/admin/AdminEditor";
 import AdminAdvertisers from "../components/admin/AdminAdvertisers";
-import UserManagement from "../components/admin/AdminUserManagement"; // Renamed AdminUserManagement to UserManagement for consistency
+import UserManagement from "../components/admin/AdminUserManagement";
 import WordpressImporter from "../components/admin/WordpressImporter";
 import ArticleManagement from "../components/admin/ArticleManagement";
-import HomePageEditor from "../components/admin/HomePageEditor";
 import SidebarEditor from "../components/admin/SidebarEditor";
-// import HotArticlesManager from "../components/admin/HotArticlesManager"; // Removed as per outline
 import ImageOptimizationManager from "../components/admin/ImageOptimizationManager";
 import ImageRepairManager from "../components/admin/ImageRepairManager";
 import BackupManager from "../components/admin/BackupManager";
@@ -40,12 +34,11 @@ import DuplicateManager from "../components/admin/DuplicateManager";
 import DesignEditor from "../components/admin/DesignEditor";
 import ArticleStylist from "../components/admin/ArticleStylist";
 import CodeInjectorManager from "../components/admin/CodeInjectorManager";
-// import CategoryPageEditor from "../components/admin/CategoryManager"; // Moved to CategoryManager
 import ContentCreatorsManager from "../components/admin/ContentCreatorsManager";
 import ThinContentManager from "../components/admin/ThinContentManager";
-import CategoryManager from "../components/admin/CategoryManager"; // Added new CategoryManager component
-import BannerManager from "../components/admin/BannerManager"; // Add new import
-import PageEditor from "../components/admin/PageEditor"; // Add new import
+import CategoryManager from "../components/admin/CategoryManager";
+import BannerManager from "../components/admin/BannerManager";
+import PageEditor from "../components/admin/PageEditor";
 
 // Modern Stats Card Component
 const ModernStatsCard = ({ title, value, icon: Icon, gradient, change }) => (
@@ -87,26 +80,22 @@ export default function Admin() {
   const [stats, setStats] = useState({ articles: 0, ads: 0, users: 0, categories: 0 });
   const [activeTab, setActiveTab] = useState("dashboard");
   const [config, setConfig] = useState(null);
-  const [allCategories, setAllCategories] = useState([]); // Kept for passing to CategoryManager
-  // Removed newCategory, editingCategory, selectedCategories, showBulkActions states (moved to CategoryManager)
+  const [allCategories, setAllCategories] = useState([]);
   const [isGeneratingContent, setIsGeneratingContent] = useState(false);
   const [generationResult, setGenerationResult] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false); // Renamed from isAuthorized
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
-  // New state for managing article editor view
   const [showArticleEditor, setShowArticleEditor] = useState(false);
   const [editingArticle, setEditingArticle] = useState(null);
-
-  // Removed generateSlug as it's now internal to CategoryManager
 
   useEffect(() => {
     const checkAuthAndFetchData = async () => {
       try {
         const user = await User.me();
         if (user && user.role === 'admin') {
-          setIsAdmin(true); // Renamed from setIsAuthorized
+          setIsAdmin(true);
           const [articleData, adData, userData, categoryData, siteConfigData] = await Promise.all([
               Article.list(),
               Advertisement.list(),
@@ -141,14 +130,14 @@ export default function Admin() {
           }
 
           setStats({ articles: articleData.length, ads: adData.length, users: userData.length, categories: categoryData.length });
-          setAllCategories(categoryData); // Kept to pass to CategoryManager
+          setAllCategories(categoryData);
         } else {
-          setIsAdmin(false); // Renamed from setIsAuthorized
+          setIsAdmin(false);
           window.location.href = createPageUrl('Home');
         }
       } catch (error) {
         console.error('Authentication or data fetching error:', error);
-        setIsAdmin(false); // Renamed from setIsAuthorized
+        setIsAdmin(false);
         window.location.href = createPageUrl('Home');
       } finally {
         setLoading(false);
@@ -157,7 +146,6 @@ export default function Admin() {
     checkAuthAndFetchData();
   }, []);
   
-  // Add effect to handle direct editing
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
@@ -167,9 +155,7 @@ export default function Admin() {
       setActiveTab(tab);
     }
     
-    // If we have an edit parameter and we're on articles tab, auto-open editor
     if (tab === 'articles' && editId) {
-      // Wait for articles to load, then find and edit the article
       const findAndEditArticle = async () => {
         try {
           const article = await Article.filter({ id: editId });
@@ -213,8 +199,6 @@ export default function Admin() {
         alert("שגיאה בשמירת ההגדרות.");
     }
   };
-  
-  // Removed all category management functions (moved to CategoryManager)
 
   const handleGenerateContent = async () => {
     if (!confirm("פעולה זו תיצור תוכן חדש עבור כל המאמרים שאין להם תוכן ארוך. התהליך עשוי לארוך מספר דקות. האם להמשיך?")) {
@@ -248,7 +232,7 @@ export default function Admin() {
     );
   }
 
-  if (!isAdmin) { // Renamed from !isAuthorized
+  if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-pink-100">
         <div className="text-center">
@@ -334,16 +318,6 @@ export default function Admin() {
               >
                 <Home className="w-4 h-4" />
                 <span>עורך דפים</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('homepage')}
-                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
-                  activeTab === 'homepage' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
-                }`}
-              >
-                <Home className="w-4 h-4" />
-                <span>עורך דף הבית</span>
               </button>
               
               <button
@@ -600,12 +574,6 @@ export default function Admin() {
             {activeTab === 'pages' && (
               <ContentContainer title="עורך דפים" description="ערוך את דף הבית ודפי הקטגוריות השונים">
                 <PageEditor />
-              </ContentContainer>
-            )}
-
-            {activeTab === 'homepage' && (
-              <ContentContainer title="עריכת דף הבית" description="התאם את מראה ותוכן דף הבית">
-                <HomePageEditor />
               </ContentContainer>
             )}
             
