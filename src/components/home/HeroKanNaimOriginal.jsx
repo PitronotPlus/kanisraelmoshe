@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -163,16 +162,16 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
             
             .hero-posts-grid {
               grid-column: span 9 / span 9;
-              height: 555px;
+              height: 530px;
             }
             
             .hero-sidebar {
               grid-column: span 3 / span 3;
-              height: 555px;
+              height: 530px;
             }
             
             .breaking-news-section {
-              height: 420px;
+              height: 395px;
             }
             
             .red-mail-button {
@@ -182,29 +181,29 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           
           @media (min-width: 1280px) {
             .hero-posts-grid {
-              height: 558px;
+              height: 535px;
             }
             
             .hero-sidebar {
-              height: 558px;
+              height: 535px;
             }
             
             .breaking-news-section {
-              height: 423px;
+              height: 400px;
             }
           }
           
           @media (min-width: 1536px) {
             .hero-posts-grid {
-              height: 560px;
+              height: 540px;
             }
             
             .hero-sidebar {
-              height: 560px;
+              height: 540px;
             }
             
             .breaking-news-section {
-              height: 425px;
+              height: 405px;
             }
           }
         `}
