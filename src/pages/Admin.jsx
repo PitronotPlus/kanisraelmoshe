@@ -45,6 +45,7 @@ import ContentCreatorsManager from "../components/admin/ContentCreatorsManager";
 import ThinContentManager from "../components/admin/ThinContentManager";
 import CategoryManager from "../components/admin/CategoryManager"; // Added new CategoryManager component
 import BannerManager from "../components/admin/BannerManager"; // Add new import
+import PageEditor from "../components/admin/PageEditor"; // Add new import
 
 // Modern Stats Card Component
 const ModernStatsCard = ({ title, value, icon: Icon, gradient, change }) => (
@@ -260,7 +261,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" dir="rtl">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-4 space-x-reverse">
@@ -325,6 +326,16 @@ export default function Admin() {
                 <span>ניהול קטגוריות</span>
               </button>
               
+              <button
+                onClick={() => setActiveTab('pages')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'pages' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <FileText className="w-4 h-4" /> {/* Changed icon to FileText as LayoutDashboard is already used */}
+                <span>עורך דפים</span>
+              </button>
+
               <button
                 onClick={() => setActiveTab('homepage')}
                 className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
@@ -584,6 +595,12 @@ export default function Admin() {
                       setStats={setStats}
                     />
                 </ContentContainer>
+            )}
+
+            {activeTab === 'pages' && (
+              <ContentContainer title="עורך דפים" description="ערוך את דף הבית ודפי הקטגוריות השונים">
+                <PageEditor />
+              </ContentContainer>
             )}
 
             {activeTab === 'homepage' && (
