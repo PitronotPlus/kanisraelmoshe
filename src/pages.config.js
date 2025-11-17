@@ -15,7 +15,7 @@ import AdminSettings from './pages/AdminSettings';
 import AdminUsers from './pages/AdminUsers';
 import UserSettings from './pages/UserSettings';
 import Onboarding from './pages/Onboarding';
-import Layout from './Layout.jsx';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -41,5 +41,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };

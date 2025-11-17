@@ -832,7 +832,7 @@ export default function Layout({ children, currentPageName }) {
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/dad5fecc4_.png"
                   alt="כאן ישראל"
                   className="w-auto"
-                  style={{ height: `${siteConfig?.logo_height || 64}px` }}
+                  style={{ height: `${(siteConfig?.logo_height || 64) * 2}px` }}
                 />
               </Link>
               {siteConfig?.site_description && (
@@ -1011,7 +1011,7 @@ export default function Layout({ children, currentPageName }) {
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/dad5fecc4_.png"
               alt="כאן ישראל"
-              className="h-8 md:h-10 w-auto mb-4 filter brightness-0 invert mx-auto"
+              className="h-16 md:h-20 w-auto mb-4 filter brightness-0 invert mx-auto"
             />
             <p className="text-gray-400 text-sm mb-6">
               {siteConfig?.site_description || 'אתר החדשות המוביל בישראל.'}
