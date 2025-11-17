@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -115,17 +116,27 @@ const SmallArticleCard = ({ article, label }) => {
         />
       </div>
       
-      <div className="absolute bottom-0 left-0 right-0">
-        <div 
-          className="py-3 px-4"
-          style={{
-            backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
-            backgroundSize: '100% 100%',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
-          <h3 className="font-normal text-white text-base leading-snug">
+      <div className="absolute bottom-0 left-0 right-0 z-10">
+        <div className="flex justify-start mb-[-1px]">
+          <div 
+            className="py-1.5 px-3 inline-block"
+            style={{
+              backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+              backgroundSize: '100% 100%',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              minWidth: '80px',
+              maxWidth: '40%'
+            }}
+          >
+            <p className="font-bold text-white text-sm whitespace-nowrap">
+              {label}
+            </p>
+          </div>
+        </div>
+        
+        <div className="bg-black/50 p-3">
+          <h3 className="font-bold text-white text-lg leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
             {article.title}
           </h3>
         </div>
