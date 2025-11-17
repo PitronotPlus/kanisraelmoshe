@@ -332,7 +332,7 @@ export default function Admin() {
                   activeTab === 'pages' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
                 }`}
               >
-                <FileText className="w-4 h-4" /> {/* Changed icon to FileText as LayoutDashboard is already used */}
+                <Home className="w-4 h-4" />
                 <span>עורך דפים</span>
               </button>
 
