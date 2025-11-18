@@ -89,12 +89,15 @@ export default function VideoEmbedFixer() {
       // Analyze articles for video links
       const analyzed = allArticles.map(article => {
         const videoLinks = detectVideoLinks(article.content);
-        const needsFix = videoLinks.some(link => !isProperlyEmbedded(article.content, link));
+        const needsEmbedFix = videoLinks.some(link => !isProperlyEmbedded(article.content, link));
+        const needsFormatFix = videoLinks.length > 0 && article.media_type !== 'video';
         
         return {
           ...article,
           videoLinks,
-          needsFix,
+          needsEmbedFix,
+          needsFormatFix,
+          needsFix: needsEmbedFix || needsFormatFix,
           hasVideo: videoLinks.length > 0
         };
       });
@@ -118,8 +121,21 @@ export default function VideoEmbedFixer() {
   const fixSingleArticle = async (article) => {
     setProcessing(true);
     try {
-      const fixedContent = fixVideoEmbeds(article.content, article.videoLinks);
-      await Article.update(article.id, { content: fixedContent });
+      const updateData = {};
+      
+      if (article.needsEmbedFix) {
+        updateData.content = fixVideoEmbeds(article.content, article.videoLinks);
+      }
+      
+      if (article.needsFormatFix) {
+        updateData.media_type = 'video';
+        // Set featured_video_url if not already set
+        if (!article.featured_video_url && article.videoLinks.length > 0) {
+          updateData.featured_video_url = article.videoLinks[0].url;
+        }
+      }
+      
+      await Article.update(article.id, updateData);
       
       // Reload articles
       await loadArticles();
@@ -142,8 +158,20 @@ export default function VideoEmbedFixer() {
       const articlesToFix = articles.filter(a => a.needsFix);
       
       for (const article of articlesToFix) {
-        const fixedContent = fixVideoEmbeds(article.content, article.videoLinks);
-        await Article.update(article.id, { content: fixedContent });
+        const updateData = {};
+        
+        if (article.needsEmbedFix) {
+          updateData.content = fixVideoEmbeds(article.content, article.videoLinks);
+        }
+        
+        if (article.needsFormatFix) {
+          updateData.media_type = 'video';
+          if (!article.featured_video_url && article.videoLinks.length > 0) {
+            updateData.featured_video_url = article.videoLinks[0].url;
+          }
+        }
+        
+        await Article.update(article.id, updateData);
         fixed++;
       }
       
@@ -247,9 +275,20 @@ export default function VideoEmbedFixer() {
                     {article.needsFix ? (
                       <Badge variant="destructive">דורש תיקון</Badge>
                     ) : (
-                      <Badge className="bg-green-600">מוטמע כראוי</Badge>
+                      <Badge className="bg-green-600">תקין</Badge>
+                    )}
+                    {article.needsEmbedFix && (
+                      <Badge className="bg-orange-600">הטמעה לא תקינה</Badge>
+                    )}
+                    {article.needsFormatFix && (
+                      <Badge className="bg-purple-600">פורמט שגוי</Badge>
                     )}
                     <Badge variant="outline">{article.videoLinks.length} סרטונים</Badge>
+                    {article.media_type !== 'video' && (
+                      <Badge variant="outline" className="text-gray-600">
+                        פורמט נוכחי: {article.media_type === 'image' ? 'תמונה' : article.media_type === 'audio' ? 'אודיו' : 'אחר'}
+                      </Badge>
+                    )}
                   </div>
                 </div>
                 <div className="flex space-x-2 space-x-reverse">
