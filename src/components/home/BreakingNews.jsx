@@ -83,14 +83,14 @@ export default function BreakingNews() {
   }, []);
 
   const SkeletonLoader = () => (
-    <>
+    <div className="flex space-x-8 space-x-reverse" style={{ width: 'max-content' }}>
       {[...Array(8)].map((_, i) => (
         <React.Fragment key={i}>
           <div className="h-4 bg-gray-400/50 rounded w-48 animate-pulse flex-shrink-0"></div>
           <span className="mx-4 text-red-600 font-bold flex-shrink-0">|</span>
         </React.Fragment>
       ))}
-    </>
+    </div>
   );
 
   return (
