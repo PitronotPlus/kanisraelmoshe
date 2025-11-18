@@ -152,6 +152,13 @@ const DesignEditor = ({ config, onConfigChange, onSave }) => {
     handleUpdate('custom_fonts', updatedFonts);
   };
 
+  const handleFontApplyToElements = (fontFamilyName, elements) => {
+    const updatedFonts = (config.custom_fonts || []).map(f => 
+      f.familyName === fontFamilyName ? { ...f, applyTo: elements } : f
+    );
+    handleUpdate('custom_fonts', updatedFonts);
+  };
+
   const globalFonts = [
     { label: 'Assistant', value: 'Assistant' },
     { label: 'Heebo', value: 'Heebo' },
@@ -218,13 +225,44 @@ const DesignEditor = ({ config, onConfigChange, onSave }) => {
               {uploadingFont ? 'מעלה קובץ...' : 'העלה קובץ גופן'}
             </Button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-4">
             {(config.custom_fonts || []).map(font => (
-              <div key={font.id} className="flex items-center justify-between p-2 border rounded-md">
-                <span className="font-semibold">{font.familyName} ({font.files.length} קבצים)</span>
-                <Button variant="ghost" size="icon" onClick={() => handleDeleteCustomFont(font.familyName)}>
-                  <Trash2 className="w-4 h-4 text-red-500"/>
-                </Button>
+              <div key={font.id} className="border rounded-lg p-4 space-y-3 bg-white">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-lg">{font.familyName}</span>
+                  <Button variant="ghost" size="icon" onClick={() => handleDeleteCustomFont(font.familyName)}>
+                    <Trash2 className="w-4 h-4 text-red-500"/>
+                  </Button>
+                </div>
+                <div className="text-sm text-gray-500">{font.files.length} קבצים</div>
+                
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">החל גופן זה על:</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', '.article-title'].map(element => {
+                      const isSelected = font.applyTo?.includes(element);
+                      return (
+                        <button
+                          key={element}
+                          onClick={() => {
+                            const currentApplyTo = font.applyTo || [];
+                            const newApplyTo = isSelected 
+                              ? currentApplyTo.filter(e => e !== element)
+                              : [...currentApplyTo, element];
+                            handleFontApplyToElements(font.familyName, newApplyTo);
+                          }}
+                          className={`px-3 py-2 text-sm rounded-md border transition-all ${
+                            isSelected 
+                              ? 'bg-blue-500 text-white border-blue-600' 
+                              : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'
+                          }`}
+                        >
+                          {element}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
