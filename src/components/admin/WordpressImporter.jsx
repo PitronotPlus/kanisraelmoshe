@@ -420,12 +420,12 @@ export default function WordpressImporter() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs value={currentStep} className="w-full">
+        <Tabs value={currentStep} onValueChange={setCurrentStep} className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="upload" disabled={currentStep !== 'upload'}>העלאת קבצים</TabsTrigger>
-            <TabsTrigger value="xml" disabled={currentStep !== 'upload'}>ייבוא XML ידני</TabsTrigger>
-            <TabsTrigger value="mapping" disabled={currentStep === 'upload'}>מיפוי שדות</TabsTrigger>
-            <TabsTrigger value="import" disabled={currentStep === 'upload' || currentStep === 'mapping'}>ייבוא</TabsTrigger>
+            <TabsTrigger value="upload" disabled={currentStep !== 'upload' && currentStep !== 'xml'}>העלאת קבצים</TabsTrigger>
+            <TabsTrigger value="xml" disabled={currentStep !== 'upload' && currentStep !== 'xml'}>ייבוא XML ידני</TabsTrigger>
+            <TabsTrigger value="mapping" disabled={currentStep === 'upload' || currentStep === 'xml'}>מיפוי שדות</TabsTrigger>
+            <TabsTrigger value="import" disabled={currentStep === 'upload' || currentStep === 'xml' || currentStep === 'mapping'}>ייבוא</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload" className="space-y-6 mt-6">
