@@ -726,7 +726,7 @@ export default function WordpressImporter() {
                       setFieldMappings(autoDetectMappings(headers));
                       setIsXmlImport(true);
                       setCurrentStep('mapping');
-                      setImportLogs(prev => [...prev, '\n🎉 מוכן לייבוא - בדוק את המיפוי בשלב הבא!`]);
+                      setImportLogs(prev => [...prev, '\n🎉 מוכן לייבוא - בדוק את המיפוי בשלב הבא!']);
                     } catch (error) {
                       console.error('XML parsing error:', error);
                       const errorMsg = error.message || 'שגיאה לא ידועה';
