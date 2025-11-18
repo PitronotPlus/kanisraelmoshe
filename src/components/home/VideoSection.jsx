@@ -1,24 +1,33 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Play, ChevronRight, ChevronLeft } from "lucide-react";
 
 export default function VideoSection({ articles = [], title = "חדשות" }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollContainerRef = useRef(null);
+  const [startIndex, setStartIndex] = useState(0);
 
   if (!articles || articles.length === 0) {
     return null;
   }
 
-  const itemsPerView = 4;
-  const maxIndex = Math.max(0, articles.length - itemsPerView);
+  const totalArticles = articles.length;
+  const articlesPerPage = 10; // 4 in first row + 6 in second row
+  const canGoNext = startIndex + articlesPerPage < totalArticles;
+  const canGoPrev = startIndex > 0;
 
-  const scrollTo = (direction) => {
-    if (direction === 'next' && currentIndex < maxIndex) {
-      setCurrentIndex(currentIndex + 1);
-    } else if (direction === 'prev' && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+  const visibleArticles = articles.slice(startIndex, startIndex + articlesPerPage);
+  const topRowArticles = visibleArticles.slice(0, 4);
+  const bottomRowArticles = visibleArticles.slice(4, 10);
+
+  const scrollNext = () => {
+    if (canGoNext) {
+      setStartIndex(startIndex + articlesPerPage);
+    }
+  };
+
+  const scrollPrev = () => {
+    if (canGoPrev) {
+      setStartIndex(Math.max(0, startIndex - articlesPerPage));
     }
   };
 
@@ -57,66 +66,91 @@ export default function VideoSection({ articles = [], title = "חדשות" }) {
       </div>
 
       {/* Video Carousel with Gray Background */}
-      <div className="relative bg-gray-200 p-4 rounded-lg">
-        {/* Previous Button */}
-        <button
-          onClick={() => scrollTo('prev')}
-          disabled={currentIndex === 0}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#153b79] hover:bg-[#1a4a99] disabled:bg-gray-400 disabled:cursor-not-allowed text-white p-3 rounded-r-none rounded-l-lg shadow-lg transition-colors"
-          style={{ transform: 'translate(0, -50%)' }}
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-
-        {/* Next Button */}
-        <button
-          onClick={() => scrollTo('next')}
-          disabled={currentIndex >= maxIndex}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white p-3 rounded-l-none rounded-r-lg shadow-lg transition-colors"
-          style={{ transform: 'translate(0, -50%)' }}
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-
-        {/* Video Grid */}
-        <div className="overflow-hidden px-12">
-          <div 
-            ref={scrollContainerRef}
-            className="grid grid-cols-4 gap-4 transition-transform duration-300 ease-in-out"
-            style={{ transform: `translateX(${currentIndex * -25}%)` }}
+      <div className="relative bg-gray-200 py-6 px-4 rounded-lg">
+        {/* Previous Button - Right side with half circle */}
+        {canGoPrev && (
+          <button
+            onClick={scrollPrev}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#153b79] hover:bg-[#1a4a99] text-white p-4 shadow-lg transition-colors"
+            style={{ borderRadius: '0 50% 50% 0' }}
           >
-            {articles.map((article) => (
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        )}
+
+        {/* Next Button - Left side with half circle */}
+        {canGoNext && (
+          <button
+            onClick={scrollNext}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-red-600 hover:bg-red-700 text-white p-4 shadow-lg transition-colors"
+            style={{ borderRadius: '50% 0 0 50%' }}
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+        )}
+
+        <div className="px-8 md:px-12">
+          {/* Top Row - 4 Large Videos */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            {topRowArticles.map((article) => (
               <Link
                 key={article.id}
                 to={createPageUrl(`Article?id=${article.id}`)}
                 className="group block"
               >
-                <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden mb-2 border-2 border-black">
-                  {/* Video Thumbnail */}
+                <div className="relative aspect-video bg-black rounded-xl overflow-hidden mb-2 border-4 border-black">
                   <img
                     src={article.video_thumbnail || article.featured_image || `https://picsum.photos/seed/${article.id}/400/225`}
                     alt={article.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-full object-cover"
                   />
                   
-                  {/* Dark Overlay */}
-                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors"></div>
-                  
-                  {/* Play Button */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-red-600 rounded-full p-3 group-hover:bg-red-700 transition-colors shadow-lg">
+                    <div className="bg-red-600 rounded-full p-3 shadow-lg">
                       <Play className="w-6 h-6 text-white fill-white" />
                     </div>
                   </div>
                 </div>
                 
-                {/* Title */}
-                <h3 className="text-base font-bold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                <h3 className="text-sm md:text-base font-bold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 text-center">
                   {article.title}
                 </h3>
               </Link>
             ))}
           </div>
+
+          {/* Bottom Row - 6 Smaller Videos with Darker Background */}
+          {bottomRowArticles.length > 0 && (
+            <div className="bg-gray-300 rounded-lg p-4">
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                {bottomRowArticles.map((article) => (
+                  <Link
+                    key={article.id}
+                    to={createPageUrl(`Article?id=${article.id}`)}
+                    className="group block"
+                  >
+                    <div className="relative aspect-video bg-black rounded-lg overflow-hidden mb-2 border-2 border-black">
+                      <img
+                        src={article.video_thumbnail || article.featured_image || `https://picsum.photos/seed/${article.id}/400/225`}
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                      />
+                      
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="bg-red-600 rounded-full p-2 shadow-lg">
+                          <Play className="w-4 h-4 text-white fill-white" />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-xs md:text-sm font-bold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 text-center">
+                      {article.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
