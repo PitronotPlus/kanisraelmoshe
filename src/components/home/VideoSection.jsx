@@ -68,26 +68,24 @@ export default function VideoSection({ articles = [], title = "חדשות" }) {
       {/* Video Carousel with Gray Background */}
       <div className="relative bg-gray-200 py-6 px-4 rounded-lg">
         {/* Previous Button - Right side with half circle */}
-        {canGoPrev && (
-          <button
-            onClick={scrollPrev}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#153b79] hover:bg-[#1a4a99] text-white p-4 shadow-lg transition-colors"
-            style={{ borderRadius: '0 50% 50% 0' }}
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        )}
+        <button
+          onClick={scrollPrev}
+          disabled={!canGoPrev}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[#153b79] hover:bg-[#1a4a99] disabled:bg-gray-400 disabled:cursor-not-allowed text-white p-4 shadow-lg transition-colors"
+          style={{ borderRadius: '0 50% 50% 0' }}
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
 
         {/* Next Button - Left side with half circle */}
-        {canGoNext && (
-          <button
-            onClick={scrollNext}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-red-600 hover:bg-red-700 text-white p-4 shadow-lg transition-colors"
-            style={{ borderRadius: '50% 0 0 50%' }}
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-        )}
+        <button
+          onClick={scrollNext}
+          disabled={!canGoNext}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white p-4 shadow-lg transition-colors"
+          style={{ borderRadius: '50% 0 0 50%' }}
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
 
         <div className="px-8 md:px-12">
           {/* Top Row - 4 Large Videos */}
@@ -98,7 +96,7 @@ export default function VideoSection({ articles = [], title = "חדשות" }) {
                 to={createPageUrl(`Article?id=${article.id}`)}
                 className="group block"
               >
-                <div className="relative aspect-video bg-black rounded-xl overflow-hidden mb-2 border-4 border-black">
+                <div className="relative aspect-video bg-black overflow-hidden mb-2">
                   <img
                     src={article.video_thumbnail || article.featured_image || `https://picsum.photos/seed/${article.id}/400/225`}
                     alt={article.title}
@@ -129,7 +127,7 @@ export default function VideoSection({ articles = [], title = "חדשות" }) {
                     to={createPageUrl(`Article?id=${article.id}`)}
                     className="group block"
                   >
-                    <div className="relative aspect-video bg-black rounded-lg overflow-hidden mb-2 border-2 border-black">
+                    <div className="relative aspect-video bg-black overflow-hidden mb-2">
                       <img
                         src={article.video_thumbnail || article.featured_image || `https://picsum.photos/seed/${article.id}/400/225`}
                         alt={article.title}
