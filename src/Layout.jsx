@@ -457,17 +457,36 @@ export default function Layout({ children, currentPageName }) {
     let css = '';
     try {
       Object.entries(siteConfig.typography).forEach(([element, styles]) => {
-        if (!styles || typeof styles !== 'object' || styles === null) return;
+        // Skip if styles is not a valid object
+        if (!styles || typeof styles !== 'object' || styles === null || Array.isArray(styles)) return;
 
         let styleString = '';
-        if (styles.fontFamily && typeof styles.fontFamily === 'string') {
-          styleString += `font-family: '${styles.fontFamily}', sans-serif !important;`;
+
+        // Safely access fontFamily
+        try {
+          if (styles.fontFamily && typeof styles.fontFamily === 'string') {
+            styleString += `font-family: '${styles.fontFamily}', sans-serif !important;`;
+          }
+        } catch (e) {
+          // Skip fontFamily if error
         }
-        if (styles.fontWeight && (typeof styles.fontWeight === 'number' || typeof styles.fontWeight === 'string')) {
-          styleString += `font-weight: ${styles.fontWeight} !important;`;
+
+        // Safely access fontWeight
+        try {
+          if (styles.fontWeight && (typeof styles.fontWeight === 'number' || typeof styles.fontWeight === 'string')) {
+            styleString += `font-weight: ${styles.fontWeight} !important;`;
+          }
+        } catch (e) {
+          // Skip fontWeight if error
         }
-        if (styles.color && typeof styles.color === 'string') {
-          styleString += `color: ${styles.color} !important;`;
+
+        // Safely access color
+        try {
+          if (styles.color && typeof styles.color === 'string') {
+            styleString += `color: ${styles.color} !important;`;
+          }
+        } catch (e) {
+          // Skip color if error
         }
 
         if (styleString) {

@@ -197,7 +197,11 @@ export default function ArticlePage() {
               <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg">
                 <header className="mb-8">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4"
-                      style={{ fontFamily: siteConfig?.typography?.h1?.fontFamily ? `'${siteConfig.typography.h1.fontFamily}', sans-serif` : 'inherit' }}>
+                      style={{ 
+                        fontFamily: (siteConfig?.typography?.h1 && typeof siteConfig.typography.h1 === 'object' && siteConfig.typography.h1.fontFamily) 
+                          ? `'${siteConfig.typography.h1.fontFamily}', sans-serif` 
+                          : 'inherit' 
+                      }}>
                     {article.title}
                   </h1>
                   {article.excerpt && (
