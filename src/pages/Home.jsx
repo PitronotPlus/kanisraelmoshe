@@ -38,6 +38,7 @@ export default function Home() {
   const [specialAlertArticles, setSpecialAlertArticles] = useState({});
   const [sectionsData, setSectionsData] = useState({});
   const [allAds, setAllAds] = useState([]);
+  const [videoArticles, setVideoArticles] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,12 +51,17 @@ export default function Home() {
           categoriesData,
           homeConfigData,
           adsData,
+          videoArticlesData,
         ] = await Promise.all([
           Article.filter({ published: true }, '-created_date', 20),
           Article.filter({ published: true }, '-views', 10), 
           Category.list(),
           HomeConfig.filter({ config_key: 'homePage' }),
           Advertisement.filter({ active: true }),
+          Article.filter({ 
+            published: true, 
+            media_type: 'video'
+          }, '-created_date', 20),
         ]);
 
         setArticles(heroArticlesData);
@@ -88,6 +94,7 @@ export default function Home() {
 
         setHomeConfig(loadedConfig);
         setAllAds(adsData);
+        setVideoArticles(videoArticlesData);
         
         // Fetch articles for special alert sections
         const specialAlertSections = loadedConfig.sections?.filter(s => s.type === 'special_alert' && s.enabled && s.article_id) || [];
@@ -380,7 +387,7 @@ export default function Home() {
         <div className="w-full mb-8">
           <Suspense fallback={<LoadingPlaceholder />}>
             <VideoSection 
-              articles={articles.slice(0, 8)} 
+              articles={videoArticles} 
               title={homeConfig.primaryVideo.title || "חדשות"}
             />
           </Suspense>

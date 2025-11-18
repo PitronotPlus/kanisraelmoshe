@@ -22,7 +22,7 @@ export default function VideoSection({ articles = [], title = "חדשות" }) {
               <h2 
                 className="text-white font-bold text-xl px-6 py-3 rounded-tl-lg m-0"
                 style={{
-                  backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/ceb048dbc_2.png)',
+                  backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/5c071f448_2.png)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
@@ -36,7 +36,7 @@ export default function VideoSection({ articles = [], title = "חדשות" }) {
             <div 
               className="flex-1"
               style={{
-                backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/ceb048dbc_2.png)',
+                backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/5c071f448_2.png)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}
