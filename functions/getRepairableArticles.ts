@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.5.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
@@ -26,7 +26,10 @@ Deno.serve(async (req) => {
 
         // Enhanced function to check if URL is external and needs repair
         const isExternalUrl = (url) => {
-            if (!url || !url.startsWith('http')) return false;
+            if (!url) return false;
+            // Also check for truncated WordPress URLs
+            if (url.startsWith('/wp-content/uploads/')) return true;
+            if (!url.startsWith('http')) return false;
             
             // List of internal/trusted domains
             const internalHosts = [

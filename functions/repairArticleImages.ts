@@ -1,20 +1,16 @@
-import { createClient } from 'npm:@base44/sdk@0.1.0';
-
-const base44 = createClient({
-    appId: Deno.env.get('BASE44_APP_ID'),
-});
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
     try {
-        const authHeader = req.headers.get('Authorization');
-        if (!authHeader) {
+        const base44 = createClientFromRequest(req);
+        
+        const user = await base44.auth.me();
+        if (!user) {
             return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), { 
                 status: 401,
                 headers: { "Content-Type": "application/json" }
             });
         }
-        const token = authHeader.split(' ')[1];
-        base44.auth.setToken(token);
 
         const { articleId } = await req.json();
         if (!articleId) {
