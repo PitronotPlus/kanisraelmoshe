@@ -1,12 +1,11 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Article } from '@/entities/Article';
 import { User } from '@/entities/User';
 import { SiteConfig } from '@/entities/SiteConfig';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale';
-import { Eye, Tag, MessageSquare } from 'lucide-react';
+import { Calendar, Eye, Clock, Tag, MessageSquare, Edit } from 'lucide-react';
 import ArticleSidebar from '../components/article/ArticleSidebar';
 import RelatedArticles from '../components/article/RelatedArticles';
 import AuthorProfileCard from '../components/article/AuthorProfileCard';
@@ -249,13 +248,42 @@ export default function ArticlePage() {
                   </div>
                 </header>
 
-                {/* Conditional rendering of featured image outside of ContentRenderer */}
+                {/* Conditional rendering of featured media outside of ContentRenderer */}
                 {!article.hide_featured_image && article.media_type === "image" && article.featured_image && (
                   <img
                     src={article.featured_image}
                     alt={article.featured_image_alt || article.title}
                     className="w-full h-auto object-cover rounded-xl shadow-lg mb-8"
                   />
+                )}
+
+                {article.media_type === "video" && article.featured_video_url && (
+                  <div className="w-full aspect-video mb-8 rounded-xl overflow-hidden shadow-lg">
+                    <iframe
+                      src={article.featured_video_url.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                      className="w-full h-full"
+                      allowFullScreen
+                      title={article.title}
+                    />
+                  </div>
+                )}
+
+                {article.media_type === "audio" && article.featured_audio_url && (
+                  <div className="w-full mb-8">
+                    {article.featured_image && (
+                      <img
+                        src={article.featured_image}
+                        alt={article.featured_image_alt || article.title}
+                        className="w-full h-64 object-cover rounded-xl shadow-lg mb-4"
+                      />
+                    )}
+                    <div className="bg-gray-100 p-6 rounded-xl shadow-lg">
+                      <audio controls className="w-full">
+                        <source src={article.featured_audio_url} />
+                        הדפדפן שלך לא תומך בנגן אודיו.
+                      </audio>
+                    </div>
+                  </div>
                 )}
 
                 {/* ContentRenderer now receives article.content directly and articleId */}

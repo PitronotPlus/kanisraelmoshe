@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Article } from "@/entities/Article";
 import { Category } from "@/entities/Category";
@@ -12,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { PenTool, Save, Eye, Upload, X, Settings, ImageIcon, ArrowLeft, Plus } from "lucide-react";
+import { PenTool, Save, Eye, Upload, Tag, X, Settings, ImageIcon, ArrowLeft, Calendar, Plus } from "lucide-react";
 import { UploadFile } from "@/integrations/Core";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -71,11 +70,12 @@ export default function AdminEditor({ editingArticle, onSaveComplete, onArticleC
     content: "",
     excerpt: "",
     categories: { primary: '', secondary: [] },
-    media_type: "image", // New field
+    media_type: "image",
     featured_image: "",
     featured_image_alt: "",
-    featured_video_url: "", // New field
-    video_thumbnail: "", // New field
+    featured_video_url: "",
+    featured_audio_url: "",
+    video_thumbnail: "",
     tags: [],
     is_featured: false,
     hide_featured_image: false,
@@ -147,6 +147,7 @@ export default function AdminEditor({ editingArticle, onSaveComplete, onArticleC
                     categories: categories,
                     media_type: editingArticle.media_type || "image",
                     featured_video_url: editingArticle.featured_video_url || "",
+                    featured_audio_url: editingArticle.featured_audio_url || "",
                     video_thumbnail: editingArticle.video_thumbnail || ""
                 });
                 setCurrentArticleId(editingArticle.id);
@@ -164,6 +165,7 @@ export default function AdminEditor({ editingArticle, onSaveComplete, onArticleC
                     featured_image: "",
                     featured_image_alt: "",
                     featured_video_url: "",
+                    featured_audio_url: "",
                     video_thumbnail: "",
                     tags: [],
                     is_featured: false,
@@ -770,7 +772,7 @@ export default function AdminEditor({ editingArticle, onSaveComplete, onArticleC
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>סוג מדיה</Label>
+                <Label>פורמט המאמר</Label>
                 <Select 
                   value={article.media_type || 'image'} 
                   onValueChange={(value) => handleInputChange('media_type', value)}
@@ -779,13 +781,62 @@ export default function AdminEditor({ editingArticle, onSaveComplete, onArticleC
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="image">תמונה ראשית</SelectItem>
-                    <SelectItem value="video">וידאו ראשי</SelectItem>
+                    <SelectItem value="image">מאמר רגיל (תמונה)</SelectItem>
+                    <SelectItem value="video">מאמר וידאו</SelectItem>
+                    <SelectItem value="audio">מאמר אודיו</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {article.media_type === 'video' ? (
+              {article.media_type === 'audio' ? (
+                <>
+                  {/* Audio Section */}
+                  <div className="space-y-2">
+                    <Label htmlFor="featured_audio_url">קישור לקובץ אודיו</Label>
+                    <Input
+                      id="featured_audio_url"
+                      value={article.featured_audio_url || ''}
+                      onChange={(e) => handleInputChange('featured_audio_url', e.target.value)}
+                      placeholder="https://example.com/audio.mp3"
+                      className="text-sm"
+                    />
+                    <p className="text-xs text-gray-500">
+                      תומך בקבצי MP3, WAV, OGG
+                    </p>
+                  </div>
+
+                  {article.featured_audio_url && (
+                    <div className="bg-gray-100 p-4 rounded-lg">
+                      <audio controls className="w-full">
+                        <source src={article.featured_audio_url} />
+                        הדפדפן שלך לא תומך בנגן אודיו.
+                      </audio>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="audio_thumbnail">תמונת עטיפה לאודיו</Label>
+                    <Input
+                      id="audio_thumbnail"
+                      value={article.featured_image || ''}
+                      onChange={(e) => handleFeaturedImageUrlChange(e.target.value)}
+                      placeholder="https://example.com/cover.jpg"
+                      className="text-sm"
+                    />
+                    <p className="text-xs text-gray-500">
+                      תמונה שתוצג עם נגן האודיו (אופציונלי)
+                    </p>
+                  </div>
+
+                  {article.featured_image && (
+                    <img
+                      src={article.featured_image}
+                      alt="תמונת עטיפה לאודיו"
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                  )}
+                </>
+              ) : article.media_type === 'video' ? (
                 <>
                   {/* Video Section */}
                   <div className="space-y-2">
