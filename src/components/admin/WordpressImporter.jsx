@@ -114,28 +114,11 @@ export default function WordpressImporter() {
   const [showDetailedLogs, setShowDetailedLogs] = useState(false); 
   const logContainerRef = useRef(null);
 
-  const [fieldOptions, setFieldOptions] = useState([]);
   const [isSingleFile, setIsSingleFile] = useState(true); // New state to toggle between single/multiple file mode
   const [xmlContent, setXmlContent] = useState(''); // For manual XML paste
-  const [xmlImportStep, setXmlImportStep] = useState('paste'); // paste, processing, complete
+  const [isXmlImport, setIsXmlImport] = useState(false); // Track if this is XML import
 
-  useEffect(() => {
-    // Dynamically generate field options from Article schema
-    // Ensure Article.schema() and its properties exist and are structured as expected
-    try {
-      const schema = Article.schema();
-      const options = Object.keys(schema.properties).map(key => ({
-        value: key,
-        label: schema.properties[key].description || key,
-      }));
-      // Add a specific option for original publication date for clarity
-      options.push({ value: 'original_publication_date', label: 'תאריך פרסום מקורי' });
-      setFieldOptions(options);
-    } catch (error) {
-      console.error("Failed to load Article schema for field options:", error);
-      // Fallback or handle error if Article.schema() is not available or structured incorrectly
-    }
-  }, []);
+
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -249,7 +232,48 @@ export default function WordpressImporter() {
     setCurrentStep('import');
     setImportResult(null);
     
-    // Initialize progress for all files
+    const validationErrors = validateMappings();
+    if (validationErrors.length > 0) {
+      setImportLogs(prev => [...prev, '❌ שגיאות מיפוי. הייבוא בוטל:']);
+      validationErrors.forEach(err => setImportLogs(prev => [...prev, `   • ${err}`]));
+      setImportProgress(prev => ({ ...prev, errors: [...prev.errors, ...validationErrors] }));
+      setIsImporting(false);
+      return;
+    }
+    
+    if (!fallbackCategory) {
+      const errorMessage = '❌ לא נבחרה קטגוריית ברירת מחדל.';
+      setImportLogs(prev => [...prev, errorMessage]);
+      setImportProgress(prev => ({ ...prev, errors: [...prev.errors, errorMessage] }));
+      setIsImporting(false);
+      return;
+    }
+
+    // If XML import, use csvData directly (already parsed)
+    if (isXmlImport) {
+      setImportProgress({ 
+        processed: 0, 
+        total: csvData.length, 
+        successful: 0, 
+        failed: 0, 
+        categoriesCreated: 0, 
+        errors: [],
+        currentFile: 'XML ידני',
+        completedFiles: 0,
+        totalFiles: 1
+      });
+      setImportLogs(['🚀 מתחיל ייבוא מ-XML ידני...']);
+      setShowDetailedLogs(true);
+
+      await processArticles(csvData, 'XML ידני');
+      
+      setImportProgress(prev => ({ ...prev, completedFiles: 1 }));
+      setImportLogs(prev => [...prev, `\n🎉 ייבוא XML הושלם!`]);
+      setIsImporting(false);
+      return;
+    }
+
+    // CSV file import flow
     const totalFilesCount = files.length;
     setImportProgress({ 
       processed: 0, 
@@ -265,131 +289,114 @@ export default function WordpressImporter() {
     setImportLogs([]);
     setShowDetailedLogs(true);
 
-    const validationErrors = validateMappings();
-    if (validationErrors.length > 0) {
-      setImportLogs(prev => [...prev, '❌ שגיאות מיפוי נתונים קריטיות. הייבוא בוטל:']);
-      validationErrors.forEach(err => setImportLogs(prev => [...prev, `   • ${err}`]));
-      setImportProgress(prev => ({ ...prev, errors: [...prev.errors, ...validationErrors] }));
-      setIsImporting(false);
-      return;
-    }
-    
-    if (!fallbackCategory) {
-      const errorMessage = '❌ לא נבחרה קטגוריית ברירת מחדל. הייבוא בוטל.';
-      setImportLogs(prev => [...prev, errorMessage]);
-      setImportProgress(prev => ({ ...prev, errors: [...prev.errors, errorMessage] }));
-      setIsImporting(false);
-      return;
-    }
-
-    // Process each file sequentially
     for (let fileIndex = 0; fileIndex < files.length; fileIndex++) {
       const currentFile = files[fileIndex];
       setImportLogs(prev => [...prev, `\n📁 מעבד קובץ ${fileIndex + 1}/${totalFilesCount}: ${currentFile.name}`]);
       setImportProgress(prev => ({ ...prev, currentFile: currentFile.name }));
 
       try {
-        // Upload and parse current file
         const { file_url } = await UploadFile({ file: currentFile });
         const { data: parseResult } = await parseCsv({ file_url });
 
         if (!parseResult.success) {
-          throw new Error(`נכשל בניתוח הקובץ ${currentFile.name}: ${parseResult.message}`);
+          throw new Error(`נכשל בניתוח ${currentFile.name}: ${parseResult.message}`);
         }
 
         const cleanData = parseResult.data.filter(row => row && Object.values(row).some(val => val !== null && val !== ''));
         
         if (cleanData.length === 0) {
-          setImportLogs(prev => [...prev, `⚠️ הקובץ ${currentFile.name} ריק או לא מכיל נתונים תקינים - דולג`]);
+          setImportLogs(prev => [...prev, `⚠️ ${currentFile.name} ריק - דולג`]);
           setImportProgress(prev => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
           continue;
         }
 
         setImportProgress(prev => ({ ...prev, total: prev.total + cleanData.length }));
-        setImportLogs(prev => [...prev, `📊 הקובץ ${currentFile.name} מכיל ${cleanData.length} מאמרים`]);
+        setImportLogs(prev => [...prev, `📊 ${currentFile.name}: ${cleanData.length} מאמרים`]);
+        
+        await processArticles(cleanData, currentFile.name);
 
-        // Process file in batches
-        const BATCH_SIZE = 10;
-        const totalBatches = Math.ceil(cleanData.length / BATCH_SIZE);
-        let consecutiveErrors = 0;
 
-        for (let i = 0; i < totalBatches; i++) {
-            const batchData = cleanData.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
-            
-            setImportLogs(prev => [...prev, `🔄 מעבד מנה ${i+1}/${totalBatches} מהקובץ ${currentFile.name} (${batchData.length} מאמרים)...`]);
-            
-            try {
-                const { data: result } = await importFromWordpress({ 
-                    batchData,
-                    fieldMappings,
-                    createNewCategories,
-                    fallbackCategory,
-                    importPublishState,
-                    skipThinContent
-                });
-                
-                consecutiveErrors = 0;
-                if (result.success && result.details) {
-                    setImportProgress(prev => ({
-                        ...prev,
-                        processed: prev.processed + batchData.length,
-                        successful: prev.successful + (result.details.successfulInBatch || 0),
-                        failed: prev.failed + (result.details.failedInBatch || 0),
-                        categoriesCreated: prev.categoriesCreated + (result.details.categoriesCreatedInBatch || 0),
-                        errors: [...prev.errors, ...(result.details.errorsInBatch || [])]
-                    }));
 
-                    if (result.details.logs) {
-                        setImportLogs(prev => [...prev, ...result.details.logs]);
-                    }
-
-                    if (result.details.failedInBatch > 0) {
-                        const errorMessages = result.details.errorsInBatch.map(err => `   • ${err}`).join('\n');
-                        setImportLogs(prev => [...prev, `⚠️ אירעו ${result.details.failedInBatch} שגיאות נתונים במנה ${i+1}. ממשיך אוטומטית...`]);
-                        setImportLogs(prev => [...prev, errorMessages]);
-                    }
-                } else {
-                    throw new Error(result.message || "שגיאה לא ידועה בעיבוד המנה");
-                }
-                
-                await new Promise(res => setTimeout(res, 1000));
-
-            } catch (error) {
-                consecutiveErrors++;
-                console.error(`Batch ${i+1} of file ${currentFile.name} failed:`, error);
-                const errorMessage = error.message || "שגיאת שרת לא ידועה";
-                
-                const waitTime = Math.min(15 * Math.pow(2, consecutiveErrors - 1), 120);
-                
-                setImportLogs(prev => [...prev, `❌ שגיאה במנה ${i+1} מהקובץ ${currentFile.name}: ${errorMessage}`]);
-                setImportLogs(prev => [...prev, `🛑 Cooldown: ממתין ${waitTime} שניות באופן אוטומטי לפני ניסיון חוזר...`]);
-                
-                await new Promise(res => setTimeout(res, waitTime * 1000));
-                
-                setImportLogs(prev => [...prev, `🔄 מנסה לעבד שוב את מנה ${i+1} מהקובץ ${currentFile.name}...`]);
-                i--;
-                continue;
-            }
-        }
-
-        // Mark file as completed
         setImportProgress(prev => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
-        setImportLogs(prev => [...prev, `✅ הקובץ ${currentFile.name} הושלם בהצלחה!`]);
+        setImportLogs(prev => [...prev, `✅ ${currentFile.name} הושלם!`]);
 
-        // Add delay between files
         if (fileIndex < files.length - 1) {
-          setImportLogs(prev => [...prev, '--- ממתין 3 שניות לפני הקובץ הבא ---']);
+          setImportLogs(prev => [...prev, '--- ממתין 3 שניות ---']);
           await new Promise(resolve => setTimeout(resolve, 3000));
         }
 
       } catch (error) {
-        setImportLogs(prev => [...prev, `❌ שגיאה קריטית בעיבוד הקובץ ${currentFile.name}: ${error.message}`]);
+        setImportLogs(prev => [...prev, `❌ שגיאה בקובץ ${currentFile.name}: ${error.message}`]);
         setImportProgress(prev => ({ ...prev, completedFiles: prev.completedFiles + 1 }));
       }
     }
 
     setIsImporting(false);
-    setImportLogs(prev => [...prev, `\n🎉 כל הקבצים הושלמו! עובדו ${files.length} קבצים בסה"כ.`]);
+    setImportLogs(prev => [...prev, `\n🎉 עובדו ${files.length} קבצים!`]);
+  };
+
+  const processArticles = async (articlesData, fileName) => {
+    const BATCH_SIZE = 10;
+    const totalBatches = Math.ceil(articlesData.length / BATCH_SIZE);
+    let consecutiveErrors = 0;
+
+    for (let i = 0; i < totalBatches; i++) {
+      const batchData = articlesData.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
+      
+      setImportLogs(prev => [...prev, `🔄 מנה ${i+1}/${totalBatches} מ-${fileName} (${batchData.length} מאמרים)...`]);
+      
+      try {
+        const { data: result } = await importFromWordpress({ 
+          batchData,
+          fieldMappings,
+          createNewCategories,
+          fallbackCategory,
+          importPublishState,
+          skipThinContent
+        });
+        
+        consecutiveErrors = 0;
+        if (result.success && result.details) {
+          setImportProgress(prev => ({
+            ...prev,
+            processed: prev.processed + batchData.length,
+            successful: prev.successful + (result.details.successfulInBatch || 0),
+            failed: prev.failed + (result.details.failedInBatch || 0),
+            categoriesCreated: prev.categoriesCreated + (result.details.categoriesCreatedInBatch || 0),
+            errors: [...prev.errors, ...(result.details.errorsInBatch || [])]
+          }));
+
+          if (result.details.logs) {
+            setImportLogs(prev => [...prev, ...result.details.logs]);
+          }
+
+          if (result.details.failedInBatch > 0) {
+            const errorMessages = result.details.errorsInBatch.map(err => `   • ${err}`).join('\n');
+            setImportLogs(prev => [...prev, `⚠️ ${result.details.failedInBatch} שגיאות במנה ${i+1}...`]);
+            setImportLogs(prev => [...prev, errorMessages]);
+          }
+        } else {
+          throw new Error(result.message || "שגיאה בעיבוד");
+        }
+        
+        await new Promise(res => setTimeout(res, 1000));
+
+      } catch (error) {
+        consecutiveErrors++;
+        console.error(`Batch ${i+1} failed:`, error);
+        const errorMessage = error.message || "שגיאת שרת";
+        const waitTime = Math.min(15 * Math.pow(2, consecutiveErrors - 1), 120);
+        
+        setImportLogs(prev => [...prev, `❌ שגיאה במנה ${i+1}: ${errorMessage}`]);
+        setImportLogs(prev => [...prev, `🛑 ממתין ${waitTime} שניות לפני ניסיון חוזר...`]);
+        
+        await new Promise(res => setTimeout(res, waitTime * 1000));
+        
+        setImportLogs(prev => [...prev, `🔄 מנסה שוב מנה ${i+1}...`]);
+        i--;
+        continue;
+      }
+    }
   };
 
   const resetImporter = () => {
@@ -407,6 +414,8 @@ export default function WordpressImporter() {
     setImportLogs([]);
     setShowDetailedLogs(false);
     setIsSingleFile(true);
+    setXmlContent('');
+    setIsXmlImport(false);
   };
   
   const finalResult = !isImporting && importProgress.totalFiles > 0;
@@ -559,38 +568,47 @@ export default function WordpressImporter() {
                     }
                     
                     setIsLoading(true);
-                    setImportLogs(['🔄 מעבד את תוכן ה-XML...']);
+                    setImportLogs(['🔄 בודק את תוכן ה-XML...']);
                     
                     try {
-                      // Clean the XML content - remove comments and whitespace before XML declaration
                       let cleanedXml = xmlContent.trim();
                       
-                      // Remove all HTML comments
-                      cleanedXml = cleanedXml.replace(/<!--[\s\S]*?-->/g, '');
-                      cleanedXml = cleanedXml.trim();
+                      // Check if user pasted HTML instead of XML
+                      if (cleanedXml.toLowerCase().includes('<!doctype html') || 
+                          cleanedXml.toLowerCase().startsWith('<html') ||
+                          cleanedXml.includes('This XML file does not appear')) {
+                        throw new Error('❌ נראה שהעתקת HTML ולא XML!\n\n📖 לחץ Ctrl+U בדפדפן כדי לראות את קוד ה-XML המקורי, ואז העתק מהמקור.');
+                      }
                       
-                      setImportLogs(prev => [...prev, `📄 גודל תוכן: ${cleanedXml.length.toLocaleString()} תווים`]);
+                      // Remove HTML comments
+                      cleanedXml = cleanedXml.replace(/<!--[\s\S]*?-->/g, '').trim();
                       
-                      // Parse XML content
+                      // Check if starts with valid XML
+                      if (!cleanedXml.startsWith('<?xml') && !cleanedXml.startsWith('<rss') && !cleanedXml.startsWith('<feed')) {
+                        throw new Error('❌ התוכן לא מתחיל בתג XML תקין.\n\n📖 ודא שהעתקת את קוד המקור (Ctrl+U) ולא את התצוגה הרגילה.');
+                      }
+                      
+                      setImportLogs(prev => [...prev, `📄 גודל: ${cleanedXml.length.toLocaleString()} תווים`]);
+                      
+                      // Parse XML
                       const parser = new DOMParser();
                       const xmlDoc = parser.parseFromString(cleanedXml, 'text/xml');
                       
-                      // Check for parsing errors
                       const parserError = xmlDoc.getElementsByTagName('parsererror');
                       if (parserError.length > 0) {
                         const errorText = parserError[0].textContent || 'שגיאה לא ידועה';
-                        throw new Error(`ה-XML לא תקין: ${errorText.substring(0, 300)}`);
+                        throw new Error(`שגיאת ניתוח XML: ${errorText.substring(0, 200)}`);
                       }
                       
                       setImportLogs(prev => [...prev, '✅ ה-XML נותח בהצלחה']);
                       
-                      // Extract articles from XML
+                      // Extract articles
                       const items = xmlDoc.getElementsByTagName('item');
                       if (items.length === 0) {
-                        throw new Error('לא נמצאו מאמרים (אלמנטים <item>). ודא שזה קובץ WordPress XML תקין.');
+                        throw new Error('לא נמצאו מאמרים (<item>). ודא שזה קובץ WordPress XML.');
                       }
                       
-                      setImportLogs(prev => [...prev, `📦 נמצאו ${items.length} מאמרים - מתחיל עיבוד...`]);
+                      setImportLogs(prev => [...prev, `📦 נמצאו ${items.length} מאמרים`]);
                       
                       const articles = [];
                       const batchSize = 100;
@@ -600,25 +618,19 @@ export default function WordpressImporter() {
                         const start = batch * batchSize;
                         const end = Math.min((batch + 1) * batchSize, items.length);
                         
-                        setImportLogs(prev => [...prev, `🔄 מעבד מאמרים ${start + 1}-${end} מתוך ${items.length}...`]);
+                        setImportLogs(prev => [...prev, `🔄 מחלץ מאמרים ${start + 1}-${end}...`]);
                         
                         for (let i = start; i < end; i++) {
                           const item = items[i];
                           const article = {};
                           
-                          // Helper to get CDATA content safely
                           const getCDATA = (element) => {
                             if (!element) return '';
-                            // Get CDATA or text content
-                            const cdata = element.textContent || '';
-                            return cdata.trim();
+                            return (element.textContent || '').trim();
                           };
                           
-                          // Extract title
-                          const titleEl = item.getElementsByTagName('title')[0];
-                          article.title = getCDATA(titleEl);
+                          article.title = getCDATA(item.getElementsByTagName('title')[0]);
                           
-                          // Extract content - try multiple namespaces
                           let contentEl = item.getElementsByTagName('content:encoded')[0];
                           if (!contentEl) {
                             const allElements = item.getElementsByTagName('*');
@@ -632,7 +644,6 @@ export default function WordpressImporter() {
                           if (!contentEl) contentEl = item.getElementsByTagName('description')[0];
                           article.content = getCDATA(contentEl);
                           
-                          // Extract excerpt
                           let excerptEl = item.getElementsByTagName('excerpt:encoded')[0];
                           if (!excerptEl) {
                             const allElements = item.getElementsByTagName('*');
@@ -645,12 +656,12 @@ export default function WordpressImporter() {
                           }
                           article.excerpt = getCDATA(excerptEl);
                           
-                          // Extract other fields
                           article.original_source_url = getCDATA(item.getElementsByTagName('link')[0]);
-                          article.original_publication_date = getCDATA(item.getElementsByTagName('pubDate')[0]) || 
-                                                              getCDATA(item.getElementsByTagName('wp:post_date')[0]);
                           
-                          // Author - try multiple tags
+                          const pubDate = getCDATA(item.getElementsByTagName('pubDate')[0]);
+                          const wpPostDate = getCDATA(item.getElementsByTagName('wp:post_date')[0]);
+                          article.original_publication_date = pubDate || wpPostDate;
+                          
                           let authorEl = item.getElementsByTagName('dc:creator')[0];
                           if (!authorEl) {
                             const allElements = item.getElementsByTagName('*');
@@ -663,13 +674,11 @@ export default function WordpressImporter() {
                           }
                           article.author = getCDATA(authorEl);
                           
-                          // Extract categories
                           const categoryElements = item.getElementsByTagName('category');
                           const cats = [];
                           for (let j = 0; j < categoryElements.length; j++) {
                             const domain = categoryElements[j].getAttribute('domain');
                             const catText = getCDATA(categoryElements[j]);
-                            
                             if (catText && domain === 'category') {
                               cats.push(catText);
                             }
@@ -681,42 +690,37 @@ export default function WordpressImporter() {
                             }
                           }
                           
-                          // Status
                           const statusEl = item.getElementsByTagName('wp:status')[0];
                           article.status = getCDATA(statusEl);
                           
-                          // Only add if has title or content
                           if (article.title || article.content) {
                             articles.push(article);
                           }
                         }
                         
-                        // Small delay between batches to prevent UI freeze
                         if (batch < totalBatches - 1) {
                           await new Promise(resolve => setTimeout(resolve, 50));
                         }
                       }
                       
                       if (articles.length === 0) {
-                        throw new Error('לא ניתן לחלץ מאמרים מה-XML. ייתכן שהפורמט לא נתמך.');
+                        throw new Error('לא ניתן לחלץ מאמרים מה-XML.');
                       }
                       
-                      setImportLogs(prev => [...prev, `✅ חולצו ${articles.length} מאמרים מה-XML`]);
+                      setImportLogs(prev => [...prev, `✅ ${articles.length} מאמרים חולצו`]);
                       
-                      // Create headers from first article
                       const headers = ['title', 'content', 'excerpt', 'category', 'tags', 'author', 'original_publication_date', 'original_source_url', 'status'];
                       
                       setCsvData(articles);
                       setCsvHeaders(headers);
                       setFieldMappings(autoDetectMappings(headers));
-                      setFiles([new File([cleanedXml], 'manual-xml-import.xml', { type: 'text/xml' })]);
-                      setFile(new File([cleanedXml], 'manual-xml-import.xml', { type: 'text/xml' }));
+                      setIsXmlImport(true);
                       setCurrentStep('mapping');
-                      setImportLogs(prev => [...prev, `🎉 המערכת מוכנה לייבוא!`]);
+                      setImportLogs(prev => [...prev, `🎉 מוכן לייבוא!`]);
                     } catch (error) {
                       console.error('XML parsing error:', error);
                       const errorMsg = error.message || 'שגיאה לא ידועה';
-                      alert(`שגיאה בעיבוד ה-XML: ${errorMsg}`);
+                      alert(errorMsg);
                       setImportLogs(prev => [...prev, `❌ ${errorMsg}`]);
                     } finally {
                       setIsLoading(false);
