@@ -4,14 +4,14 @@ import SmartAdBanner from "./SmartAdBanner";
 export default function DualAdBanner({ ads = [] }) {
   return (
     <div className="w-full flex gap-4">
-      {/* Left banner - 65% */}
+      {/* Right banner - 65% (Large) */}
       <div className="w-[65%]">
-        <SmartAdBanner ads={ads} position="main_leaderboard_left" size="banner" />
+        <SmartAdBanner ads={ads} position="main_leaderboard_right" size="banner" />
       </div>
       
-      {/* Right banner - 35% */}
+      {/* Left banner - 35% (Small) */}
       <div className="w-[35%]">
-        <SmartAdBanner ads={ads} position="main_leaderboard_right" size="banner" />
+        <SmartAdBanner ads={ads} position="main_leaderboard_left" size="banner" />
       </div>
     </div>
   );

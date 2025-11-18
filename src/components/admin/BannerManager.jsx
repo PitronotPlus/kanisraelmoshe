@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Advertisement } from '@/entities/Advertisement';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -84,8 +83,8 @@ const BannerForm = ({ banner, onSave, onCancel }) => {
                   <SelectItem value="sidebar_top">סרגל צד - עליון</SelectItem>
                   <SelectItem value="sidebar_bottom">סרגל צד - תחתון</SelectItem>
                   <SelectItem value="main_leaderboard">באנר ראשי</SelectItem>
-                  <SelectItem value="main_leaderboard_left">מודעות ראשי - שמאל (65%)</SelectItem>
-                  <SelectItem value="main_leaderboard_right">מודעות ראשי - ימין (35%)</SelectItem>
+                  <SelectItem value="main_leaderboard_right">מודעות ראשי - ימין (65% - גדול)</SelectItem>
+                  <SelectItem value="main_leaderboard_left">מודעות ראשי - שמאל (35% - קטן)</SelectItem>
                   <SelectItem value="between_articles">בין מאמרים</SelectItem>
                   <SelectItem value="large_banner">באנר גדול</SelectItem>
                   <SelectItem value="footer">באנר תחתון</SelectItem>
@@ -236,8 +235,8 @@ const BannerItem = ({ banner, onEdit, onDelete, onToggle }) => {
       'sidebar_top': 'סרגל צד - עליון',
       'sidebar_bottom': 'סרגל צד - תחתון',
       'main_leaderboard': 'באנר ראשי',
-      'main_leaderboard_left': 'מודעות ראשי - שמאל (65%)',
-      'main_leaderboard_right': 'מודעות ראשי - ימין (35%)',
+      'main_leaderboard_right': 'מודעות ראשי - ימין (65% - גדול)',
+      'main_leaderboard_left': 'מודעות ראשי - שמאל (35% - קטן)',
       'between_articles': 'בין מאמרים',
       'large_banner': 'באנר גדול',
       'footer': 'באנר תחתון'
