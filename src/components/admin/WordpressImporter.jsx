@@ -711,12 +711,22 @@ export default function WordpressImporter() {
                       
                       const headers = ['title', 'content', 'excerpt', 'category', 'tags', 'author', 'original_publication_date', 'original_source_url', 'status'];
                       
+                      // Show sample of parsed data for validation
+                      setImportLogs(prev => [...prev, '\n📋 דוגמה למאמר שנחלץ:']);
+                      if (articles.length > 0) {
+                        const sample = articles[0];
+                        setImportLogs(prev => [...prev, `   כותרת: ${sample.title?.substring(0, 80) || '❌ חסר'}`]);
+                        setImportLogs(prev => [...prev, `   תוכן: ${sample.content?.substring(0, 100) || '❌ חסר'}...`]);
+                        setImportLogs(prev => [...prev, `   קטגוריה: ${sample.category || 'אין'}`]);
+                        setImportLogs(prev => [...prev, `   מחבר: ${sample.author || 'אין'}`]);
+                      }
+                      
                       setCsvData(articles);
                       setCsvHeaders(headers);
                       setFieldMappings(autoDetectMappings(headers));
                       setIsXmlImport(true);
                       setCurrentStep('mapping');
-                      setImportLogs(prev => [...prev, `🎉 מוכן לייבוא!`]);
+                      setImportLogs(prev => [...prev, '\n🎉 מוכן לייבוא - בדוק את המיפוי בשלב הבא!`]);
                     } catch (error) {
                       console.error('XML parsing error:', error);
                       const errorMsg = error.message || 'שגיאה לא ידועה';
