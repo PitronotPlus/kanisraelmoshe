@@ -58,10 +58,7 @@ export default function Home() {
           Category.list(),
           HomeConfig.filter({ config_key: 'homePage' }),
           Advertisement.filter({ active: true }),
-          Article.filter({ 
-            published: true, 
-            media_type: 'video'
-          }, '-created_date', 20),
+          Article.filter({ published: true }, '-created_date', 50),
         ]);
 
         setArticles(heroArticlesData);
@@ -94,7 +91,19 @@ export default function Home() {
 
         setHomeConfig(loadedConfig);
         setAllAds(adsData);
-        setVideoArticles(videoArticlesData);
+        
+        // Filter articles that have videos (media_type video OR featured_video_url OR video in content)
+        const articlesWithVideo = videoArticlesData.filter(article => {
+          return article.media_type === 'video' || 
+                 (article.featured_video_url && article.featured_video_url.trim() !== '') ||
+                 (article.content && (
+                   article.content.includes('youtube.com') || 
+                   article.content.includes('youtu.be') ||
+                   article.content.includes('vimeo.com') ||
+                   article.content.includes('<video')
+                 ));
+        });
+        setVideoArticles(articlesWithVideo);
         
         // Fetch articles for special alert sections
         const specialAlertSections = loadedConfig.sections?.filter(s => s.type === 'special_alert' && s.enabled && s.article_id) || [];
