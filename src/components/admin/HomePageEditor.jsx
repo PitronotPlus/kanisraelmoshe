@@ -18,8 +18,13 @@ export const defaultHomeConfig = {
     showBreakingNews: true,
     type: 'grid',
     grid_style: 'hierarchical-1',
-    redMailLink: 'mailto:kanisraelnews@gmail.com', // Add default red mail link
-    showPrimaryAd: true // Added new property
+    redMailLink: 'mailto:kanisraelnews@gmail.com',
+    showPrimaryAd: true
+  },
+  primaryVideo: {
+    enabled: true,
+    title: 'חדשות',
+    articleCount: 8
   },
   sections: [
     {
