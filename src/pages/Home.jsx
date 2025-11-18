@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -21,6 +20,7 @@ const Sidebar = lazy(() => import("../components/home/Sidebar"));
 const SmartAdBanner = lazy(() => import("../components/ads/SmartAdBanner"));
 const DualAdBanner = lazy(() => import("../components/ads/DualAdBanner"));
 const SpecialAlert = lazy(() => import("../components/home/SpecialAlert"));
+const VideoSection = lazy(() => import("../components/home/VideoSection"));
 import ArticleSlider from "../components/home/ArticleSlider";
 
 const LoadingPlaceholder = () => (
@@ -371,6 +371,18 @@ export default function Home() {
         <div className="w-full my-6">
           <Suspense fallback={<LoadingPlaceholder />}>
             <DualAdBanner ads={allAds} />
+          </Suspense>
+        </div>
+      )}
+
+      {/* Primary Video Section (full width before sidebar) */}
+      {homeConfig?.primaryVideo?.enabled && (
+        <div className="w-full mb-8">
+          <Suspense fallback={<LoadingPlaceholder />}>
+            <VideoSection 
+              articles={articles.slice(0, 8)} 
+              title={homeConfig.primaryVideo.title || "חדשות"}
+            />
           </Suspense>
         </div>
       )}

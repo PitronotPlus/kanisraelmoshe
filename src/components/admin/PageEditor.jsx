@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -658,10 +657,42 @@ export default function PageEditor() {
                     מודעה שתופיע על כל הרוחב מתחת למקטע ה-Hero ולפני שאר הסקשנים
                   </p>
                 </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                </>
+                )}
+                </CardContent>
+                </Card>
+
+                {/* Primary Video Section Settings */}
+                <Card>
+                <CardHeader>
+                <CardTitle>הגדרות מקטע וידאו ראשי</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                <div className="flex items-center space-x-2 space-x-reverse">
+                <Switch
+                checked={config.primaryVideo?.enabled ?? true}
+                onCheckedChange={(enabled) =>
+                  setConfig({ ...config, primaryVideo: { ...config.primaryVideo, enabled } })
+                }
+                />
+                <Label>הפעל מקטע וידאו ראשי</Label>
+                </div>
+                {config.primaryVideo?.enabled && (
+                <div>
+                <Label>כותרת המקטע</Label>
+                <Input
+                  value={config.primaryVideo?.title || 'חדשות'}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      primaryVideo: { ...config.primaryVideo, title: e.target.value }
+                    })
+                  }
+                />
+                </div>
+                )}
+                </CardContent>
+                </Card>
 
         {/* Sections */}
         <Card>
