@@ -546,7 +546,7 @@ export default function WordpressImporter() {
                     }
                     
                     setIsLoading(true);
-                    setImportLogs([]);
+                    setImportLogs(['🔄 מעבד את תוכן ה-XML...']);
                     
                     try {
                       // Parse XML content
@@ -556,78 +556,77 @@ export default function WordpressImporter() {
                       // Check for parsing errors
                       const parserError = xmlDoc.getElementsByTagName('parsererror');
                       if (parserError.length > 0) {
-                        throw new Error('שגיאה בניתוח ה-XML. ודא שהתוכן תקין.');
+                        const errorText = parserError[0].textContent || 'שגיאה לא ידועה';
+                        throw new Error(`שגיאה בניתוח XML: ${errorText.substring(0, 200)}`);
                       }
+                      
+                      setImportLogs(prev => [...prev, '✅ ה-XML נקרא בהצלחה']);
                       
                       // Extract articles from XML
                       const items = xmlDoc.getElementsByTagName('item');
                       if (items.length === 0) {
-                        throw new Error('לא נמצאו מאמרים (אלמנטים <item>) בתוך ה-XML.');
+                        throw new Error('לא נמצאו מאמרים (אלמנטים <item>) בתוך ה-XML. ודא שמדובר בקובץ WordPress XML תקין.');
                       }
+                      
+                      setImportLogs(prev => [...prev, `📦 נמצאו ${items.length} מאמרים, מעבד...`]);
                       
                       const articles = [];
                       for (let i = 0; i < items.length; i++) {
                         const item = items[i];
                         const article = {};
                         
-                        // Extract common WordPress XML fields
-                        const titleEl = item.getElementsByTagName('title')[0];
-                        if (titleEl) article.title = titleEl.textContent;
+                        // Helper to get element by multiple tag names
+                        const getElement = (tagNames) => {
+                          for (const tagName of tagNames) {
+                            const el = item.getElementsByTagName(tagName)[0];
+                            if (el) return el.textContent || '';
+                          }
+                          return '';
+                        };
                         
-                        const contentEl = item.getElementsByTagNameNS('*', 'encoded')[0] || 
-                                         item.getElementsByTagName('content:encoded')[0] ||
-                                         item.getElementsByTagName('description')[0];
-                        if (contentEl) article.content = contentEl.textContent;
+                        // Extract fields
+                        article.title = getElement(['title']);
+                        article.content = getElement(['content:encoded', 'encoded', 'description']);
+                        article.excerpt = getElement(['excerpt:encoded', 'excerpt']);
+                        article.original_source_url = getElement(['link']);
+                        article.original_publication_date = getElement(['pubDate', 'post_date']);
+                        article.author = getElement(['dc:creator', 'creator', 'author']);
                         
-                        const excerptEl = item.getElementsByTagNameNS('*', 'excerpt')[0] || 
-                                         item.getElementsByTagName('excerpt:encoded')[0];
-                        if (excerptEl) article.excerpt = excerptEl.textContent;
-                        
-                        const linkEl = item.getElementsByTagName('link')[0];
-                        if (linkEl) article.original_source_url = linkEl.textContent;
-                        
-                        const pubDateEl = item.getElementsByTagName('pubDate')[0];
-                        if (pubDateEl) article.original_publication_date = pubDateEl.textContent;
-                        
-                        const creatorEl = item.getElementsByTagNameNS('*', 'creator')[0] ||
-                                         item.getElementsByTagName('dc:creator')[0];
-                        if (creatorEl) article.author = creatorEl.textContent;
-                        
-                        // Extract categories
-                        const categories = item.getElementsByTagName('category');
-                        if (categories.length > 0) {
+                        // Extract categories and tags
+                        const categoryElements = item.getElementsByTagName('category');
+                        if (categoryElements.length > 0) {
                           const cats = [];
-                          for (let j = 0; j < categories.length; j++) {
-                            const catText = categories[j].textContent;
-                            if (catText && catText.trim()) cats.push(catText);
+                          for (let j = 0; j < categoryElements.length; j++) {
+                            const catText = categoryElements[j].textContent;
+                            if (catText && catText.trim()) cats.push(catText.trim());
                           }
                           article.category = cats[0] || '';
-                          article.tags = cats.join(', ');
+                          article.tags = cats.slice(1).join(', ');
                         }
                         
-                        // Status
-                        const statusEl = item.getElementsByTagNameNS('*', 'status')[0];
-                        if (statusEl) article.status = statusEl.textContent;
-                        
-                        articles.push(article);
+                        // Only add if has title and content
+                        if (article.title || article.content) {
+                          articles.push(article);
+                        }
                       }
                       
                       if (articles.length === 0) {
-                        throw new Error('לא ניתן לחלץ מאמרים מה-XML.');
+                        throw new Error('לא ניתן לחלץ מאמרים עם תוכן תקין מה-XML.');
                       }
                       
-                      // Create headers from first article
+                      // Create headers from first article with content
                       const headers = Object.keys(articles[0]);
                       
                       setCsvData(articles);
                       setCsvHeaders(headers);
                       setFieldMappings(autoDetectMappings(headers));
                       setCurrentStep('mapping');
-                      setImportLogs([`✅ נטענו ${articles.length} מאמרים מה-XML בהצלחה`]);
+                      setImportLogs(prev => [...prev, `✅ ${articles.length} מאמרים עם תוכן נטענו בהצלחה!`]);
                     } catch (error) {
                       console.error('XML parsing error:', error);
-                      alert(`שגיאה בעיבוד ה-XML: ${error.message}`);
-                      setImportLogs([`❌ שגיאה: ${error.message}`]);
+                      const errorMsg = `שגיאה בעיבוד ה-XML: ${error.message}`;
+                      alert(errorMsg);
+                      setImportLogs(prev => [...prev, `❌ ${errorMsg}`]);
                     } finally {
                       setIsLoading(false);
                     }
