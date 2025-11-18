@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Article } from '@/entities/Article';
 import { repairArticleImages } from '@/functions/repairArticleImages';
 import { getRepairableArticles } from '@/functions/getRepairableArticles'; // Import new function
@@ -35,10 +34,11 @@ const analyzeArticleImages = (article) => {
     
     // Check featured image
     if (article.featured_image) {
+        const isTruncated = article.featured_image.startsWith('/wp-content/uploads/');
         images.push({
             url: article.featured_image,
             source: 'תמונה ראשית',
-            isExternal: isExternalUrl(article.featured_image)
+            isExternal: isExternalUrl(article.featured_image) || isTruncated
         });
     }
     
@@ -47,11 +47,19 @@ const analyzeArticleImages = (article) => {
     const imgRegex = /<img[^>]+src="([^"]+)"/g;
     const contentImages = [...content.matchAll(imgRegex)].map(match => match[1]);
     
-    contentImages.forEach(url => {
+    // Also check for truncated URLs
+    const truncatedRegex = /src="(\/wp-content\/uploads\/[^"]+)"/g;
+    const truncatedImages = [...content.matchAll(truncatedRegex)].map(match => match[1]);
+    
+    // Combine and deduplicate
+    const allImages = [...new Set([...contentImages, ...truncatedImages])];
+    
+    allImages.forEach(url => {
+        const isTruncated = url.startsWith('/wp-content/uploads/');
         images.push({
             url: url,
             source: 'תוכן המאמר',
-            isExternal: isExternalUrl(url)
+            isExternal: isExternalUrl(url) || isTruncated
         });
     });
     

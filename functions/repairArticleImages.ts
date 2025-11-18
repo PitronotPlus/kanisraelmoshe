@@ -51,16 +51,32 @@ Deno.serve(async (req) => {
             }
         };
 
+        const fixTruncatedUrl = (url) => {
+            // Fix truncated WordPress URLs from kanisrael.co.il
+            if (url.startsWith('/wp-content/uploads/')) {
+                return `https://kanisrael.co.il${url}`;
+            }
+            if (url.startsWith('src="/wp-content/uploads/')) {
+                return `https://kanisrael.co.il${url.substring(5)}`;
+            }
+            return url;
+        };
+
         const tryDownloadImage = async (url) => {
             try {
-                console.log(`Attempting to download image: ${url}`);
+                // Fix truncated URLs before attempting download
+                const fixedUrl = fixTruncatedUrl(url);
+                console.log(`Attempting to download image: ${fixedUrl}`);
+                if (fixedUrl !== url) {
+                    console.log(`Fixed truncated URL from: ${url}`);
+                }
                 
                 // Check if it's an expired OpenAI URL
-                if (url.includes('oaidalleapiprodscus.blob.core.windows.net')) {
+                if (fixedUrl.includes('oaidalleapiprodscus.blob.core.windows.net')) {
                     console.log('Detected OpenAI image URL - checking if expired...');
                 }
 
-                const response = await fetch(url, {
+                const response = await fetch(fixedUrl, {
                     method: 'GET',
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (compatible; Base44Bot/1.0)',
@@ -141,7 +157,14 @@ Deno.serve(async (req) => {
         if (article.content) {
             const imgRegex = /<img[^>]+src="([^"]+)"/gi;
             const contentImages = [...article.content.matchAll(imgRegex)].map(match => match[1]);
-            const externalContentImages = contentImages.filter(isExternalUrl);
+            
+            // Also detect truncated URLs in content
+            const truncatedRegex = /src="(\/wp-content\/uploads\/[^"]+)"/gi;
+            const truncatedImages = [...article.content.matchAll(truncatedRegex)].map(match => match[1]);
+            
+            // Combine and deduplicate
+            const allContentImages = [...new Set([...contentImages, ...truncatedImages])];
+            const externalContentImages = allContentImages.filter(url => isExternalUrl(url) || url.startsWith('/wp-content/uploads/'));
             
             console.log(`Found ${externalContentImages.length} external content images`);
             
