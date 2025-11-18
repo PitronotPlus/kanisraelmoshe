@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -453,27 +452,31 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const generateTypographyCSS = () => {
-    if (!siteConfig?.typography) return '';
-    
-    let css = '';
-    Object.entries(siteConfig.typography).forEach(([element, styles]) => {
-      if (!styles || typeof styles !== 'object') return;
-      
-      let styleString = '';
-      if (styles.fontFamily && typeof styles.fontFamily === 'string') {
-        styleString += `font-family: '${styles.fontFamily}', sans-serif !important;`;
-      }
-      if (styles.fontWeight && (typeof styles.fontWeight === 'number' || typeof styles.fontWeight === 'string')) {
-        styleString += `font-weight: ${styles.fontWeight} !important;`;
-      }
-      if (styles.color && typeof styles.color === 'string') {
-        styleString += `color: ${styles.color} !important;`;
-      }
+    if (!siteConfig?.typography || typeof siteConfig.typography !== 'object') return '';
 
-      if (styleString) {
-        css += `${element} { ${styleString} }`;
-      }
-    });
+    let css = '';
+    try {
+      Object.entries(siteConfig.typography).forEach(([element, styles]) => {
+        if (!styles || typeof styles !== 'object' || styles === null) return;
+
+        let styleString = '';
+        if (styles.fontFamily && typeof styles.fontFamily === 'string') {
+          styleString += `font-family: '${styles.fontFamily}', sans-serif !important;`;
+        }
+        if (styles.fontWeight && (typeof styles.fontWeight === 'number' || typeof styles.fontWeight === 'string')) {
+          styleString += `font-weight: ${styles.fontWeight} !important;`;
+        }
+        if (styles.color && typeof styles.color === 'string') {
+          styleString += `color: ${styles.color} !important;`;
+        }
+
+        if (styleString) {
+          css += `${element} { ${styleString} }`;
+        }
+      });
+    } catch (error) {
+      console.warn('Error generating typography CSS:', error);
+    }
     return css;
   };
 
@@ -553,15 +556,19 @@ export default function Layout({ children, currentPageName }) {
 
         ${(() => {
           const uniqueFonts = new Set();
-          if (siteConfig?.font_family && fontLinks[siteConfig.font_family] && siteConfig.font_family !== 'Assistant') {
-            uniqueFonts.add(siteConfig.font_family);
-          }
-          if (siteConfig?.typography && typeof siteConfig.typography === 'object') {
-            Object.values(siteConfig.typography).forEach(styles => {
-              if (styles && typeof styles === 'object' && styles.fontFamily && typeof styles.fontFamily === 'string' && fontLinks[styles.fontFamily] && styles.fontFamily !== 'Assistant') {
-                uniqueFonts.add(styles.fontFamily);
-              }
-            });
+          try {
+            if (siteConfig?.font_family && fontLinks[siteConfig.font_family] && siteConfig.font_family !== 'Assistant') {
+              uniqueFonts.add(siteConfig.font_family);
+            }
+            if (siteConfig?.typography && typeof siteConfig.typography === 'object') {
+              Object.values(siteConfig.typography).forEach(styles => {
+                if (styles && typeof styles === 'object' && styles !== null && styles.fontFamily && typeof styles.fontFamily === 'string' && fontLinks[styles.fontFamily] && styles.fontFamily !== 'Assistant') {
+                  uniqueFonts.add(styles.fontFamily);
+                }
+              });
+            }
+          } catch (error) {
+            console.warn('Error loading fonts:', error);
           }
           return Array.from(uniqueFonts).map(fontFamily => (
             `@import url('${fontLinks[fontFamily]}');`
