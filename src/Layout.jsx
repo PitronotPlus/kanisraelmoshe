@@ -894,7 +894,7 @@ export default function Layout({ children, currentPageName }) {
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/dad5fecc4_.png"
                   alt="כאן ישראל"
                   className="w-auto"
-                  style={{ height: `${(siteConfig?.logo_height || 64) * 2}px` }}
+                  style={{ height: `${siteConfig?.logo_height || 64}px` }}
                 />
               </Link>
               {siteConfig?.site_description && (
