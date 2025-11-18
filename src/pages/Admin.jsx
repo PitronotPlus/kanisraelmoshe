@@ -29,6 +29,7 @@ import ImageOptimizationManager from "../components/admin/ImageOptimizationManag
 import ImageRepairManager from "../components/admin/ImageRepairManager";
 import BackupManager from "../components/admin/BackupManager";
 import MenuEditor from "../components/admin/MenuEditor";
+import VideoEmbedFixer from "../components/admin/VideoEmbedFixer";
 import ImageGenerator from "../components/admin/ImageGenerator";
 import DuplicateManager from "../components/admin/DuplicateManager";
 import DesignEditor from "../components/admin/DesignEditor";
@@ -431,6 +432,16 @@ export default function Admin() {
               </button>
               
               <button
+                onClick={() => setActiveTab('video-fixer')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'video-fixer' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Video className="w-4 h-4" />
+                <span>מתקן הטמעת וידאו</span>
+              </button>
+              
+              <button
                 onClick={() => setActiveTab('users')}
                 className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
                   activeTab === 'users' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
@@ -640,6 +651,12 @@ export default function Admin() {
             {activeTab === 'backup' && (
               <ContentContainer title="גיבוי וניהול קבצים" description="ייצא מאמרים ונהל קבצי תמונות באתר">
                 <BackupManager />
+              </ContentContainer>
+            )}
+
+            {activeTab === 'video-fixer' && (
+              <ContentContainer title="מתקן הטמעת וידאו" description="זיהוי ותיקון אוטומטי של קישורי וידאו במאמרים">
+                <VideoEmbedFixer />
               </ContentContainer>
             )}
 
