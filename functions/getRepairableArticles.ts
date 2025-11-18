@@ -18,7 +18,8 @@ Deno.serve(async (req) => {
 
         console.log('Starting comprehensive scan for articles with external images...');
 
-        const BATCH_SIZE = 100; // Smaller batch for more reliable processing
+        const BATCH_SIZE = 50; // Reduced batch size
+        const MAX_ARTICLES_TO_SCAN = 500; // Limit total scan to prevent timeout
         let offset = 0;
         let hasMore = true;
         const repairableArticles = [];
@@ -87,7 +88,7 @@ Deno.serve(async (req) => {
             return images;
         };
 
-        while (hasMore) {
+        while (hasMore && totalScanned < MAX_ARTICLES_TO_SCAN) {
             console.log(`Scanning batch: ${offset + 1} to ${offset + BATCH_SIZE}`);
             
             try {
@@ -101,6 +102,12 @@ Deno.serve(async (req) => {
                 }
 
                 totalScanned += batch.length;
+                
+                // Stop if we've reached the max articles limit
+                if (totalScanned >= MAX_ARTICLES_TO_SCAN) {
+                    console.log(`Reached max scan limit of ${MAX_ARTICLES_TO_SCAN} articles`);
+                    hasMore = false;
+                }
 
                 for (const article of batch) {
                     let hasExternalImages = false;
@@ -148,9 +155,9 @@ Deno.serve(async (req) => {
 
                 offset += BATCH_SIZE;
                 
-                // Add a small delay to prevent overwhelming the database
-                if (hasMore) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
+                // Reduce delay to speed up processing
+                if (hasMore && totalScanned < MAX_ARTICLES_TO_SCAN) {
+                    await new Promise(resolve => setTimeout(resolve, 50));
                 }
                 
             } catch (batchError) {
