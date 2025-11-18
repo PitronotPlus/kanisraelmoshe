@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,11 @@ const ColorInput = ({ label, value, onChange }) => (
 );
 
 const TypographyRule = ({ ruleKey, rule, onUpdate, onDelete, availableFonts }) => {
+  // Safe null check for rule
+  if (!rule || typeof rule !== 'object') {
+    return null;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end p-4 border rounded-lg bg-gray-50/50">
       <div className="font-mono font-bold text-lg md:col-span-4">{ruleKey}</div>
@@ -35,7 +40,7 @@ const TypographyRule = ({ ruleKey, rule, onUpdate, onDelete, availableFonts }) =
       <div className="space-y-2">
         <Label>משפחת גופנים</Label>
         <Select
-          value={rule.fontFamily || ''}
+          value={rule?.fontFamily || ''}
           onValueChange={(value) => onUpdate(ruleKey, { ...rule, fontFamily: value })}
         >
           <SelectTrigger><SelectValue placeholder="בחר גופן" /></SelectTrigger>
@@ -55,7 +60,7 @@ const TypographyRule = ({ ruleKey, rule, onUpdate, onDelete, availableFonts }) =
           step="100"
           min="100"
           max="900"
-          value={rule.fontWeight || ''}
+          value={rule?.fontWeight || ''}
           onChange={(e) => onUpdate(ruleKey, { ...rule, fontWeight: e.target.value })}
           placeholder="400"
         />
@@ -65,7 +70,7 @@ const TypographyRule = ({ ruleKey, rule, onUpdate, onDelete, availableFonts }) =
         <Label>צבע</Label>
         <Input
           type="color"
-          value={rule.color || '#000000'}
+          value={rule?.color || '#000000'}
           onChange={(e) => onUpdate(ruleKey, { ...rule, color: e.target.value })}
           className="w-full h-10"
         />
@@ -242,16 +247,22 @@ const DesignEditor = ({ config, onConfigChange, onSave }) => {
             <Button onClick={handleAddTypographyRule}><PlusCircle className="w-4 h-4 ml-2"/> הוסף חוק</Button>
           </div>
           <div className="space-y-4">
-            {config.typography && Object.entries(config.typography).map(([key, value]) => (
-              <TypographyRule 
-                key={key}
-                ruleKey={key}
-                rule={value}
-                onUpdate={handleTypographyUpdate}
-                onDelete={handleDeleteTypographyRule}
-                availableFonts={availableFonts}
-              />
-            ))}
+            {config?.typography && Object.entries(config.typography).map(([key, value]) => {
+              // Skip null or invalid values
+              if (!value || typeof value !== 'object' || Array.isArray(value)) {
+                return null;
+              }
+              return (
+                <TypographyRule 
+                  key={key}
+                  ruleKey={key}
+                  rule={value}
+                  onUpdate={handleTypographyUpdate}
+                  onDelete={handleDeleteTypographyRule}
+                  availableFonts={availableFonts}
+                />
+              );
+            })}
           </div>
         </CardContent>
       </Card>
