@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, CheckCircle, ArrowRight } from "lucide-react";
+import { UploadCloud, FileText, CheckCircle, XCircle, Settings, Eye, ArrowRight } from "lucide-react";
 import { UploadFile } from "@/integrations/Core";
 import { importFromWordpress } from "@/functions/importFromWordpress";
 import { parseCsv } from "@/functions/parseCsv";
@@ -117,6 +116,8 @@ export default function WordpressImporter() {
 
   const [fieldOptions, setFieldOptions] = useState([]);
   const [isSingleFile, setIsSingleFile] = useState(true); // New state to toggle between single/multiple file mode
+  const [xmlContent, setXmlContent] = useState(''); // For manual XML paste
+  const [xmlImportStep, setXmlImportStep] = useState('paste'); // paste, processing, complete
 
   useEffect(() => {
     // Dynamically generate field options from Article schema
@@ -420,8 +421,9 @@ export default function WordpressImporter() {
       </CardHeader>
       <CardContent>
         <Tabs value={currentStep} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="upload" disabled={currentStep !== 'upload'}>העלאת קבצים</TabsTrigger>
+            <TabsTrigger value="xml" disabled={currentStep !== 'upload'}>ייבוא XML ידני</TabsTrigger>
             <TabsTrigger value="mapping" disabled={currentStep === 'upload'}>מיפוי שדות</TabsTrigger>
             <TabsTrigger value="import" disabled={currentStep === 'upload' || currentStep === 'mapping'}>ייבוא</TabsTrigger>
           </TabsList>
@@ -493,6 +495,158 @@ export default function WordpressImporter() {
                   )}
                 </div>
               )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="xml" className="space-y-6 mt-6">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="xml-content">הדבק את תוכן ה-XML כאן</Label>
+                <p className="text-sm text-gray-600 mb-2">
+                  הדבק את תוכן קובץ ה-XML המלא. המערכת תעבד אותו בשלבים גם אם הוא ארוך מאוד.
+                </p>
+                <textarea
+                  id="xml-content"
+                  value={xmlContent}
+                  onChange={(e) => setXmlContent(e.target.value)}
+                  placeholder="<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>
+<rss version=&quot;2.0&quot;>
+  <channel>
+    <item>...</item>
+  </channel>
+</rss>"
+                  className="w-full h-96 p-4 border rounded-lg font-mono text-xs"
+                  dir="ltr"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  ניתן להדביק תוכן ארוך - המערכת תעבד אותו בשלבים
+                </p>
+              </div>
+
+              {xmlContent.trim() && (
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center text-blue-800">
+                    <FileText className="w-5 h-5 ml-2" />
+                    <span className="font-medium">
+                      נמצאו {xmlContent.length.toLocaleString()} תווים
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={() => { setXmlContent(''); setCurrentStep('upload'); }}>
+                  חזור
+                </Button>
+                <Button 
+                  onClick={async () => {
+                    if (!xmlContent.trim()) {
+                      alert('אנא הדבק תוכן XML');
+                      return;
+                    }
+                    
+                    setIsLoading(true);
+                    setImportLogs([]);
+                    
+                    try {
+                      // Parse XML content
+                      const parser = new DOMParser();
+                      const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+                      
+                      // Check for parsing errors
+                      const parserError = xmlDoc.getElementsByTagName('parsererror');
+                      if (parserError.length > 0) {
+                        throw new Error('שגיאה בניתוח ה-XML. ודא שהתוכן תקין.');
+                      }
+                      
+                      // Extract articles from XML
+                      const items = xmlDoc.getElementsByTagName('item');
+                      if (items.length === 0) {
+                        throw new Error('לא נמצאו מאמרים (אלמנטים <item>) בתוך ה-XML.');
+                      }
+                      
+                      const articles = [];
+                      for (let i = 0; i < items.length; i++) {
+                        const item = items[i];
+                        const article = {};
+                        
+                        // Extract common WordPress XML fields
+                        const titleEl = item.getElementsByTagName('title')[0];
+                        if (titleEl) article.title = titleEl.textContent;
+                        
+                        const contentEl = item.getElementsByTagNameNS('*', 'encoded')[0] || 
+                                         item.getElementsByTagName('content:encoded')[0] ||
+                                         item.getElementsByTagName('description')[0];
+                        if (contentEl) article.content = contentEl.textContent;
+                        
+                        const excerptEl = item.getElementsByTagNameNS('*', 'excerpt')[0] || 
+                                         item.getElementsByTagName('excerpt:encoded')[0];
+                        if (excerptEl) article.excerpt = excerptEl.textContent;
+                        
+                        const linkEl = item.getElementsByTagName('link')[0];
+                        if (linkEl) article.original_source_url = linkEl.textContent;
+                        
+                        const pubDateEl = item.getElementsByTagName('pubDate')[0];
+                        if (pubDateEl) article.original_publication_date = pubDateEl.textContent;
+                        
+                        const creatorEl = item.getElementsByTagNameNS('*', 'creator')[0] ||
+                                         item.getElementsByTagName('dc:creator')[0];
+                        if (creatorEl) article.author = creatorEl.textContent;
+                        
+                        // Extract categories
+                        const categories = item.getElementsByTagName('category');
+                        if (categories.length > 0) {
+                          const cats = [];
+                          for (let j = 0; j < categories.length; j++) {
+                            const catText = categories[j].textContent;
+                            if (catText && catText.trim()) cats.push(catText);
+                          }
+                          article.category = cats[0] || '';
+                          article.tags = cats.join(', ');
+                        }
+                        
+                        // Status
+                        const statusEl = item.getElementsByTagNameNS('*', 'status')[0];
+                        if (statusEl) article.status = statusEl.textContent;
+                        
+                        articles.push(article);
+                      }
+                      
+                      if (articles.length === 0) {
+                        throw new Error('לא ניתן לחלץ מאמרים מה-XML.');
+                      }
+                      
+                      // Create headers from first article
+                      const headers = Object.keys(articles[0]);
+                      
+                      setCsvData(articles);
+                      setCsvHeaders(headers);
+                      setFieldMappings(autoDetectMappings(headers));
+                      setCurrentStep('mapping');
+                      setImportLogs([`✅ נטענו ${articles.length} מאמרים מה-XML בהצלחה`]);
+                    } catch (error) {
+                      console.error('XML parsing error:', error);
+                      alert(`שגיאה בעיבוד ה-XML: ${error.message}`);
+                      setImportLogs([`❌ שגיאה: ${error.message}`]);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  disabled={!xmlContent.trim() || isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
+                      מעבד XML...
+                    </>
+                  ) : (
+                    <>
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                      המשך למיפוי
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </TabsContent>
 
