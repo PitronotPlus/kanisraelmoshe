@@ -506,10 +506,12 @@ export default function Layout({ children, currentPageName }) {
 
   const generateCustomFontCSS = () => {
     if (!customFonts || !Array.isArray(customFonts) || customFonts.length === 0) return '';
-    
-    return customFonts.map(font => {
-      if (!font || !font.familyName || !font.files || !Array.isArray(font.files)) return '';
-      
+
+    let css = '';
+
+    customFonts.forEach(font => {
+      if (!font || !font.familyName || !font.files || !Array.isArray(font.files)) return;
+
       const fontSources = font.files
         .filter(file => file && file.url && file.format)
         .sort((a, b) => {
@@ -522,10 +524,11 @@ export default function Layout({ children, currentPageName }) {
                        file.format;
           return `url('${file.url}') format('${format}')`;
         }).join(', ');
-      
-      if (!fontSources) return '';
-      
-      return `
+
+      if (!fontSources) return;
+
+      // הגדרת ה-font-face
+      css += `
         @font-face {
           font-family: '${font.familyName}';
           src: ${fontSources};
@@ -533,7 +536,19 @@ export default function Layout({ children, currentPageName }) {
           font-weight: 100 900;
         }
       `;
-    }).join('\n');
+
+      // החלת הפונט על האלמנטים שנבחרו
+      if (font.applyTo && Array.isArray(font.applyTo) && font.applyTo.length > 0) {
+        const selectors = font.applyTo.join(', ');
+        css += `
+          ${selectors} {
+            font-family: '${font.familyName}', sans-serif !important;
+          }
+        `;
+      }
+    });
+
+    return css;
   };
 
   const generateSlugForMobileMenu = (name) => {
