@@ -493,7 +493,15 @@ export default function Layout({ children, currentPageName }) {
           } catch {}
 
           if (parts.length > 0) {
-            css += `${element} { ${parts.join(' ')} }`;
+            // החלת הסטיילים על האלמנט עצמו ובכל הקונטקסטים
+            const selectors = [
+              element,
+              `.article-content ${element}`,
+              `article ${element}`,
+              `.prose ${element}`,
+              `main ${element}`
+            ].join(', ');
+            css += `${selectors} { ${parts.join(' ')} }`;
           }
         } catch {}
       });
@@ -537,9 +545,19 @@ export default function Layout({ children, currentPageName }) {
         }
       `;
 
-      // החלת הפונט על האלמנטים שנבחרו
+      // החלת הפונט על האלמנטים שנבחרו בכל הקונטקסטים
       if (font.applyTo && Array.isArray(font.applyTo) && font.applyTo.length > 0) {
-        const selectors = font.applyTo.join(', ');
+        const expandedSelectors = [];
+        font.applyTo.forEach(element => {
+          expandedSelectors.push(
+            element,
+            `.article-content ${element}`,
+            `article ${element}`,
+            `.prose ${element}`,
+            `main ${element}`
+          );
+        });
+        const selectors = expandedSelectors.join(', ');
         css += `
           ${selectors} {
             font-family: '${font.familyName}', sans-serif !important;
