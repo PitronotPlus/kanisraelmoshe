@@ -549,83 +549,161 @@ export default function WordpressImporter() {
                     setImportLogs(['🔄 מעבד את תוכן ה-XML...']);
                     
                     try {
+                      // Clean the XML content - remove comments and whitespace before XML declaration
+                      let cleanedXml = xmlContent.trim();
+                      
+                      // Remove all HTML comments
+                      cleanedXml = cleanedXml.replace(/<!--[\s\S]*?-->/g, '');
+                      cleanedXml = cleanedXml.trim();
+                      
+                      setImportLogs(prev => [...prev, `📄 גודל תוכן: ${cleanedXml.length.toLocaleString()} תווים`]);
+                      
                       // Parse XML content
                       const parser = new DOMParser();
-                      const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+                      const xmlDoc = parser.parseFromString(cleanedXml, 'text/xml');
                       
                       // Check for parsing errors
                       const parserError = xmlDoc.getElementsByTagName('parsererror');
                       if (parserError.length > 0) {
                         const errorText = parserError[0].textContent || 'שגיאה לא ידועה';
-                        throw new Error(`שגיאה בניתוח XML: ${errorText.substring(0, 200)}`);
+                        throw new Error(`ה-XML לא תקין: ${errorText.substring(0, 300)}`);
                       }
                       
-                      setImportLogs(prev => [...prev, '✅ ה-XML נקרא בהצלחה']);
+                      setImportLogs(prev => [...prev, '✅ ה-XML נותח בהצלחה']);
                       
                       // Extract articles from XML
                       const items = xmlDoc.getElementsByTagName('item');
                       if (items.length === 0) {
-                        throw new Error('לא נמצאו מאמרים (אלמנטים <item>) בתוך ה-XML. ודא שמדובר בקובץ WordPress XML תקין.');
+                        throw new Error('לא נמצאו מאמרים (אלמנטים <item>). ודא שזה קובץ WordPress XML תקין.');
                       }
                       
-                      setImportLogs(prev => [...prev, `📦 נמצאו ${items.length} מאמרים, מעבד...`]);
+                      setImportLogs(prev => [...prev, `📦 נמצאו ${items.length} מאמרים - מתחיל עיבוד...`]);
                       
                       const articles = [];
-                      for (let i = 0; i < items.length; i++) {
-                        const item = items[i];
-                        const article = {};
+                      const batchSize = 100;
+                      const totalBatches = Math.ceil(items.length / batchSize);
+                      
+                      for (let batch = 0; batch < totalBatches; batch++) {
+                        const start = batch * batchSize;
+                        const end = Math.min((batch + 1) * batchSize, items.length);
                         
-                        // Helper to get element by multiple tag names
-                        const getElement = (tagNames) => {
-                          for (const tagName of tagNames) {
-                            const el = item.getElementsByTagName(tagName)[0];
-                            if (el) return el.textContent || '';
+                        setImportLogs(prev => [...prev, `🔄 מעבד מאמרים ${start + 1}-${end} מתוך ${items.length}...`]);
+                        
+                        for (let i = start; i < end; i++) {
+                          const item = items[i];
+                          const article = {};
+                          
+                          // Helper to get CDATA content safely
+                          const getCDATA = (element) => {
+                            if (!element) return '';
+                            // Get CDATA or text content
+                            const cdata = element.textContent || '';
+                            return cdata.trim();
+                          };
+                          
+                          // Extract title
+                          const titleEl = item.getElementsByTagName('title')[0];
+                          article.title = getCDATA(titleEl);
+                          
+                          // Extract content - try multiple namespaces
+                          let contentEl = item.getElementsByTagName('content:encoded')[0];
+                          if (!contentEl) {
+                            const allElements = item.getElementsByTagName('*');
+                            for (let el of allElements) {
+                              if (el.localName === 'encoded' && el.namespaceURI?.includes('content')) {
+                                contentEl = el;
+                                break;
+                              }
+                            }
                           }
-                          return '';
-                        };
-                        
-                        // Extract fields
-                        article.title = getElement(['title']);
-                        article.content = getElement(['content:encoded', 'encoded', 'description']);
-                        article.excerpt = getElement(['excerpt:encoded', 'excerpt']);
-                        article.original_source_url = getElement(['link']);
-                        article.original_publication_date = getElement(['pubDate', 'post_date']);
-                        article.author = getElement(['dc:creator', 'creator', 'author']);
-                        
-                        // Extract categories and tags
-                        const categoryElements = item.getElementsByTagName('category');
-                        if (categoryElements.length > 0) {
+                          if (!contentEl) contentEl = item.getElementsByTagName('description')[0];
+                          article.content = getCDATA(contentEl);
+                          
+                          // Extract excerpt
+                          let excerptEl = item.getElementsByTagName('excerpt:encoded')[0];
+                          if (!excerptEl) {
+                            const allElements = item.getElementsByTagName('*');
+                            for (let el of allElements) {
+                              if (el.localName === 'encoded' && el.namespaceURI?.includes('excerpt')) {
+                                excerptEl = el;
+                                break;
+                              }
+                            }
+                          }
+                          article.excerpt = getCDATA(excerptEl);
+                          
+                          // Extract other fields
+                          article.original_source_url = getCDATA(item.getElementsByTagName('link')[0]);
+                          article.original_publication_date = getCDATA(item.getElementsByTagName('pubDate')[0]) || 
+                                                              getCDATA(item.getElementsByTagName('wp:post_date')[0]);
+                          
+                          // Author - try multiple tags
+                          let authorEl = item.getElementsByTagName('dc:creator')[0];
+                          if (!authorEl) {
+                            const allElements = item.getElementsByTagName('*');
+                            for (let el of allElements) {
+                              if (el.localName === 'creator') {
+                                authorEl = el;
+                                break;
+                              }
+                            }
+                          }
+                          article.author = getCDATA(authorEl);
+                          
+                          // Extract categories
+                          const categoryElements = item.getElementsByTagName('category');
                           const cats = [];
                           for (let j = 0; j < categoryElements.length; j++) {
-                            const catText = categoryElements[j].textContent;
-                            if (catText && catText.trim()) cats.push(catText.trim());
+                            const domain = categoryElements[j].getAttribute('domain');
+                            const catText = getCDATA(categoryElements[j]);
+                            
+                            if (catText && domain === 'category') {
+                              cats.push(catText);
+                            }
                           }
-                          article.category = cats[0] || '';
-                          article.tags = cats.slice(1).join(', ');
+                          if (cats.length > 0) {
+                            article.category = cats[0];
+                            if (cats.length > 1) {
+                              article.tags = cats.slice(1).join(', ');
+                            }
+                          }
+                          
+                          // Status
+                          const statusEl = item.getElementsByTagName('wp:status')[0];
+                          article.status = getCDATA(statusEl);
+                          
+                          // Only add if has title or content
+                          if (article.title || article.content) {
+                            articles.push(article);
+                          }
                         }
                         
-                        // Only add if has title and content
-                        if (article.title || article.content) {
-                          articles.push(article);
+                        // Small delay between batches to prevent UI freeze
+                        if (batch < totalBatches - 1) {
+                          await new Promise(resolve => setTimeout(resolve, 50));
                         }
                       }
                       
                       if (articles.length === 0) {
-                        throw new Error('לא ניתן לחלץ מאמרים עם תוכן תקין מה-XML.');
+                        throw new Error('לא ניתן לחלץ מאמרים מה-XML. ייתכן שהפורמט לא נתמך.');
                       }
                       
-                      // Create headers from first article with content
-                      const headers = Object.keys(articles[0]);
+                      setImportLogs(prev => [...prev, `✅ חולצו ${articles.length} מאמרים מה-XML`]);
+                      
+                      // Create headers from first article
+                      const headers = ['title', 'content', 'excerpt', 'category', 'tags', 'author', 'original_publication_date', 'original_source_url', 'status'];
                       
                       setCsvData(articles);
                       setCsvHeaders(headers);
                       setFieldMappings(autoDetectMappings(headers));
+                      setFiles([new File([cleanedXml], 'manual-xml-import.xml', { type: 'text/xml' })]);
+                      setFile(new File([cleanedXml], 'manual-xml-import.xml', { type: 'text/xml' }));
                       setCurrentStep('mapping');
-                      setImportLogs(prev => [...prev, `✅ ${articles.length} מאמרים עם תוכן נטענו בהצלחה!`]);
+                      setImportLogs(prev => [...prev, `🎉 המערכת מוכנה לייבוא!`]);
                     } catch (error) {
                       console.error('XML parsing error:', error);
-                      const errorMsg = `שגיאה בעיבוד ה-XML: ${error.message}`;
-                      alert(errorMsg);
+                      const errorMsg = error.message || 'שגיאה לא ידועה';
+                      alert(`שגיאה בעיבוד ה-XML: ${errorMsg}`);
                       setImportLogs(prev => [...prev, `❌ ${errorMsg}`]);
                     } finally {
                       setIsLoading(false);
