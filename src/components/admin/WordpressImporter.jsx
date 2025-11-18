@@ -500,10 +500,23 @@ export default function WordpressImporter() {
 
           <TabsContent value="xml" className="space-y-6 mt-6">
             <div className="space-y-4">
+              <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <h4 className="font-bold text-orange-800 mb-2">⚠️ חשוב - איך להעתיק XML נכון:</h4>
+                <ol className="list-decimal mr-5 space-y-1 text-sm text-orange-700">
+                  <li>פתח את קובץ ה-XML בדפדפן</li>
+                  <li><strong>לחץ Ctrl+U</strong> (או לחיצה ימנית → "View Page Source" / "הצג מקור דף")</li>
+                  <li>תראה קוד XML טהור שמתחיל ב- <code className="bg-orange-100 px-1">&lt;?xml</code> או <code className="bg-orange-100 px-1">&lt;rss</code></li>
+                  <li>בחר הכל (Ctrl+A) והעתק (Ctrl+C)</li>
+                  <li>הדבק למטה</li>
+                </ol>
+                <p className="text-xs text-red-600 font-semibold mt-2">
+                  ❌ אל תעתיק מהתצוגה הרגילה של הדפדפן - המערכת לא תוכל לקרוא את זה!
+                </p>
+              </div>
               <div>
                 <Label htmlFor="xml-content">הדבק את תוכן ה-XML כאן</Label>
                 <p className="text-sm text-gray-600 mb-2">
-                  הדבק את תוכן קובץ ה-XML המלא. המערכת תעבד אותו בשלבים גם אם הוא ארוך מאוד.
+                  המערכת תעבד את ה-XML בשלבים גם אם הוא ארוך מאוד.
                 </p>
                 <textarea
                   id="xml-content"
