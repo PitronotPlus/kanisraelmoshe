@@ -73,7 +73,7 @@ export default function VideoSection({ articles = [], title = "חדשות" }) {
             </div>
             
             {/* Title */}
-            <h3 className="text-sm font-semibold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+            <h3 className="text-base md:text-lg font-bold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
               {article.title}
             </h3>
           </Link>
