@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Article } from '@/entities/Article';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,8 @@ export default function ThinContentManager() {
   const loadAndProcessArticles = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await Article.list('-created_date');
+      // Limit to 500 articles to prevent timeout
+      const data = await Article.list('-created_date', 500);
       setAllArticles(data);
 
       const filtered = data.filter(article => countWords(article.content) < WORD_COUNT_THRESHOLD);
