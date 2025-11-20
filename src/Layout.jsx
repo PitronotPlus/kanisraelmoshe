@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 import { Advertisement } from "@/entities/Advertisement";
 import { SiteConfig } from "@/entities/SiteConfig";
 import { NavigationMenu } from "@/entities/NavigationMenu";
@@ -319,8 +319,8 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [currentUser, menuResult, adsData, configData] = await Promise.all([
-          User.me().catch(() => null),
+          const [currentUser, menuResult, adsData, configData] = await Promise.all([
+            base44.auth.me().catch(() => null),
           NavigationMenu.filter({ name: 'main_menu' }).catch(() => []),
           Advertisement.filter({ active: true }).catch(() => []), // Load ALL active ads
           SiteConfig.list().catch(() => [])
@@ -371,9 +371,8 @@ export default function Layout({ children, currentPageName }) {
   }, [menuTree]);
 
   const handleLogout = async () => {
-    await User.logout();
+    await base44.auth.logout();
     setUser(null);
-    window.location.href = createPageUrl('Home');
   };
 
   const handleSearch = (e) => {
@@ -437,13 +436,13 @@ export default function Layout({ children, currentPageName }) {
         <Button 
           variant="outline" 
           size="sm"
-          onClick={() => User.login()}
+          onClick={() => base44.auth.redirectToLogin()}
         >
           כניסה
         </Button>
         <Button 
           size="sm"
-          onClick={() => User.login()}
+          onClick={() => base44.auth.redirectToLogin()}
         >
           הרשמה
         </Button>
