@@ -30,7 +30,14 @@ Deno.serve(async (req) => {
             });
         }
 
-        const { threshold = 20 } = await req.json();
+        let threshold = 20;
+        try {
+            const body = await req.json();
+            threshold = body.threshold || 20;
+        } catch (e) {
+            // No body or invalid JSON, use default
+            threshold = 20;
+        }
 
         console.log(`Starting thin content scan with threshold: ${threshold} words`);
 
