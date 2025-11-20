@@ -8,6 +8,17 @@ const countWords = (htmlString) => {
 };
 
 Deno.serve(async (req) => {
+    const corsHeaders = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Content-Type": "application/json"
+    };
+
+    if (req.method === "OPTIONS") {
+        return new Response(null, { status: 204, headers: corsHeaders });
+    }
+
     try {
         const base44 = createClientFromRequest(req);
         
@@ -15,7 +26,7 @@ Deno.serve(async (req) => {
         if (!user || user.role !== 'admin') {
             return new Response(JSON.stringify({ success: false, error: 'Unauthorized - Admin only' }), { 
                 status: 401,
-                headers: { "Content-Type": "application/json" }
+                headers: corsHeaders
             });
         }
 
@@ -74,7 +85,7 @@ Deno.serve(async (req) => {
             }
         }), {
             status: 200,
-            headers: { "Content-Type": "application/json" }
+            headers: corsHeaders
         });
 
     } catch (error) {
@@ -84,7 +95,7 @@ Deno.serve(async (req) => {
             error: error.message 
         }), {
             status: 500,
-            headers: { "Content-Type": "application/json" }
+            headers: corsHeaders
         });
     }
 });
