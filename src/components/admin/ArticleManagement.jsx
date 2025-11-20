@@ -1,9 +1,8 @@
-
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Article } from "@/entities/Article";
 import { Category } from "@/entities/Category";
 import { User } from "@/entities/User"; // Import User entity
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"; // New imports for table components
 import { Link } from 'react-router-dom'; // Fixed import - using react-router-dom instead of next/link
 
-import { CheckCircle2, Circle, Edit, Trash2, Search, Plus, Newspaper, Bot, RefreshCw, Users, Eye, ChevronDown } from "lucide-react"; // Add new icons
+import { CheckCircle2, Circle, Edit, Trash2, Search, Plus, Newspaper, Bot, RefreshCw, CalendarIcon, Users, Eye, ChevronDown, CheckSquare, Sparkles, XSquare } from "lucide-react"; // Add new icons
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 import { rewriteArticle } from "@/functions/rewriteArticle";
@@ -45,7 +44,7 @@ const ArticleRow = ({ article, onUpdateStatus, onDelete, onReassign, onEditArtic
            onCheckedChange={(checked) => article.onSelect(article.id, checked)}
         />
       </TableCell>
-      <TableCell className="p-4 font-medium text-right">{article.title}</TableCell>
+      <TableCell className="p-4 font-medium text-right max-w-md truncate">{article.title}</TableCell>
       <TableCell className="p-4 text-right">{article.displayAuthorName}</TableCell> {/* Use displayAuthorName passed from parent */}
       <TableCell className="p-4 text-right">{article.category}</TableCell>
       <TableCell className="p-4 text-gray-600 text-right">
