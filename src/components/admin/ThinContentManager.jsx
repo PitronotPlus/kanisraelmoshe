@@ -29,11 +29,32 @@ export default function ThinContentManager() {
   const loadAndProcessArticles = useCallback(async () => {
     try {
       setLoading(true);
-      // Limit to 500 articles to prevent timeout
-      const data = await Article.list('-created_date', 500);
-      setAllArticles(data);
+      const BATCH_SIZE = 200;
+      let allLoadedArticles = [];
+      let offset = 0;
+      let hasMore = true;
 
-      const filtered = data.filter(article => countWords(article.content) < WORD_COUNT_THRESHOLD);
+      // Load all articles in batches
+      while (hasMore) {
+        const batch = await Article.list('-created_date', BATCH_SIZE, offset);
+        
+        if (batch.length === 0) {
+          hasMore = false;
+          break;
+        }
+        
+        allLoadedArticles = [...allLoadedArticles, ...batch];
+        offset += BATCH_SIZE;
+        
+        // Small delay between batches to prevent overload
+        if (hasMore) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+
+      setAllArticles(allLoadedArticles);
+
+      const filtered = allLoadedArticles.filter(article => countWords(article.content) < WORD_COUNT_THRESHOLD);
       setThinArticles(filtered);
       setSelectedArticles(new Set());
     } catch (error) {
