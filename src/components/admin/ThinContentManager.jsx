@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Article } from '@/entities/Article';
+import { scanThinContent } from '@/functions/scanThinContent';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,43 +20,24 @@ const countWords = (htmlString) => {
 };
 
 export default function ThinContentManager() {
-  const [allArticles, setAllArticles] = useState([]);
+  const [totalScanned, setTotalScanned] = useState(0);
   const [thinArticles, setThinArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedArticles, setSelectedArticles] = useState(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
-  const WORD_COUNT_THRESHOLD = 20; // Changed from 100 to 20
+  const WORD_COUNT_THRESHOLD = 20;
 
   const loadAndProcessArticles = useCallback(async () => {
     try {
       setLoading(true);
-      const BATCH_SIZE = 200;
-      let allLoadedArticles = [];
-      let offset = 0;
-      let hasMore = true;
-
-      // Load all articles in batches
-      while (hasMore) {
-        const batch = await Article.list('-created_date', BATCH_SIZE, offset);
-        
-        if (batch.length === 0) {
-          hasMore = false;
-          break;
-        }
-        
-        allLoadedArticles = [...allLoadedArticles, ...batch];
-        offset += BATCH_SIZE;
-        
-        // Small delay between batches to prevent overload
-        if (hasMore) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
+      const { data: response } = await scanThinContent({ threshold: WORD_COUNT_THRESHOLD });
+      
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to scan articles');
       }
 
-      setAllArticles(allLoadedArticles);
-
-      const filtered = allLoadedArticles.filter(article => countWords(article.content) < WORD_COUNT_THRESHOLD);
-      setThinArticles(filtered);
+      setTotalScanned(response.data.totalScanned);
+      setThinArticles(response.data.thinArticles);
       setSelectedArticles(new Set());
     } catch (error) {
       console.error("שגיאה בטעינת מאמרים:", error);
@@ -176,8 +158,8 @@ export default function ThinContentManager() {
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-sm text-gray-600">סה"כ מאמרים באתר</p>
-            <p className="text-3xl font-bold text-gray-900">{allArticles.length}</p>
+            <p className="text-sm text-gray-600">סה"כ מאמרים שנסרקו</p>
+            <p className="text-3xl font-bold text-gray-900">{totalScanned}</p>
           </CardContent>
         </Card>
       </div>
@@ -246,7 +228,7 @@ export default function ThinContentManager() {
                       </TableCell>
                       <TableCell className="font-medium">{article.title}</TableCell>
                       <TableCell className="text-center text-red-600 font-bold">
-                        {countWords(article.content)}
+                        {article.wordCount}
                       </TableCell>
                       <TableCell className="text-center">
                         {format(new Date(article.created_date), 'dd/MM/yyyy HH:mm', { locale: he })}
