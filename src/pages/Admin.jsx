@@ -77,8 +77,13 @@ const ContentContainer = ({ children, title, description }) => (
   </div>
 );
 
+// Baseline article count - any articles added/deleted after this will be added to 25,866
+const BASELINE_ARTICLE_COUNT = 25866;
+const INITIAL_REAL_COUNT = 0; // This will be set on first load
+
 export default function Admin() {
   const [stats, setStats] = useState({ articles: 0, ads: 0, users: 0, categories: 0 });
+  const [baselineCount, setBaselineCount] = useState(null); // Real count when baseline was set
   const [activeTab, setActiveTab] = useState("dashboard");
   const [config, setConfig] = useState(null);
   const [allCategories, setAllCategories] = useState([]);
@@ -130,7 +135,26 @@ export default function Admin() {
             setConfig(defaultConfig);
           }
 
-          setStats({ articles: articleData.length, ads: adData.length, users: userData.length, categories: categoryData.length });
+          // Set baseline count on first load (store the real count)
+          const storedBaseline = localStorage.getItem('article_baseline_count');
+          if (!storedBaseline) {
+            localStorage.setItem('article_baseline_count', articleData.length.toString());
+            setBaselineCount(articleData.length);
+          } else {
+            setBaselineCount(parseInt(storedBaseline));
+          }
+
+          // Calculate displayed article count: 25,866 + (current - baseline)
+          const currentRealCount = articleData.length;
+          const baseline = storedBaseline ? parseInt(storedBaseline) : currentRealCount;
+          const displayedArticleCount = BASELINE_ARTICLE_COUNT + (currentRealCount - baseline);
+
+          setStats({ 
+            articles: displayedArticleCount, 
+            ads: adData.length, 
+            users: userData.length, 
+            categories: categoryData.length 
+          });
           setAllCategories(categoryData);
         } else {
           setIsAdmin(false);
