@@ -92,16 +92,18 @@ export default function Home() {
         setHomeConfig(loadedConfig);
         setAllAds(adsData);
         
-        // Filter articles that have videos (media_type video OR featured_video_url OR video in content)
-        const articlesWithVideo = videoArticlesData.filter(article => {
-          return article.media_type === 'video' || 
-                 (article.featured_video_url && article.featured_video_url.trim() !== '') ||
-                 (article.content && (
-                   article.content.includes('youtube.com') || 
-                   article.content.includes('youtu.be') ||
-                   article.content.includes('vimeo.com') ||
-                   article.content.includes('<video')
-                 ));
+        // Filter ALL articles to find those with videos
+        const articlesWithVideo = allPublishedArticles.filter(article => {
+          return article.published && (
+            article.media_type === 'video' || 
+            (article.featured_video_url && article.featured_video_url.trim() !== '') ||
+            (article.content && (
+              article.content.includes('youtube.com') || 
+              article.content.includes('youtu.be') ||
+              article.content.includes('vimeo.com') ||
+              article.content.includes('<video')
+            ))
+          );
         });
         setVideoArticles(articlesWithVideo);
         
