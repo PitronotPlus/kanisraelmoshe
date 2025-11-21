@@ -22,9 +22,11 @@ export default function CronJobManager() {
   useEffect(() => {
     // Generate CRON URLs based on current domain
     const baseUrl = window.location.origin;
+    const functionBaseUrl = baseUrl.replace('https://', 'https://').replace('.base44.app', '.base44.run');
+    
     setCronUrls({
-      clearCache: `${baseUrl}/api/cron/clear-cache`,
-      refreshData: `${baseUrl}/api/cron/refresh-data`,
+      clearCache: `${functionBaseUrl}/refreshLayoutCache`,
+      refreshData: `${functionBaseUrl}/warmupCache`,
       optimizeImages: `${baseUrl}/api/cron/optimize-images`,
       generateSitemap: `${baseUrl}/api/cron/generate-sitemap`
     });
@@ -64,22 +66,24 @@ export default function CronJobManager() {
 
   const cronJobs = [
     {
-      id: 'clearCache',
-      title: 'ניקוי Cache',
-      description: 'מנקה את הזיכרון המטמון של האתר ומאלץ טעינה מחדש של נתונים',
-      url: cronUrls.clearCache,
-      recommended: 'פעם ביום בשעה 03:00',
-      cronExpression: '0 3 * * *',
-      icon: RefreshCw
+      id: 'refreshData',
+      title: 'רענון Layout Cache (גבוה)',
+      description: 'מרענן תפריט, מודעות והגדרות - מפחית קריאות שרת בצורה משמעותית',
+      url: cronUrls.refreshData,
+      recommended: 'כל דקה (מומלץ מאוד)',
+      cronExpression: '* * * * *',
+      icon: Zap,
+      priority: 'high'
     },
     {
-      id: 'refreshData',
-      title: 'רענון נתונים',
-      description: 'מרענן את נתוני התפריט, המודעות וההגדרות',
-      url: cronUrls.refreshData,
-      recommended: 'כל 30 דקות',
-      cronExpression: '*/30 * * * *',
-      icon: Zap
+      id: 'clearCache',
+      title: 'חימום Cache נתונים (גבוה)',
+      description: 'טוען מראש מאמרים, קטגוריות ונתונים נוספים לזיכרון',
+      url: cronUrls.clearCache,
+      recommended: 'כל 5 דקות',
+      cronExpression: '*/5 * * * *',
+      icon: RefreshCw,
+      priority: 'high'
     },
     {
       id: 'optimizeImages',
@@ -88,7 +92,8 @@ export default function CronJobManager() {
       url: cronUrls.optimizeImages,
       recommended: 'כל 6 שעות',
       cronExpression: '0 */6 * * *',
-      icon: AlertCircle
+      icon: AlertCircle,
+      priority: 'medium'
     },
     {
       id: 'generateSitemap',
@@ -97,7 +102,8 @@ export default function CronJobManager() {
       url: cronUrls.generateSitemap,
       recommended: 'פעם ביום בשעה 02:00',
       cronExpression: '0 2 * * *',
-      icon: ExternalLink
+      icon: ExternalLink,
+      priority: 'low'
     }
   ];
 
@@ -200,15 +206,32 @@ export default function CronJobManager() {
           <div className="space-y-4">
             {cronJobs.map((job) => {
               const Icon = job.icon;
+              const priorityColors = {
+                high: 'border-red-300 bg-red-50',
+                medium: 'border-yellow-300 bg-yellow-50',
+                low: 'border-gray-300 bg-gray-50'
+              };
+              const priorityBadges = {
+                high: 'bg-red-100 text-red-800',
+                medium: 'bg-yellow-100 text-yellow-800',
+                low: 'bg-gray-100 text-gray-800'
+              };
               return (
-                <div key={job.id} className="border rounded-lg p-4 space-y-3">
+                <div key={job.id} className={`border-2 rounded-lg p-4 space-y-3 ${priorityColors[job.priority] || ''}`}>
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3 space-x-reverse">
                       <div className="p-2 bg-purple-100 rounded-lg">
                         <Icon className="w-5 h-5 text-purple-600" />
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{job.title}</h4>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-semibold text-gray-900">{job.title}</h4>
+                          {job.priority === 'high' && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${priorityBadges.high}`}>
+                              עדיפות גבוהה
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600 mt-1">{job.description}</p>
                       </div>
                     </div>
@@ -259,6 +282,13 @@ export default function CronJobManager() {
             })}
           </div>
 
+          <Alert className="bg-red-50 border-red-200">
+            <AlertCircle className="w-4 h-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              <strong>חשוב מאוד:</strong> הגדר את שני ה-CRON Jobs עם עדיפות גבוהה (רענון Layout Cache כל דקה + חימום Cache כל 5 דקות) כדי להפחית את העומס על השרת באופן דרמטי!
+            </AlertDescription>
+          </Alert>
+          
           <Alert className="bg-green-50 border-green-200">
             <CheckCircle className="w-4 h-4 text-green-600" />
             <AlertDescription className="text-green-800">
