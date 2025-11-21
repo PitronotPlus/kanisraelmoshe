@@ -51,14 +51,14 @@ export default function Home() {
           categoriesData,
           homeConfigData,
           adsData,
-          videoArticlesData,
+          allArticlesForVideo,
         ] = await Promise.all([
-          Article.filter({ published: true }, '-created_date', 20), // Already sorted by newest
-          Article.filter({ published: true }, '-created_date', 10), // Changed from '-views' to newest 
+          Article.filter({ published: true }, '-created_date', 20),
+          Article.filter({ published: true }, '-created_date', 10),
           Category.list(),
           HomeConfig.filter({ config_key: 'homePage' }),
           Advertisement.filter({ active: true }),
-          Article.filter({ published: true }, '-created_date', 500), // Increased to fetch more articles // Already sorted by newest
+          Article.list('-created_date'), // Load ALL articles to check for videos
         ]);
 
         setArticles(heroArticlesData);
@@ -93,7 +93,7 @@ export default function Home() {
         setAllAds(adsData);
         
         // Filter ALL articles to find those with videos
-        const articlesWithVideo = allPublishedArticles.filter(article => {
+        const articlesWithVideo = allArticlesForVideo.filter(article => {
           return article.published && (
             article.media_type === 'video' || 
             (article.featured_video_url && article.featured_video_url.trim() !== '') ||
