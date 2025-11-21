@@ -18,6 +18,16 @@ export default function CronJobManager() {
   const [cacheDuration, setCacheDuration] = useState('5');
   const [copied, setCopied] = useState('');
   const [cacheEnabled, setCacheEnabled] = useState(true);
+  const [articlesCache, setArticlesCache] = useState({
+    enabled: false,
+    duration: '10'
+  });
+  const [cronJobsStatus, setCronJobsStatus] = useState({
+    refreshData: false,
+    clearCache: false,
+    optimizeImages: false,
+    generateSitemap: false
+  });
 
   useEffect(() => {
     // Generate CRON URLs based on current domain
@@ -36,6 +46,26 @@ export default function CronJobManager() {
     const savedEnabled = localStorage.getItem('cache_enabled');
     if (savedDuration) setCacheDuration(savedDuration);
     if (savedEnabled !== null) setCacheEnabled(savedEnabled === 'true');
+
+    // Load articles cache settings
+    const savedArticlesCacheEnabled = localStorage.getItem('articles_cache_enabled');
+    const savedArticlesCacheDuration = localStorage.getItem('articles_cache_duration');
+    if (savedArticlesCacheEnabled !== null) {
+      setArticlesCache(prev => ({ ...prev, enabled: savedArticlesCacheEnabled === 'true' }));
+    }
+    if (savedArticlesCacheDuration) {
+      setArticlesCache(prev => ({ ...prev, duration: savedArticlesCacheDuration }));
+    }
+
+    // Load CRON jobs status
+    const savedCronStatus = localStorage.getItem('cron_jobs_status');
+    if (savedCronStatus) {
+      try {
+        setCronJobsStatus(JSON.parse(savedCronStatus));
+      } catch (e) {
+        console.error('Failed to parse cron status:', e);
+      }
+    }
   }, []);
 
   const copyToClipboard = (text, type) => {
@@ -58,10 +88,34 @@ export default function CronJobManager() {
 
   const handleClearCache = () => {
     sessionStorage.removeItem('layout_cache_data');
+    sessionStorage.removeItem('articles_cache_data');
+    sessionStorage.removeItem('category_cache_data');
     localStorage.removeItem('cache_duration');
     localStorage.removeItem('cache_enabled');
     alert('Cache נוקה בהצלחה!');
     window.location.reload();
+  };
+
+  const handleSaveArticlesCache = () => {
+    localStorage.setItem('articles_cache_enabled', articlesCache.enabled.toString());
+    localStorage.setItem('articles_cache_duration', articlesCache.duration);
+    
+    if (!articlesCache.enabled) {
+      sessionStorage.removeItem('articles_cache_data');
+      sessionStorage.removeItem('category_cache_data');
+    }
+    
+    alert('הגדרות Cache מאמרים נשמרו בהצלחה! העמוד ירענן כדי להחיל את השינויים.');
+    window.location.reload();
+  };
+
+  const toggleCronJobStatus = (jobId) => {
+    const newStatus = {
+      ...cronJobsStatus,
+      [jobId]: !cronJobsStatus[jobId]
+    };
+    setCronJobsStatus(newStatus);
+    localStorage.setItem('cron_jobs_status', JSON.stringify(newStatus));
   };
 
   const cronJobs = [
@@ -130,6 +184,9 @@ export default function CronJobManager() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Layout Cache */}
+          <div className="border-b pb-6">
+            <h3 className="font-semibold text-lg mb-4">Cache תפריט ומודעות</h3>
           <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
             <div>
               <h4 className="font-semibold text-blue-900">הפעלת Cache</h4>
@@ -178,6 +235,57 @@ export default function CronJobManager() {
               המשתמש תמיד יראה נתונים מעודכנים לאחר {cacheDuration} דקות או רענון ידני של העמוד.
             </AlertDescription>
           </Alert>
+          </div>
+
+          {/* Articles Cache */}
+          <div className="border-t pt-6">
+            <h3 className="font-semibold text-lg mb-4">Cache מאמרים וקטגוריות</h3>
+            
+            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg mb-4">
+              <div>
+                <h4 className="font-semibold text-green-900">הפעלת Cache מאמרים</h4>
+                <p className="text-sm text-green-700">טוען את כל המאמרים פעם אחת ושומר אותם בזיכרון</p>
+              </div>
+              <Switch
+                checked={articlesCache.enabled}
+                onCheckedChange={(checked) => setArticlesCache(prev => ({ ...prev, enabled: checked }))}
+              />
+            </div>
+
+            <div className="space-y-2 mb-4">
+              <Label>משך זמן Cache מאמרים (דקות)</Label>
+              <Select 
+                value={articlesCache.duration} 
+                onValueChange={(value) => setArticlesCache(prev => ({ ...prev, duration: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5 דקות</SelectItem>
+                  <SelectItem value="10">10 דקות (מומלץ)</SelectItem>
+                  <SelectItem value="15">15 דקות</SelectItem>
+                  <SelectItem value="30">30 דקות</SelectItem>
+                  <SelectItem value="60">שעה</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-gray-500">
+                כל המאמרים והקטגוריות ייטענו פעם אחת וייסננו בצד הלקוח
+              </p>
+            </div>
+
+            <Button onClick={handleSaveArticlesCache} className="bg-green-600 hover:bg-green-700">
+              <CheckCircle className="w-4 h-4 ml-2" />
+              שמור הגדרות Cache מאמרים
+            </Button>
+
+            <Alert className="mt-4 bg-green-50 border-green-200">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                <strong>יתרונות:</strong> פחות קריאות שרת, טעינה מהירה יותר של דפי קטגוריות ומאמרים, חוויית גלישה חלקה יותר.
+              </AlertDescription>
+            </Alert>
+          </div>
         </CardContent>
       </Card>
 
@@ -216,24 +324,40 @@ export default function CronJobManager() {
                 medium: 'bg-yellow-100 text-yellow-800',
                 low: 'bg-gray-100 text-gray-800'
               };
+              const isActive = cronJobsStatus[job.id];
               return (
-                <div key={job.id} className={`border-2 rounded-lg p-4 space-y-3 ${priorityColors[job.priority] || ''}`}>
+                <div key={job.id} className={`border-2 rounded-lg p-4 space-y-3 ${priorityColors[job.priority] || ''} ${isActive ? 'ring-2 ring-green-500' : ''}`}>
                   <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-3 space-x-reverse">
+                    <div className="flex items-start space-x-3 space-x-reverse flex-1">
                       <div className="p-2 bg-purple-100 rounded-lg">
                         <Icon className="w-5 h-5 text-purple-600" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h4 className="font-semibold text-gray-900">{job.title}</h4>
                           {job.priority === 'high' && (
                             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${priorityBadges.high}`}>
                               עדיפות גבוהה
                             </span>
                           )}
+                          {isActive && (
+                            <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-800 flex items-center gap-1">
+                              <CheckCircle className="w-3 h-3" />
+                              פעיל
+                            </span>
+                          )}
                         </div>
                         <p className="text-sm text-gray-600 mt-1">{job.description}</p>
                       </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <Switch
+                        checked={isActive}
+                        onCheckedChange={() => toggleCronJobStatus(job.id)}
+                      />
+                      <span className="text-xs text-gray-500">
+                        {isActive ? 'מופעל' : 'כבוי'}
+                      </span>
                     </div>
                   </div>
 
@@ -285,7 +409,7 @@ export default function CronJobManager() {
           <Alert className="bg-red-50 border-red-200">
             <AlertCircle className="w-4 h-4 text-red-600" />
             <AlertDescription className="text-red-800">
-              <strong>חשוב מאוד:</strong> הגדר את שני ה-CRON Jobs עם עדיפות גבוהה (רענון Layout Cache כל דקה + חימום Cache כל 5 דקות) כדי להפחית את העומס על השרת באופן דרמטי!
+              <strong>חשוב מאוד:</strong> הגדר את שני ה-CRON Jobs עם עדיפות גבוהה (רענון Layout Cache כל דקה + חימום Cache כל 5 דקות) כדי להפחית את העומס על השרת באופן דרמטי! אל תשכח לסמן אותם כפעילים עם המתג בצד.
             </AlertDescription>
           </Alert>
           
