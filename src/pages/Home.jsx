@@ -58,7 +58,7 @@ export default function Home() {
           Category.list(),
           HomeConfig.filter({ config_key: 'homePage' }),
           Advertisement.filter({ active: true }),
-          Article.filter({ published: true }, '-created_date', 50), // Already sorted by newest
+          Article.filter({ published: true }, '-created_date', 500), // Increased to fetch more articles // Already sorted by newest
         ]);
 
         setArticles(heroArticlesData);
