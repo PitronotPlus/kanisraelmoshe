@@ -337,7 +337,7 @@ export default function CategoryPage() {
                     published: true, // Ensuring only published articles are fetched
                     'categories.primary': section.category // Assuming section.category is a slug
                   },
-                  '-created_date',
+                  '-created_date', // Sort by newest first
                   section.article_count || section.display?.limit || 6 // Default to 6 if not specified
                 )
               );
@@ -351,7 +351,7 @@ export default function CategoryPage() {
           articlesPromises.push(
             Article.filter(
               { published: true, is_hot: true }, // Ensuring only published and hot articles are fetched
-              '-views', // Order by views for hot articles
+              '-created_date', // Sort by newest first (changed from '-views')
               6 // Limit hot articles
             )
           );

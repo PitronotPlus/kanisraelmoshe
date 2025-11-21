@@ -53,12 +53,12 @@ export default function Home() {
           adsData,
           videoArticlesData,
         ] = await Promise.all([
-          Article.filter({ published: true }, '-created_date', 20),
-          Article.filter({ published: true }, '-views', 10), 
+          Article.filter({ published: true }, '-created_date', 20), // Already sorted by newest
+          Article.filter({ published: true }, '-created_date', 10), // Changed from '-views' to newest 
           Category.list(),
           HomeConfig.filter({ config_key: 'homePage' }),
           Advertisement.filter({ active: true }),
-          Article.filter({ published: true }, '-created_date', 50),
+          Article.filter({ published: true }, '-created_date', 50), // Already sorted by newest
         ]);
 
         setArticles(heroArticlesData);
