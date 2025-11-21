@@ -117,6 +117,9 @@ const ArticleRow = ({ article, onUpdateStatus, onDelete, onReassign, onEditArtic
 };
 
 
+// Baseline article count - any articles added/deleted after this will be added to 25,866
+const BASELINE_ARTICLE_COUNT = 25866;
+
 export default function ArticleManagement({ onEditArticle, onNewArticle }) {
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -129,6 +132,7 @@ export default function ArticleManagement({ onEditArticle, onNewArticle }) {
   const [assignedAuthorFilter, setAssignedAuthorFilter] = useState("all"); // סינון לפי עורך משויך
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [baselineCount, setBaselineCount] = useState(null); // Real count when baseline was set
 
   // State for bulk actions
   const [selectedArticles, setSelectedArticles] = useState(new Set());
@@ -156,6 +160,16 @@ export default function ArticleManagement({ onEditArticle, onNewArticle }) {
         Category.list(),
         User.list() // Load all users
       ]);
+      
+      // Set baseline count on first load (store the real count)
+      const storedBaseline = localStorage.getItem('article_baseline_count');
+      if (!storedBaseline) {
+        localStorage.setItem('article_baseline_count', articleData.length.toString());
+        setBaselineCount(articleData.length);
+      } else {
+        setBaselineCount(parseInt(storedBaseline));
+      }
+      
       setArticles(articleData);
       setCategories(categoryData.filter(c => !c.parent_id));
       setUsers(userData.filter(u => u.status === 'approved' || u.role === 'admin')); // Filter users by status or role
@@ -651,7 +665,7 @@ export default function ArticleManagement({ onEditArticle, onNewArticle }) {
           </div>
           <div className="flex justify-between items-center mt-4">
             <div className="text-sm text-gray-500">
-              מציג {filteredArticles.length} מתוך {articles.length} מאמרים
+              מציג {filteredArticles.length} מתוך {baselineCount !== null ? BASELINE_ARTICLE_COUNT + (articles.length - baselineCount) : articles.length} מאמרים
             </div>
              {(fromDate || toDate || originalAuthorFilter !== "all" || assignedAuthorFilter !== "all" || searchTerm !== "" || statusFilter !== "all" || categoryFilter !== "all") && (
                 <Button variant="link" className="p-0 h-auto text-blue-600" onClick={() => {
