@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
+import React, { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useLocation } from "react-router-dom";
 import { Category as CategoryEntity } from "@/entities/Category"; // Renamed to avoid conflict with component name
 import { Article } from "@/entities/Article";

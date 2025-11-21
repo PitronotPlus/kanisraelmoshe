@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Eye, Rss, Newspaper, CloudSun, Calendar, DollarSign, Video, ShoppingCart, Archive, Zap } from 'lucide-react';
@@ -112,7 +111,14 @@ const MostViewedWidget = ({ articles = [], count = 10 }) => {
     );
   }
 
-  const displayedArticles = articles.slice(0, count);
+  // Sort articles by created_date (newest first) and then take the first 'count' articles
+  const sortedArticles = [...articles].sort((a, b) => {
+    const dateA = new Date(a.created_date || 0);
+    const dateB = new Date(b.created_date || 0);
+    return dateB - dateA; // Descending order (newest first)
+  });
+  
+  const displayedArticles = sortedArticles.slice(0, count);
 
   return (
     <div className="mb-8">
