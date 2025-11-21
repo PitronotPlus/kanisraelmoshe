@@ -40,6 +40,7 @@ import ThinContentManager from "../components/admin/ThinContentManager";
 import CategoryManager from "../components/admin/CategoryManager";
 import BannerManager from "../components/admin/BannerManager";
 import PageEditor from "../components/admin/PageEditor";
+import CronJobManager from "../components/admin/CronJobManager";
 
 // Modern Stats Card Component
 const ModernStatsCard = ({ title, value, icon: Icon, gradient, change }) => (
@@ -504,8 +505,18 @@ export default function Admin() {
                 <Wand2 className="w-4 h-4" />
                 <span>מסגנן מאמרים</span>
               </button>
-            </div>
-          </div>
+
+              <button
+                onClick={() => setActiveTab('cron')}
+                className={`w-full text-right px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 space-x-reverse ${
+                  activeTab === 'cron' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Zap className="w-4 h-4" />
+                <span>CRON & Cache</span>
+              </button>
+              </div>
+              </div>
 
           {/* Main Content */}
           <div className="flex-1">
@@ -757,9 +768,15 @@ export default function Admin() {
                 <ArticleStylist />
               </ContentContainer>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+
+            {activeTab === 'cron' && (
+              <ContentContainer title="CRON Jobs ו-Cache" description="נהל משימות מתוזמנות וזיכרון מטמון להפחתת עומס שרת">
+                <CronJobManager />
+              </ContentContainer>
+            )}
+            </div>
+            </div>
+            </div>
+            </div>
+            );
+            }

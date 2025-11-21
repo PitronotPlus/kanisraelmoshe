@@ -319,24 +319,56 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-          const [currentUser, menuResult, adsData, configData] = await Promise.all([
-            base44.auth.me().catch(() => null),
+        const CACHE_KEY = 'layout_cache_data';
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+        
+        // Try to get cached data
+        const cachedData = sessionStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+          try {
+            const { data, timestamp } = JSON.parse(cachedData);
+            const now = Date.now();
+            
+            // Check if cache is still valid
+            if (now - timestamp < CACHE_DURATION) {
+              setUser(data.user);
+              if (data.menuItems && data.menuItems.length > 0) {
+                setMenuItems(data.menuItems);
+                setMenuTree(buildMenuTree(data.menuItems));
+              }
+              setAllAds(data.ads);
+              setSiteConfig(data.config);
+              setLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.error('Cache parse error:', e);
+          }
+        }
+
+        // Fetch fresh data
+        const [currentUser, menuResult, adsData, configData] = await Promise.all([
+          base44.auth.me().catch(() => null),
           NavigationMenu.filter({ name: 'main_menu' }).catch(() => []),
-          Advertisement.filter({ active: true }).catch(() => []), // Load ALL active ads
+          Advertisement.filter({ active: true }).catch(() => []),
           SiteConfig.list().catch(() => [])
         ]);
         
         setUser(currentUser);
+        let flatItems = [];
         if (menuResult.length > 0) {
-            const flatItems = menuResult[0].items || [];
+            flatItems = menuResult[0].items || [];
             setMenuItems(flatItems);
             setMenuTree(buildMenuTree(flatItems));
         }
-        setAllAds(adsData); // Store all ads
+        setAllAds(adsData);
+        
+        let finalConfig;
         if (configData.length > 0) {
-            setSiteConfig(configData[0]);
+            finalConfig = configData[0];
+            setSiteConfig(finalConfig);
         } else {
-            setSiteConfig({ 
+            finalConfig = { 
               font_family: 'Assistant', 
               primary_color: '#153b79', 
               accent_color: '#d20201',
@@ -344,7 +376,23 @@ export default function Layout({ children, currentPageName }) {
               text_color_primary: '#111827',
               text_color_secondary: '#6b7281',
               site_description: 'אתר החדשות המוביל בישראל' 
-            });
+            };
+            setSiteConfig(finalConfig);
+        }
+
+        // Store in cache
+        try {
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+            data: {
+              user: currentUser,
+              menuItems: flatItems,
+              ads: adsData,
+              config: finalConfig
+            },
+            timestamp: Date.now()
+          }));
+        } catch (e) {
+          console.error('Cache save error:', e);
         }
       } catch (error) {
         console.error('Error fetching initial data:', error);
