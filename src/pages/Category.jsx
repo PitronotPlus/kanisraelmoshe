@@ -277,11 +277,51 @@ export default function CategoryPage() {
       }
 
       try {
-        // Load category and articles without authentication - these entities are designed for public access
-        const [allCategoriesData, allAdsData] = await Promise.all([
-          CategoryEntity.list(),
-          Advertisement.filter({ active: true })
-        ]);
+        // Check if articles cache is enabled
+        const articlesCacheEnabled = localStorage.getItem('articles_cache_enabled') === 'true';
+        const articlesCacheDuration = parseInt(localStorage.getItem('articles_cache_duration') || '10') * 60 * 1000;
+        
+        let cachedData = null;
+        if (articlesCacheEnabled) {
+          const cacheKey = 'category_cache_data';
+          const cached = sessionStorage.getItem(cacheKey);
+          if (cached) {
+            try {
+              const { data, timestamp } = JSON.parse(cached);
+              if (Date.now() - timestamp < articlesCacheDuration) {
+                cachedData = data;
+              }
+            } catch (e) {
+              console.error('Cache parse error:', e);
+            }
+          }
+        }
+
+        let allCategoriesData, allAdsData;
+        
+        if (cachedData) {
+          // Use cached data
+          allCategoriesData = cachedData.categories;
+          allAdsData = cachedData.ads;
+        } else {
+          // Fetch fresh data
+          [allCategoriesData, allAdsData] = await Promise.all([
+            CategoryEntity.list(),
+            Advertisement.filter({ active: true })
+          ]);
+          
+          // Save to cache if enabled
+          if (articlesCacheEnabled) {
+            try {
+              sessionStorage.setItem('category_cache_data', JSON.stringify({
+                data: { categories: allCategoriesData, ads: allAdsData },
+                timestamp: Date.now()
+              }));
+            } catch (e) {
+              console.error('Cache save error:', e);
+            }
+          }
+        }
 
         setAllCategories(allCategoriesData);
         setAllAds(allAdsData);
@@ -323,42 +363,89 @@ export default function CategoryPage() {
         // --- Dynamic Section and Hot Articles Fetching ---
         const pageConfig = currentCategory.page_config;
         const sectionsToFetch = [];
-        const articlesPromises = [];
         const currentSectionsData = {};
+        let results = [];
 
-        if (pageConfig && pageConfig.sections) {
-          for (const section of pageConfig.sections) {
-            if (section.enabled && (section.type === 'articles' || section.type === 'slider')) {
-              sectionsToFetch.push(section);
-              articlesPromises.push(
-                // All article fetches are for published content, ensuring public visibility
-                Article.filter(
-                  {
-                    published: true, // Ensuring only published articles are fetched
-                    'categories.primary': section.category // Assuming section.category is a slug
-                  },
-                  '-created_date', // Sort by newest first
-                  section.article_count || section.display?.limit || 6 // Default to 6 if not specified
-                )
-              );
-            }
+        // Check if we can use cached articles
+        let allArticlesData = null;
+        if (articlesCacheEnabled && cachedData?.allArticles) {
+          allArticlesData = cachedData.allArticles;
+        } else if (articlesCacheEnabled) {
+          // Fetch ALL articles once and cache them
+          allArticlesData = await Article.list('-created_date');
+          
+          // Save to cache
+          try {
+            const cacheKey = 'category_cache_data';
+            const existingCache = JSON.parse(sessionStorage.getItem(cacheKey) || '{}');
+            sessionStorage.setItem(cacheKey, JSON.stringify({
+              ...existingCache,
+              data: {
+                ...existingCache.data,
+                allArticles: allArticlesData
+              }
+            }));
+          } catch (e) {
+            console.error('Failed to save articles cache:', e);
           }
         }
 
-        // Fetch hot articles if needed for a 'hot_articles' section
-        const hotArticlesSectionExists = pageConfig?.sections?.some(s => s.enabled && s.type === 'hot_articles');
-        if (hotArticlesSectionExists) {
-          articlesPromises.push(
-            Article.filter(
-              { published: true, is_hot: true }, // Ensuring only published and hot articles are fetched
-              '-created_date', // Sort by newest first (changed from '-views')
-              6 // Limit hot articles
-            )
-          );
-        }
+        if (allArticlesData) {
+          // Filter articles from cache instead of fetching
+          if (pageConfig && pageConfig.sections) {
+            for (const section of pageConfig.sections) {
+              if (section.enabled && (section.type === 'articles' || section.type === 'slider')) {
+                sectionsToFetch.push(section);
+                const filteredArticles = allArticlesData
+                  .filter(a => a.published && a.categories?.primary === section.category)
+                  .slice(0, section.article_count || section.display?.limit || 6);
+                results.push(filteredArticles);
+              }
+            }
+          }
 
-        // Execute all article fetches concurrently
-        const results = await Promise.all(articlesPromises);
+          const hotArticlesSectionExists = pageConfig?.sections?.some(s => s.enabled && s.type === 'hot_articles');
+          if (hotArticlesSectionExists) {
+            const hotArticlesFiltered = allArticlesData
+              .filter(a => a.published && a.is_hot)
+              .slice(0, 6);
+            results.push(hotArticlesFiltered);
+          }
+        } else {
+          // Original fetching logic if cache is disabled
+          const articlesPromises = [];
+          
+          if (pageConfig && pageConfig.sections) {
+            for (const section of pageConfig.sections) {
+              if (section.enabled && (section.type === 'articles' || section.type === 'slider')) {
+                sectionsToFetch.push(section);
+                articlesPromises.push(
+                  Article.filter(
+                    {
+                      published: true,
+                      'categories.primary': section.category
+                    },
+                    '-created_date',
+                    section.article_count || section.display?.limit || 6
+                  )
+                );
+              }
+            }
+          }
+
+          const hotArticlesSectionExists = pageConfig?.sections?.some(s => s.enabled && s.type === 'hot_articles');
+          if (hotArticlesSectionExists) {
+            articlesPromises.push(
+              Article.filter(
+                { published: true, is_hot: true },
+                '-created_date',
+                6
+              )
+            );
+          }
+
+          results = await Promise.all(articlesPromises);
+        }
 
         let resultIndex = 0;
         sectionsToFetch.forEach(section => {
