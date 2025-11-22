@@ -14,7 +14,7 @@ import { defaultHomeConfig } from "../components/admin/HomePageEditor";
 const HeroGrid = lazy(() => import("../components/home/HeroGrid"));
 const HeroCards = lazy(() => import("../components/home/HeroCards"));
 const HeroKanNaimOriginal = lazy(() => import("../components/home/HeroKanNaimOriginal"));
-const BreakingNews = lazy(() => import("../components/home/BreakingNews"));
+import BreakingNews from "../components/home/BreakingNews";
 const CategorySection = lazy(() => import("../components/home/CategorySection"));
 const Sidebar = lazy(() => import("../components/home/Sidebar"));
 const SmartAdBanner = lazy(() => import("../components/ads/SmartAdBanner"));
@@ -377,9 +377,7 @@ export default function Home() {
   return (
     <div className="w-full space-y-8">
       {homeConfig?.hero?.enabled && homeConfig.hero.showBreakingNews && (
-        <Suspense fallback={<LoadingPlaceholder />}>
-          <BreakingNews />
-        </Suspense>
+        <BreakingNews />
       )}
 
       {renderHero()}
