@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 
 export default function EventsCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -48,40 +48,39 @@ export default function EventsCalendar() {
 
   return (
     <div className="mb-8">
-      {/* כותרת */}
-      <div className="bg-blue-600 text-white py-3 px-4 rounded-t-lg relative">
-        <div className="absolute top-0 right-0 bg-blue-800 text-white px-3 py-1 rounded-bl-lg text-sm font-bold">
-          לוח אירועים
-        </div>
-        <div className="flex items-center justify-between mt-4">
+      {/* כפתור כותרת עליון */}
+      <div className="bg-[#1e3a8a] text-white py-2 px-4 rounded-t-lg">
+        <div className="text-center text-sm font-bold">לוח אירועים</div>
+      </div>
+
+      {/* כותרת עם חודש ושנה */}
+      <div className="bg-white border-x border-gray-300">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-300">
           <button 
             onClick={() => navigateMonth(-1)}
-            className="text-white hover:text-blue-200 transition-colors p-1"
+            className="text-gray-600 hover:text-gray-800 transition-colors p-1"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
           
-          <h3 className="text-lg font-bold">
+          <h3 className="text-base font-bold text-gray-800">
             {monthNames[currentMonth]} {currentYear}
           </h3>
           
           <button 
             onClick={() => navigateMonth(1)}
-            className="text-white hover:text-blue-200 transition-colors p-1"
+            className="text-gray-600 hover:text-gray-800 transition-colors p-1"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
         </div>
-      </div>
 
-      {/* לוח השנה */}
-      <div className="bg-white border border-gray-200 border-t-0 rounded-b-lg">
         {/* שורת ימי השבוע */}
-        <div className="grid grid-cols-7 border-b border-gray-200">
+        <div className="grid grid-cols-7">
           {dayNames.map((day, index) => (
             <div 
               key={index} 
-              className="p-2 text-center font-bold text-gray-700 bg-gray-50 border-l border-gray-200 first:border-l-0"
+              className="p-2 text-center font-semibold text-white bg-[#5b9bd5] border-l border-white last:border-l-0"
             >
               {day}
             </div>
@@ -94,26 +93,15 @@ export default function EventsCalendar() {
             <div 
               key={index} 
               className={`
-                h-10 border-l border-b border-gray-200 first:border-l-0 
-                flex items-center justify-center text-sm
+                h-10 border-l border-b border-gray-300 last:border-l-0
+                flex items-center justify-center text-sm font-medium
                 ${day ? 'hover:bg-gray-50 cursor-pointer' : ''}
-                ${isToday(day) ? 'bg-blue-600 text-white font-bold' : 'text-gray-700'}
-                ${!day ? 'bg-gray-50' : ''}
+                ${isToday(day) ? 'bg-[#1e3a8a] text-white font-bold' : day ? 'text-gray-900 bg-white' : 'bg-gray-100'}
               `}
             >
               {day || ''}
             </div>
           ))}
-        </div>
-
-        {/* פוטר עם מידע נוסף */}
-        <div className="p-3 bg-gray-50 border-t border-gray-200 text-center">
-          <p className="text-xs text-gray-600">
-            {isToday(today.getDate()) && currentMonth === today.getMonth() && currentYear === today.getFullYear()
-              ? `היום: ${today.getDate()} ${monthNames[today.getMonth()]}`
-              : `היום: ${today.getDate()} ${monthNames[today.getMonth()]} ${today.getFullYear()}`
-            }
-          </p>
         </div>
       </div>
     </div>
