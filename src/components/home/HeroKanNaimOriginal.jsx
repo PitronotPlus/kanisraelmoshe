@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -211,7 +210,70 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
       </style>
       
       <div className="hero-grid-container grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Grid of posts */}
+        {/* Mobile View - Stack articles vertically */}
+        <div className="lg:hidden space-y-4">
+          {/* Main article on mobile */}
+          <div className="h-64">
+            <MainArticleCard article={articles[0]} categoryName="פוליטיקה" />
+          </div>
+          
+          {/* Two smaller articles on mobile */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="h-48">
+              <SmallArticleCard 
+                article={articles[1]} 
+                label="מתכונים"
+              />
+            </div>
+            <div className="h-48">
+              <SmallArticleCard 
+                article={articles[2]} 
+                label="סלבs"
+              />
+            </div>
+          </div>
+          
+          {/* Breaking news on mobile */}
+          {breakingNews.length > 0 && (
+            <div className="bg-white">
+              <div 
+                className="py-2 px-4 relative z-10 inline-block"
+                style={{
+                  width: '45%',
+                  backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/1ac382c6e_5.png)',
+                  backgroundSize: '100% 100%',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  marginBottom: '-1px'
+                }}
+              >
+                <h3 className="text-white text-sm font-bold whitespace-nowrap">מבזקים</h3>
+              </div>
+              
+              <div className="border border-gray-300 bg-white divide-y divide-gray-200">
+                {breakingNews.slice(0, 3).map((article) => (
+                  <BreakingNewsItem key={article.id} article={article} isLast={false} />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Red mail button on mobile */}
+          <a
+            href={redMailLink}
+            target={redMailLink.startsWith('http') ? '_blank' : undefined}
+            rel={redMailLink.startsWith('http') ? 'noopener noreferrer' : undefined}
+            className="block hover:opacity-90 transition-opacity"
+          >
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/8491fa781_Screenshot_2.jpg"
+              alt="המייל האדום"
+              className="w-full h-32 object-contain"
+            />
+          </a>
+        </div>
+        
+        {/* Desktop View - Grid of posts */}
         <div className="hidden lg:block hero-posts-grid order-1">
           <div className="grid grid-cols-9 gap-4 h-full">
             {/* Two smaller articles - right side */}
@@ -235,7 +297,7 @@ export default function HeroKanNaimOriginal({ articles, breakingNews = [], redMa
           </div>
         </div>
         
-        {/* Sidebar column */}
+        {/* Desktop Sidebar column */}
         <div className="hidden lg:block hero-sidebar order-2">
           <div className="flex flex-col h-full">
             {/* Breaking News Sidebar */}
