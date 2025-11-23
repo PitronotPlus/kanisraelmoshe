@@ -295,13 +295,13 @@ export default function Home() {
           return (
             <Suspense key={section.id || index} fallback={<LoadingPlaceholder />}>
               <div className="mb-12">
-                <div className="herald-mod-wrap mb-6">
+                <div className="herald-mod-wrap mb-4 md:mb-6">
                   <div className="herald-mod-head relative">
                     <div className="flex justify-between items-end">
                       <div className="flex z-10">
-                        <div className="w-2" style={{ backgroundColor: '#091d4f' }}></div>
+                        <div className="w-1 md:w-2" style={{ backgroundColor: '#091d4f' }}></div>
                         <h2 
-                          className="text-white font-bold text-lg px-5 py-2 rounded-tl-lg m-0"
+                          className="text-white font-bold text-base md:text-lg px-3 md:px-5 py-1.5 md:py-2 rounded-tl-lg m-0"
                           style={{
                             backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68701c57df55f5f96aeb5a04/a2b1f4156_5.png)',
                             backgroundSize: 'cover',
@@ -313,7 +313,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex h-1 mt-[-1px]">
-                      <div className="w-2" style={{ backgroundColor: '#091d4f' }}></div>
+                      <div className="w-1 md:w-2" style={{ backgroundColor: '#091d4f' }}></div>
                       <div 
                         className="flex-1"
                         style={{
@@ -325,8 +325,8 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                   {hotArticles.map((article) => {
                     const displayDate = article.original_publication_date || article.created_date;
                     const isValidDate = displayDate && !isNaN(new Date(displayDate));
@@ -347,7 +347,7 @@ export default function Home() {
                               </span>
                             </div>
                           </div>
-                          <h3 className="text-lg font-bold leading-tight mb-2 group-hover:text-blue-600 transition-colors">
+                          <h3 className="text-base md:text-lg font-bold leading-tight mb-2 group-hover:text-blue-600 transition-colors line-clamp-3">
                             {article.title}
                           </h3>
                           <div className="text-xs text-gray-500">
@@ -403,8 +403,8 @@ export default function Home() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <main className="lg:col-span-2 space-y-12 order-1 lg:order-2 min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+        <main className="lg:col-span-2 space-y-6 md:space-y-8 lg:space-y-12 order-1 lg:order-2 min-w-0">
           {renderDynamicSections()}
         </main>
         
