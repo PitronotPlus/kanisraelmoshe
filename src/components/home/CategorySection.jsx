@@ -15,7 +15,7 @@ const LargeArticle = ({ article, displaySettings = {} }) => {
   return (
     <article className="herald-lay-f group">
       <Link to={createPageUrl(`Article?id=${article.id}`)} className="block">
-        <div className="herald-post-thumbnail mb-4 overflow-hidden">
+        <div className="herald-post-thumbnail mb-3 md:mb-4 overflow-hidden rounded-lg">
           <img
             width="300"
             height="168"
@@ -27,7 +27,7 @@ const LargeArticle = ({ article, displaySettings = {} }) => {
         </div>
         
         <div className="entry-header">
-          <h2 className="entry-title text-lg font-bold leading-tight mb-2 group-hover:text-blue-600 transition-colors duration-200">
+          <h2 className="entry-title text-base md:text-lg font-bold leading-tight mb-2 group-hover:text-blue-600 transition-colors duration-200 line-clamp-3">
             {article.title}
           </h2>
           
@@ -76,20 +76,20 @@ const SmallArticle = ({ article, displaySettings = {} }) => {
 
   return (
     <article className="herald-lay-k group">
-      <Link to={createPageUrl(`Article?id=${article.id}`)} className="flex space-x-3 space-x-reverse">
-        <div className="herald-post-thumbnail flex-shrink-0 overflow-hidden">
+      <Link to={createPageUrl(`Article?id=${article.id}`)} className="flex space-x-2 md:space-x-3 space-x-reverse">
+        <div className="herald-post-thumbnail flex-shrink-0 overflow-hidden rounded">
           <img
             width="130"
             height="86"
             src={article.featured_image || `https://picsum.photos/seed/${article.id}/130/86`}
-            className="w-[130px] aspect-video object-cover transition-opacity duration-300 group-hover:opacity-80"
+            className="w-[100px] md:w-[130px] aspect-video object-cover transition-opacity duration-300 group-hover:opacity-80"
             alt={article.title}
             loading="lazy"
           />
         </div>
         
-        <div className="entry-header flex-1">
-          <h2 className="entry-title text-sm font-semibold leading-tight mb-2 group-hover:text-blue-600 transition-colors duration-200 line-clamp-3">
+        <div className="entry-header flex-1 min-w-0">
+          <h2 className="entry-title text-xs md:text-sm font-semibold leading-tight mb-1 md:mb-2 group-hover:text-blue-600 transition-colors duration-200 line-clamp-3">
             {article.title}
           </h2>
           
@@ -149,16 +149,16 @@ export default function CategorySection({ title, categorySlug, articles, headerS
   const smallArticles = articles.slice(3);
 
   return (
-    <div className="herald-module mb-12">
+    <div className="herald-module mb-8 md:mb-12">
       {/* Module Header */}
-      <div className="herald-mod-wrap mb-6">
+      <div className="herald-mod-wrap mb-4 md:mb-6">
         <div className="herald-mod-head relative">
           <div className="flex justify-between items-end">
             {/* The title itself */}
             <div className="flex z-10">
-              <div className="w-2" style={{ backgroundColor: '#091d4f' }}></div>
+              <div className="w-1 md:w-2" style={{ backgroundColor: '#091d4f' }}></div>
               <h2 
-                className="text-white font-bold text-lg px-5 py-2 rounded-tl-lg m-0"
+                className="text-white font-bold text-base md:text-lg px-3 md:px-5 py-1.5 md:py-2 rounded-tl-lg m-0"
                 style={{
                   backgroundImage: `url(${style.image_url})`,
                   backgroundSize: 'cover',
@@ -172,16 +172,17 @@ export default function CategorySection({ title, categorySlug, articles, headerS
             {/* "All articles" link */}
             <Link 
               to={createPageUrl(`Category?slug=${categorySlug}`)} 
-              className="flex items-center space-x-2 space-x-reverse text-blue-600 hover:text-blue-800 transition-colors text-sm font-semibold pb-1"
+              className="flex items-center space-x-1 md:space-x-2 space-x-reverse text-blue-600 hover:text-blue-800 transition-colors text-xs md:text-sm font-semibold pb-0.5 md:pb-1 whitespace-nowrap"
             >
-              <span>כל הכתבות</span>
-              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">כל הכתבות</span>
+              <span className="sm:hidden">עוד</span>
+              <ArrowLeft className="w-3 h-3 md:w-4 md:h-4" />
             </Link>
           </div>
           {/* The underline */}
           {style.type === 'background' ? (
             <div className="flex h-1 mt-[-1px]">
-              <div className="w-2" style={{ backgroundColor: '#091d4f' }}></div>
+              <div className="w-1 md:w-2" style={{ backgroundColor: '#091d4f' }}></div>
               <div 
                 className="flex-1"
                 style={{
@@ -207,7 +208,7 @@ export default function CategorySection({ title, categorySlug, articles, headerS
       <div className="herald-posts">
         {/* Top Row - 3 Large Articles */}
         {largeArticles.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
             {largeArticles.map((article) => (
               <LargeArticle key={article.id} article={article} displaySettings={displaySettings} />
             ))}
@@ -216,7 +217,7 @@ export default function CategorySection({ title, categorySlug, articles, headerS
 
         {/* Bottom Grid - Small Articles */}
         {smallArticles.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {smallArticles.map((article) => (
               <SmallArticle key={article.id} article={article} displaySettings={displaySettings} />
             ))}
