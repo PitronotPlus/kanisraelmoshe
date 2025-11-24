@@ -59,7 +59,7 @@ export default function EventsCalendar() {
   return (
     <div className="mb-8">
       {/* כפתור כותרת עליון */}
-      <div className="bg-[#1e4d8b] text-white py-2 px-3 rounded-tr-lg" style={{ width: '35%' }}>
+      <div className="bg-[#1e4d8b] text-white py-2 px-3 rounded-tl-lg" style={{ width: '35%' }}>
         <div className="text-center text-sm font-bold whitespace-nowrap">לוח אירועים</div>
       </div>
 
