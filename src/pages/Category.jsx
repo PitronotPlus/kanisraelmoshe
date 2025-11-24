@@ -390,6 +390,9 @@ export default function CategoryPage() {
           }
         }
 
+        // Check if hot articles section exists (outside of cache logic)
+        const hotArticlesSectionExists = pageConfig?.sections?.some(s => s.enabled && s.type === 'hot_articles');
+
         if (allArticlesData) {
           // Filter articles from cache instead of fetching
           if (pageConfig && pageConfig.sections) {
@@ -404,7 +407,6 @@ export default function CategoryPage() {
             }
           }
 
-          const hotArticlesSectionExists = pageConfig?.sections?.some(s => s.enabled && s.type === 'hot_articles');
           if (hotArticlesSectionExists) {
             const hotArticlesFiltered = allArticlesData
               .filter(a => a.published && a.is_hot)
@@ -433,7 +435,6 @@ export default function CategoryPage() {
             }
           }
 
-          const hotArticlesSectionExists = pageConfig?.sections?.some(s => s.enabled && s.type === 'hot_articles');
           if (hotArticlesSectionExists) {
             articlesPromises.push(
               Article.filter(
