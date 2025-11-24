@@ -33,6 +33,16 @@ export default function EventsCalendar() {
   for (let day = 1; day <= daysInMonth; day++) {
     days.push(day);
   }
+  
+  // ימים ריקים בסוף החודש כדי למלא את השורה האחרונה
+  const totalCells = days.length;
+  const remainingCells = totalCells % 7;
+  if (remainingCells > 0) {
+    const cellsToAdd = 7 - remainingCells;
+    for (let i = 0; i < cellsToAdd; i++) {
+      days.push(null);
+    }
+  }
 
   const navigateMonth = (direction) => {
     const newDate = new Date(currentDate);
@@ -49,8 +59,8 @@ export default function EventsCalendar() {
   return (
     <div className="mb-8">
       {/* כפתור כותרת עליון */}
-      <div className="bg-[#1e4d8b] text-white py-2 px-4 rounded-t-lg">
-        <div className="text-center text-sm font-bold">לוח אירועים</div>
+      <div className="bg-[#1e4d8b] text-white py-2 px-3 rounded-tr-lg" style={{ width: '35%' }}>
+        <div className="text-center text-sm font-bold whitespace-nowrap">לוח אירועים</div>
       </div>
 
       {/* כותרת עם חודש ושנה - רקע אדום */}
