@@ -37,7 +37,7 @@ const NavMenuItem = ({ item, location }) => {
 
   const getLink = () => {
     if (item.type === 'category') {
-      const slug = item.slug || generateSlug(item.label);
+      const slug = item.slug || item.category || generateSlug(item.label);
       return createPageUrl(`Category?slug=${slug}`);
     }
     if (item.type === 'custom') {
@@ -161,7 +161,7 @@ const NavSubMenuItem = ({ item }) => {
     
     const getLink = () => {
       if (item.type === 'category') {
-        const slug = item.slug || generateSlug(item.label);
+        const slug = item.slug || item.category || generateSlug(item.label);
         return createPageUrl(`Category?slug=${slug}`);
       }
       if (item.type === 'custom') {
