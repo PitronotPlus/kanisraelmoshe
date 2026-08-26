@@ -1,0 +1,81 @@
+{
+  "name": "ImageOptimization",
+  "type": "object",
+  "properties": {
+    "original_url": {
+      "type": "string",
+      "description": "\u05d4\u05e7\u05d9\u05e9\u05d5\u05e8 \u05d4\u05de\u05e7\u05d5\u05e8\u05d9 \u05e9\u05dc \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "optimized_url": {
+      "type": "string",
+      "description": "\u05d4\u05e7\u05d9\u05e9\u05d5\u05e8 \u05d4\u05de\u05d9\u05d8\u05d5\u05d1 \u05e9\u05dc \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "original_size": {
+      "type": "number",
+      "description": "\u05d4\u05d2\u05d5\u05d3\u05dc \u05d4\u05de\u05e7\u05d5\u05e8\u05d9 \u05d1\u05d1\u05ea\u05d9\u05dd"
+    },
+    "optimized_size": {
+      "type": "number",
+      "description": "\u05d4\u05d2\u05d5\u05d3\u05dc \u05dc\u05d0\u05d7\u05e8 \u05d0\u05d5\u05e4\u05d8\u05d9\u05de\u05d9\u05d6\u05e6\u05d9\u05d4 \u05d1\u05d1\u05ea\u05d9\u05dd"
+    },
+    "compression_ratio": {
+      "type": "number",
+      "description": "\u05d0\u05d7\u05d5\u05d6 \u05d4\u05d3\u05d7\u05d9\u05e1\u05d4"
+    },
+    "format_original": {
+      "type": "string",
+      "description": "\u05e4\u05d5\u05e8\u05de\u05d8 \u05d4\u05ea\u05de\u05d5\u05e0\u05d4 \u05d4\u05de\u05e7\u05d5\u05e8\u05d9\u05ea"
+    },
+    "format_optimized": {
+      "type": "string",
+      "description": "\u05e4\u05d5\u05e8\u05de\u05d8 \u05d4\u05ea\u05de\u05d5\u05e0\u05d4 \u05d4\u05de\u05d9\u05d8\u05d5\u05d1\u05ea"
+    },
+    "width": {
+      "type": "number",
+      "description": "\u05e8\u05d5\u05d7\u05d1 \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "height": {
+      "type": "number",
+      "description": "\u05d2\u05d5\u05d1\u05d4 \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "optimization_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d4\u05d0\u05d5\u05e4\u05d8\u05d9\u05de\u05d9\u05d6\u05e6\u05d9\u05d4"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "optimized",
+        "failed",
+        "skipped",
+        "analyzed"
+      ],
+      "default": "pending",
+      "description": "\u05e1\u05d8\u05d8\u05d5\u05e1"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "article",
+        "advertisement",
+        "category",
+        "user",
+        "other"
+      ],
+      "description": "\u05de\u05e7\u05d5\u05e8 \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05e4\u05e8\u05d9\u05d8 \u05e9\u05d0\u05dc\u05d9\u05d5 \u05e9\u05d9\u05d9\u05db\u05ea \u05d4\u05ea\u05de\u05d5\u05e0\u05d4"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "\u05d4\u05d5\u05d3\u05e2\u05ea \u05e9\u05d2\u05d9\u05d0\u05d4 \u05d0\u05dd \u05d9\u05e9"
+    }
+  },
+  "required": [
+    "original_url"
+  ]
+}

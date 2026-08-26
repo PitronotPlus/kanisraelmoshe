@@ -1,0 +1,23 @@
+{
+  "name": "NavigationMenu",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique name for the menu (e.g., 'main_menu', 'footer_menu')",
+      "unique": true
+    },
+    "items": {
+      "type": "array",
+      "description": "The array of menu items, representing the menu structure.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "required": [
+    "name",
+    "items"
+  ]
+}

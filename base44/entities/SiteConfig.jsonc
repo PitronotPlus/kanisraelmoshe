@@ -1,0 +1,253 @@
+{
+  "name": "SiteConfig",
+  "type": "object",
+  "properties": {
+    "site_name": {
+      "type": "string",
+      "default": "\u05db\u05d0\u05df \u05d9\u05e9\u05e8\u05d0\u05dc"
+    },
+    "site_description": {
+      "type": "string",
+      "default": "\u05d0\u05ea\u05e8 \u05d4\u05d7\u05d3\u05e9\u05d5\u05ea \u05d4\u05de\u05d5\u05d1\u05d9\u05dc \u05d1\u05d9\u05e9\u05e8\u05d0\u05dc"
+    },
+    "primary_color": {
+      "type": "string",
+      "default": "#2563eb"
+    },
+    "accent_color": {
+      "type": "string",
+      "default": "#dc2626"
+    },
+    "background_color": {
+      "type": "string",
+      "default": "#f9fafb"
+    },
+    "text_color_primary": {
+      "type": "string",
+      "default": "#111827"
+    },
+    "text_color_secondary": {
+      "type": "string",
+      "default": "#6b7281"
+    },
+    "font_family": {
+      "type": "string",
+      "enum": [
+        "Assistant",
+        "Heebo",
+        "Arimo"
+      ],
+      "default": "Assistant"
+    },
+    "logo_height": {
+      "type": "number",
+      "default": 64,
+      "description": "\u05d2\u05d5\u05d1\u05d4 \u05d4\u05dc\u05d5\u05d2\u05d5 \u05d1\u05e4\u05d9\u05e7\u05e1\u05dc\u05d9\u05dd"
+    },
+    "typography": {
+      "type": "object",
+      "properties": {
+        "h1": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "h2": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "h3": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "h4": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "h5": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "h6": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "p": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        },
+        "body": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "string"
+            },
+            "fontWeight": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "default": {}
+    },
+    "show_video": {
+      "type": "boolean",
+      "default": true
+    },
+    "video_url": {
+      "type": "string",
+      "default": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    "video_title": {
+      "type": "string",
+      "default": "\u05d4\u05e6\u05d2\u05d4 \u05d9\u05e9\u05e8\u05d0\u05dc\u05d9\u05ea - \u05e1\u05d8\u05d9\u05d9\u05d8\u05d9\u05e7 \u05dc\u05d9\u05d9\u05e3 \u05d1\u05e2\u05e6\u05de\u05d0\u05d5\u05ea 75"
+    },
+    "show_ali_express": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_ad_sense": {
+      "type": "boolean",
+      "default": true
+    },
+    "ad_sense_code": {
+      "type": "string",
+      "default": ""
+    },
+    "custom_fonts": {
+      "type": "array",
+      "description": "\u05e4\u05d5\u05e0\u05d8\u05d9\u05dd \u05de\u05d5\u05ea\u05d0\u05de\u05d9\u05dd \u05e9\u05d4\u05d5\u05e2\u05dc\u05d5 \u05e2\u05dc \u05d9\u05d3\u05d9 \u05d4\u05de\u05e9\u05ea\u05de\u05e9",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "familyName": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "article_injects": {
+      "type": "array",
+      "description": "Custom code snippets to inject into articles",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "html",
+              "javascript"
+            ]
+          },
+          "position": {
+            "type": "number"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "required": []
+}
